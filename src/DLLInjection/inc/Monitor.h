@@ -28,7 +28,7 @@ class Monitor
         volatile char dllLoc[1024];
 
         bool RegisterCreationCallback ();
-        static DWORD ThreadProc (LPVOID lpParameter);
+        static DWORD WINAPI ThreadProc (LPVOID lpParameter);
         void WorkerThread ();
         int GetArchitecture (int pid);
 

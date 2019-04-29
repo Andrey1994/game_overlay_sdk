@@ -1,0 +1,29 @@
+EXPORTS
+	; dxgi.dll
+	CreateDXGIFactory
+	CreateDXGIFactory1
+	CreateDXGIFactory2
+
+	; d3d12.dll
+	D3D12CreateDevice
+
+	; vulkan-1.dll
+	vkCreateDevice
+	vkCreateSwapchainKHR
+	vkDestroySwapchainKHR
+	vkGetSwapchainImagesKHR
+	vkQueuePresentKHR
+	vkGetDeviceProcAddr
+
+	; LibOVRRT64_1.dll
+	ovr_GetTextureSwapChainLength
+	ovr_GetTextureSwapChainCurrentIndex
+	ovr_CommitTextureSwapChain
+	ovr_DestroyTextureSwapChain
+	ovr_Destroy
+	ovr_CreateTextureSwapChainDX
+	ovr_GetTextureSwapChainBufferDX
+	ovr_EndFrame
+
+	; openvr_api.dll
+	VR_GetGenericInterface
