@@ -49,6 +49,11 @@ class InjectorDLL (object):
             ctypes.c_int
         ]
 
+        # get pid
+        self.GetPid = self.lib.GetPid
+        self.GetPid.restype = ctypes.c_int
+        self.GetPid.argtypes = []
+
 
 def start_monitor (process_name):
     location = os.path.abspath (os.path.dirname (pkg_resources.resource_filename (__name__, os.path.join ('lib', 'GameOverlay64.dll'))))
@@ -63,3 +68,8 @@ def stop_monitor ():
 
 def set_log_level (level):
     InjectorDLL.get_instance ().SetLogLevel (level)
+
+def get_pid ():
+    res = InjectorDLL.get_instance ().GetPid ()
+    if res == 0:
+        raise InjectionError ('Callback has not been called yet')

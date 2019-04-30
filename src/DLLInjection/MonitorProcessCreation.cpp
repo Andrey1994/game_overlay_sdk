@@ -38,6 +38,16 @@ bool StopMonitor ()
     return res;
 }
 
+int GetPid ()
+{
+    if (!monitor)
+    {
+        Monitor::monitorLogger->error ("process monitor is not running");
+        return 0;
+    }
+    return monitor->GetPid ();
+}
+
 BOOL WINAPI DllMain (HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 {
     switch (fdwReason)

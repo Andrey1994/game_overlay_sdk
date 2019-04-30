@@ -42,16 +42,6 @@ endmacro()
 
 configure_msvc_runtime ()
 
-include_directories (
-  inc
-  src/Utils
-  src/DLLInjection/inc
-)
-
-link_directories (
-
-)
-
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/python/game_overlay_sdk/lib)
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/python/game_overlay_sdk/lib)
 
@@ -63,4 +53,10 @@ add_library (
   src/DLLInjection/DLLInjection.cpp
   src/DLLInjection/Monitor.cpp
   src/DLLInjection/MonitorProcessCreation.cpp
+)
+
+target_include_directories (DLLInjector PUBLIC
+  inc
+  src/Utils
+  src/DLLInjection/inc
 )
