@@ -57,8 +57,6 @@ namespace GameOverlay {
       RecordingState::GetInstance().SetDisplayTimes(g_config.startDisplayTime_,
         g_config.endDisplayTime_);
       RecordingState::GetInstance().SetRecordingTime(static_cast<float>(g_config.recordingTime_));
-      const auto overlayPosition = GetOverlayPositionFromUint(g_config.overlayPosition_);
-      RecordingState::GetInstance().SetOverlayPosition(overlayPosition);
       g_overlayThread.Start();
       initialized = true;
     }

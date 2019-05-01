@@ -297,31 +297,7 @@ void OverlayBitmap::Resize(int screenWidth, int screenHeight)
 
 void OverlayBitmap::UpdateScreenPosition()
 {
-  const auto overlayPosition = RecordingState::GetInstance().GetOverlayPosition();
-  if (IsLowerOverlayPosition(overlayPosition)) {
-    if (IsLeftOverlayPosition(overlayPosition)) {
-      screenPosition_.x = 0;
-      screenPosition_.y = 0;
-      currentAlignment_ = Alignment::LowerLeft;
-    }
-    else {
-      screenPosition_.x = screenWidth_ - (fullWidth_ + barWidth_);
-      screenPosition_.y = 0;
-      currentAlignment_ = Alignment::LowerRight;
-    }
-  }
-  else {
-    if (IsLeftOverlayPosition(overlayPosition)) {
-      screenPosition_.x = 0;
-      screenPosition_.y = 0;
-      currentAlignment_ = Alignment::UpperLeft;
-    }
-    else {
-      screenPosition_.x = screenWidth_ - (fullWidth_ + barWidth_);
-      screenPosition_.y = 0;
-      currentAlignment_ = Alignment::UpperRight;
-    }
-  }
+
 }
 
 void OverlayBitmap::DrawOverlay()

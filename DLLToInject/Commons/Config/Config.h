@@ -38,7 +38,6 @@ struct Config {
   unsigned int toggleBarOverlayHotKey_ = 0x77;  // F8
   unsigned int recordingTime_ = 0;
   bool recordAllProcesses_ = true;
-  unsigned int overlayPosition_ = 2;
 
   float startDisplayTime_ = 1.0f;
   float endDisplayTime_ = 10.0f;

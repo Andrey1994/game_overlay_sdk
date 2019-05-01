@@ -103,15 +103,6 @@ void OverlayThread::ThreadProc()
       case OverlayMessageType::HideBarOverlay:
         RecordingState::GetInstance().HideBarOverlay();
         break;
-      case OverlayMessageType::UpperLeft:
-      case OverlayMessageType::UpperRight:
-      case OverlayMessageType::LowerLeft:
-      case OverlayMessageType::LowerRight:
-      {
-        const auto overlayPosition = GetOverlayPositionFromMessageType(messageType);
-        RecordingState::GetInstance().SetOverlayPosition(overlayPosition);
-        break;
-      }
       case OverlayMessageType::CaptureTime:
         RecordingState::GetInstance().UpdateRecordingTime();
         break;

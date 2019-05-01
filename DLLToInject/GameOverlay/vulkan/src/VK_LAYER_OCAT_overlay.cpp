@@ -660,8 +660,6 @@ OVR_PUBLIC_FUNCTION(ovrResult) ovr_EndFrame(ovrSession session, long long frameI
     overlayLayer.Header.Flags = ovrLayerFlag_HighQuality | ovrLayerFlag_HeadLocked;
     overlayLayer.ColorTexture = g_OculusVk->GetSwapChain();
 
-    const auto overlayPosition = RecordingState::GetInstance().GetOverlayPosition();
-
     overlayLayer.QuadPoseCenter.Position.y = -0.10f;
     overlayLayer.QuadPoseCenter.Position.x = -0.10f;
 

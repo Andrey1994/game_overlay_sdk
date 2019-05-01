@@ -28,7 +28,6 @@
     <ClCompile Include="Overlay\Overlay.cpp" />
     <ClCompile Include="Overlay\OverlayInterface.cpp" />
     <ClCompile Include="Overlay\OverlayMessage.cpp" />
-    <ClCompile Include="Overlay\OverlayPosition.cpp" />
     <ClCompile Include="Overlay\VK_Environment.cpp" />
     <ClCompile Include="Recording\Capturing.cpp" />
     <ClCompile Include="Recording\OverlayThread.cpp" />
@@ -54,7 +53,6 @@
     <ClInclude Include="Overlay\Overlay.h" />
     <ClInclude Include="Overlay\OverlayInterface.h" />
     <ClInclude Include="Overlay\OverlayMessage.h" />
-    <ClInclude Include="Overlay\OverlayPosition.h" />
     <ClInclude Include="Overlay\VK_Environment.h" />
     <ClInclude Include="Recording\Capturing.h" />
     <ClInclude Include="Recording\OverlayThread.h" />

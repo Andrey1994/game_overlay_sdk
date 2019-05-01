@@ -144,16 +144,6 @@ void RecordingState::HideBarOverlay()
   showBarOverlay_ = false;
 }
 
-OverlayPosition RecordingState::GetOverlayPosition()
-{
-  return overlayPosition_;
-}
-
-void RecordingState::SetOverlayPosition(OverlayPosition overlayPosition)
-{
-  overlayPosition_ = overlayPosition;
-}
-
 void RecordingState::Start()
 {
   recording_ = true;

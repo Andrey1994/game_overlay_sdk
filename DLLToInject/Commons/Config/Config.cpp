@@ -43,7 +43,6 @@ bool Config::Load(const std::wstring& path)
     toggleOverlayHotKey_ = GetPrivateProfileInt(L"Recording", L"toggleOverlayHotkey", toggleOverlayHotKey_, fileName.c_str());
     recordingTime_ = GetPrivateProfileInt(L"Recording", L"captureTime", recordingTime_, fileName.c_str());
     recordAllProcesses_ = ReadBoolFromIni(L"Recording", L"captureAllProcesses", recordAllProcesses_, fileName.c_str());
-    overlayPosition_ = GetPrivateProfileInt(L"Recording", L"overlayPosition", overlayPosition_, fileName.c_str());
 
     g_messageLog.LogInfo("Config", "file loaded");
     return true;

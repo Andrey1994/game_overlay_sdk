@@ -96,9 +96,6 @@
     <ClCompile Include="Utility\StringUtils.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Overlay\OverlayPosition.cpp">
-      <Filter>Overlay</Filter>
-    </ClCompile>
     <ClCompile Include="Rendering\OverlayBitmap.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
@@ -172,9 +169,6 @@
     </ClInclude>
     <ClInclude Include="Utility\StringUtils.h">
       <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Overlay\OverlayPosition.h">
-      <Filter>Overlay</Filter>
     </ClInclude>
     <ClInclude Include="Rendering\OverlayBitmap.h">
       <Filter>Rendering</Filter>
