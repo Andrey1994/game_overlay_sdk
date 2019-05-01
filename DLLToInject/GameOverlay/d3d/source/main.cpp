@@ -25,7 +25,6 @@
 
 #include <windows.h>
 #include <appmodel.h>
-#include "Config/BlackList.h"
 #include "Recording/Capturing.h"
 #include "Utility/Constants.h"
 #include "Utility/FileDirectory.h"
@@ -47,7 +46,6 @@ HWND sharedFrontendWindow = NULL;
 HMODULE g_module_handle = NULL;
 HHOOK g_hook = NULL;
 std::wstring g_dllDirectory;
-BlackList g_blackList;
 bool g_uwpApp = false;
 
 extern "C" __declspec(dllexport) LRESULT CALLBACK
@@ -128,50 +126,35 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
     GetSystemDirectoryW(system_path_buffer, MAX_PATH);
     const std::wstring system_path(system_path_buffer);
 
-    g_blackList.Load();
-    const std::wstring processName = GetProcessNameFromHandle(GetCurrentProcess());
-    if (!processName.empty())
+    InitLogging();
+    SendDllStateMessage(OverlayMessageType::AttachDll);
+
+    // Vulkan
+    g_messageLog.LogInfo("GameOverlay", "Install process hooks for Vulkan");
+    if (!GameOverlay::InstallCreateProcessHook())
     {
-      if (!g_blackList.Contains(processName))
-      {
-        g_messageLog.SetVersion(g_blackList.GetVersion());
-        InitLogging();
-        SendDllStateMessage(OverlayMessageType::AttachDll);
+        g_messageLog.LogError("GameOverlay", "Failed to install process hooks for Vulkan");
+    }
 
-        // Vulkan
-        g_messageLog.LogInfo("GameOverlay", "Install process hooks for Vulkan");
-        if (!GameOverlay::InstallCreateProcessHook())
-        {
-          g_messageLog.LogError("GameOverlay", "Failed to install process hooks for Vulkan");
-        }
+    // DXGI
+    GetSystemDirectoryW(system_path_buffer, MAX_PATH);
+    if (!GameOverlay::register_module(system_path + L"\\dxgi.dll"))
+    {
+        g_messageLog.LogError("GameOverlay", "Failed to register module for DXGI");
+    }
 
-        // DXGI
-        wchar_t system_path_buffer[MAX_PATH];
-        GetSystemDirectoryW(system_path_buffer, MAX_PATH);
-        const std::wstring system_path(system_path_buffer);
-        if (!GameOverlay::register_module(system_path + L"\\dxgi.dll"))
-        {
-          g_messageLog.LogError("GameOverlay", "Failed to register module for DXGI");
-        }
+    // D3D12
+    GameOverlay::register_additional_module(L"d3d12.dll");
 
-        // D3D12
-        GameOverlay::register_additional_module(L"d3d12.dll");
-
-       // Oculus Compositor
+    // Oculus Compositor
 #if _WIN64
-       GameOverlay::register_additional_module(L"LibOVRRT64_1.dll");
+    GameOverlay::register_additional_module(L"LibOVRRT64_1.dll");
 #else
-       GameOverlay::register_additional_module(L"LibOVRRT32_1.dll");
+    GameOverlay::register_additional_module(L"LibOVRRT32_1.dll");
 #endif
 
-       // SteamVR Compositor
-       GameOverlay::register_additional_module(L"openvr_api.dll");
-      }
-      else
-      {
-        g_messageLog.LogInfo("GameOverlay", L"Process '" + processName + L"' is on blacklist -> Ignore");
-      }
-    }
+    // SteamVR Compositor
+    GameOverlay::register_additional_module(L"openvr_api.dll");
     break;
   }
   case DLL_PROCESS_DETACH:

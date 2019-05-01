@@ -98,21 +98,18 @@ int Monitor::GetPid ()
 
 void Monitor::Callback (int pid, char *pName)
 {
-    if (!this->pid)
+    if (strcmp (pName, (char *)this->processName) == 0)
     {
-        if (strcmp (pName, (char *)this->processName) == 0)
-        {
-            int architecture = GetArchitecture (pid);
-            Monitor::monitorLogger->info ("Target Process created, name {}, pid {}, architecture {}",
-                pName, pid, architecture);
-            DLLInjection dllInjection (pid, (char *)this->processName, architecture, (char *)this->dllLoc);
-            dllInjection.InjectDLL ();
-            this->pid = pid;
-        }
-        else
-        {
-            monitorLogger->trace ("Non Target Process created, name {}, pid {}", pName, pid);
-        }
+        int architecture = GetArchitecture (pid);
+        Monitor::monitorLogger->info ("Target Process created, name {}, pid {}, architecture {}",
+            pName, pid, architecture);
+        DLLInjection dllInjection (pid, (char *)this->processName, architecture, (char *)this->dllLoc);
+        dllInjection.InjectDLL ();
+        this->pid = pid;
+    }
+    else
+    {
+        monitorLogger->trace ("Non Target Process created, name {}, pid {}", pName, pid);
     }
 }
 

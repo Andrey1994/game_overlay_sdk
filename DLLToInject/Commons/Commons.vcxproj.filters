@@ -25,9 +25,6 @@
     <Filter Include="Recording">
       <UniqueIdentifier>{feac52b2-f92d-4da9-8ad4-af272491e66a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Config">
-      <UniqueIdentifier>{ca8486c5-e763-436b-a22d-8da4bdc67094}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Rendering">
       <UniqueIdentifier>{ee896462-c74d-491d-a5f5-51e9c2dfc1eb}</UniqueIdentifier>
     </Filter>
@@ -62,12 +59,6 @@
     </ClCompile>
     <ClCompile Include="Utility\ProcessTermination.cpp">
       <Filter>Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Config\BlackList.cpp">
-      <Filter>Config</Filter>
-    </ClCompile>
-    <ClCompile Include="Config\Config.cpp">
-      <Filter>Config</Filter>
     </ClCompile>
     <ClCompile Include="Overlay\VK_Environment.cpp">
       <Filter>Overlay</Filter>
@@ -136,12 +127,6 @@
     </ClInclude>
     <ClInclude Include="Utility\ProcessTermination.h">
       <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Config\BlackList.h">
-      <Filter>Config</Filter>
-    </ClInclude>
-    <ClInclude Include="Config\Config.h">
-      <Filter>Config</Filter>
     </ClInclude>
     <ClInclude Include="Overlay\VK_Environment.h">
       <Filter>Overlay</Filter>

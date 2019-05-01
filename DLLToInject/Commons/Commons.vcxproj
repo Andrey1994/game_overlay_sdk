@@ -19,8 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Config\BlackList.cpp" />
-    <ClCompile Include="Config\Config.cpp" />
     <ClCompile Include="Logging\MessageLog.cpp" />
     <ClCompile Include="Overlay\DLLInjection.cpp" />
     <ClCompile Include="Overlay\GlobalHook.cpp" />
@@ -44,8 +42,6 @@
     <ClCompile Include="Utility\StringUtils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Config\BlackList.h" />
-    <ClInclude Include="Config\Config.h" />
     <ClInclude Include="Logging\MessageLog.h" />
     <ClInclude Include="Overlay\DLLInjection.h" />
     <ClInclude Include="Overlay\GlobalHook.h" />

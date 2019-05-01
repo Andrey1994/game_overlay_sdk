@@ -55,8 +55,6 @@ class RecordingState final {
   void HideBarOverlay();
   void ShowBarOverlay();
 
-  void UpdateRecordingTime();
-
  private:
   RecordingState();
 

@@ -34,7 +34,6 @@
 #include "../Utility/StringUtils.h"
 
 namespace GameOverlay {
-  Config g_config;
   OverlayThread g_overlayThread;
 
 #if _WIN64
@@ -53,10 +52,6 @@ namespace GameOverlay {
   {
     static bool initialized = false;
     if (!initialized) {
-      g_config.Load(g_fileDirectory.GetDirectory(DirectoryType::Config));
-      RecordingState::GetInstance().SetDisplayTimes(g_config.startDisplayTime_,
-        g_config.endDisplayTime_);
-      RecordingState::GetInstance().SetRecordingTime(static_cast<float>(g_config.recordingTime_));
       g_overlayThread.Start();
       initialized = true;
     }

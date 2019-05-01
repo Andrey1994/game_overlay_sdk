@@ -32,7 +32,6 @@
 #include <vector>
 #include "Overlay/DLLInjection.h"
 #include "Overlay/VK_Environment.h"
-#include "Config/BlackList.h"
 #include "Recording/Capturing.h"
 #include "Utility/FileDirectory.h"
 #include "Logging/MessageLog.h"
@@ -41,7 +40,6 @@
 #include "Utility/SmartHandle.h"
 
 extern std::wstring g_dllDirectory;
-extern BlackList g_blackList;
 
 std::vector<std::wstring> g_filter;
 
@@ -473,10 +471,7 @@ namespace GameOverlay {
 
     void EnableVulkan(VK_Environment& vkEnv, const std::wstring& processName)
     {
-      const auto blacklisted = g_blackList.Contains(processName);
-      if (!blacklisted) {
-        vkEnv.SetVKEnvironment(g_dllDirectory);
-      }
+      vkEnv.SetVKEnvironment(g_dllDirectory);
     }
 
     BOOL WINAPI HookCreateProcessA(_In_opt_ LPCTSTR lpApplicationName, _Inout_opt_ LPTSTR lpCommandLine,

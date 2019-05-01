@@ -23,7 +23,6 @@
 #include "RecordingState.h"
 #include "../Logging/MessageLog.h"
 
-#include "../Config/Config.h"
 #include "../Utility/FileDirectory.h"
 
 using Clock = std::chrono::high_resolution_clock;
@@ -105,13 +104,6 @@ void RecordingState::SetDisplayTimes(float start, float end)
 void RecordingState::SetRecordingTime(float time) 
 {
   recordingTime_ = time; 
-}
-
-void RecordingState::UpdateRecordingTime()
-{
-  Config config;
-  config.Load(g_fileDirectory.GetDirectory(DirectoryType::Config));
-  SetRecordingTime(static_cast<float>(config.recordingTime_));
 }
 
 void RecordingState::ShowOverlay() 

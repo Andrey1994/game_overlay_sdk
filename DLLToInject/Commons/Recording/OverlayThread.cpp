@@ -103,9 +103,6 @@ void OverlayThread::ThreadProc()
       case OverlayMessageType::HideBarOverlay:
         RecordingState::GetInstance().HideBarOverlay();
         break;
-      case OverlayMessageType::CaptureTime:
-        RecordingState::GetInstance().UpdateRecordingTime();
-        break;
       default:
         break;
       }

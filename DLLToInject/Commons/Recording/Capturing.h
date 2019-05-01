@@ -23,12 +23,10 @@
 #pragma once
 #include <windows.h>
 #include <map>
-#include "../Config/Config.h"
 
 namespace GameOverlay {
 void InitLogging(const std::string& callerName);
 void InitCapturing();
 
-extern Config g_config;
 extern const std::wstring g_overlayLibName;
 }
