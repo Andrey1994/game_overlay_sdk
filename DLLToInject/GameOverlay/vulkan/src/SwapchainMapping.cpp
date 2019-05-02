@@ -24,27 +24,27 @@
 
 void SwapchainMapping::ClearImageData(VkLayerDispatchTable * pTable)
 {
-  for (auto& id : imageData)
-  {
-    if (id.view != VK_NULL_HANDLE)
+    for (auto& id : imageData)
     {
-      pTable->DestroyImageView(device, id.view, nullptr);
+        if (id.view != VK_NULL_HANDLE)
+        {
+            pTable->DestroyImageView(device, id.view, nullptr);
+        }
+
+        if (id.framebuffer != VK_NULL_HANDLE)
+        {
+            pTable->DestroyFramebuffer(device, id.framebuffer, nullptr);
+        }
+    }
+    imageData.clear();
+
+    if (descriptorPool != VK_NULL_HANDLE)
+    {
+        pTable->DestroyDescriptorPool(device, descriptorPool, nullptr);
     }
 
-    if (id.framebuffer != VK_NULL_HANDLE)
+    if (computePipelineLayout != VK_NULL_HANDLE)
     {
-      pTable->DestroyFramebuffer(device, id.framebuffer, nullptr);
+        pTable->DestroyPipelineLayout(device, computePipelineLayout, nullptr);
     }
-  }
-  imageData.clear();
-
-  if (descriptorPool != VK_NULL_HANDLE)
-  {
-    pTable->DestroyDescriptorPool(device, descriptorPool, nullptr);
-  }
-
-  if (computePipelineLayout != VK_NULL_HANDLE)
-  {
-    pTable->DestroyPipelineLayout(device, computePipelineLayout, nullptr);
-  }
 }

@@ -26,12 +26,12 @@
 #include <windows.h>
 
 class ProcessTermination {
- public:
-  // Register Callback for process termination
-  void Register(DWORD procesID);
-  void UnRegister();
+public:
+    // Register Callback for process termination
+    void Register(DWORD procesID);
+    void UnRegister();
 
- private:
-  HANDLE processExitHandle_ = NULL;
-  DWORD processID_ = 0;
+private:
+    HANDLE processExitHandle_ = NULL;
+    DWORD processID_ = 0;
 };

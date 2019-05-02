@@ -25,8 +25,8 @@
 #include <map>
 
 namespace GameOverlay {
-void InitLogging(const std::string& callerName);
-void InitCapturing();
+    void InitLogging(const std::string& callerName);
+    void InitCapturing();
 
-extern const std::wstring g_overlayLibName;
+    extern const std::wstring g_overlayLibName;
 }

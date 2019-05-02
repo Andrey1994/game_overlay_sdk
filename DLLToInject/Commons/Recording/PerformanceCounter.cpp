@@ -29,63 +29,63 @@
 constexpr float percentile = 0.99f;
 
 namespace GameOverlay {
-using Clock = std::chrono::high_resolution_clock;
-using MilliSeconds = std::chrono::duration<double, std::milli>;
-using Seconds = std::chrono::duration<double>;
+    using Clock = std::chrono::high_resolution_clock;
+    using MilliSeconds = std::chrono::duration<double, std::milli>;
+    using Seconds = std::chrono::duration<double>;
 
-const MilliSeconds PerformanceCounter::refreshRate_{1000.0};
+    const MilliSeconds PerformanceCounter::refreshRate_{ 1000.0 };
 
-PerformanceCounter::PerformanceCounter() : frameTimes_(1024)
-{
-  lastFrame_ = Clock::now();
-  recordingStart_ = Clock::now();
-  deltaTime_ = MilliSeconds::zero();
-}
+    PerformanceCounter::PerformanceCounter() : frameTimes_(1024)
+    {
+        lastFrame_ = Clock::now();
+        recordingStart_ = Clock::now();
+        deltaTime_ = MilliSeconds::zero();
+    }
 
-const PerformanceCounter::FrameInfo& PerformanceCounter::NextFrame()
-{
-  const auto currFrame = Clock::now();
-  const MilliSeconds frameDelta = currFrame - lastFrame_;
-  deltaTime_ += frameDelta;
-  frameTimes_.push_back(static_cast<float>(frameDelta.count()));
-  currentFrameInfo_.frameTime = static_cast<float>(frameDelta.count());
+    const PerformanceCounter::FrameInfo& PerformanceCounter::NextFrame()
+    {
+        const auto currFrame = Clock::now();
+        const MilliSeconds frameDelta = currFrame - lastFrame_;
+        deltaTime_ += frameDelta;
+        frameTimes_.push_back(static_cast<float>(frameDelta.count()));
+        currentFrameInfo_.frameTime = static_cast<float>(frameDelta.count());
 
-  currentFrameCount_++;
-  totalFrameCount_++;
-  if (deltaTime_ >= refreshRate_) {
-    currentFrameInfo_.fps = static_cast<int32_t>(currentFrameCount_);
-    currentFrameInfo_.ms = static_cast<float>(deltaTime_.count() / currentFrameCount_);
+        currentFrameCount_++;
+        totalFrameCount_++;
+        if (deltaTime_ >= refreshRate_) {
+            currentFrameInfo_.fps = static_cast<int32_t>(currentFrameCount_);
+            currentFrameInfo_.ms = static_cast<float>(deltaTime_.count() / currentFrameCount_);
 
-    currentFrameCount_ = 0;
-    deltaTime_ -= refreshRate_;
-  }
+            currentFrameCount_ = 0;
+            deltaTime_ -= refreshRate_;
+        }
 
-  lastFrame_ = currFrame;
+        lastFrame_ = currFrame;
 
-  return currentFrameInfo_;
-}
+        return currentFrameInfo_;
+    }
 
-const PerformanceCounter::CaptureResults& PerformanceCounter::GetLastCaptureResults() const
-{
-  return prevCaptureResults_;
-}
+    const PerformanceCounter::CaptureResults& PerformanceCounter::GetLastCaptureResults() const
+    {
+        return prevCaptureResults_;
+    }
 
-void PerformanceCounter::Start()
-{
-  recordingStart_ = Clock::now();
-  totalFrameCount_ = 0;
-  frameTimes_.clear();
-}
+    void PerformanceCounter::Start()
+    {
+        recordingStart_ = Clock::now();
+        totalFrameCount_ = 0;
+        frameTimes_.clear();
+    }
 
-void PerformanceCounter::Stop()
-{
-  const MilliSeconds durationMS = lastFrame_ - recordingStart_;
-  prevCaptureResults_.averageFPS =
-      static_cast<float>(totalFrameCount_ / (durationMS.count() / 1000.0f));
-  prevCaptureResults_.averageMS = static_cast<float>(durationMS.count() / totalFrameCount_);
+    void PerformanceCounter::Stop()
+    {
+        const MilliSeconds durationMS = lastFrame_ - recordingStart_;
+        prevCaptureResults_.averageFPS =
+            static_cast<float>(totalFrameCount_ / (durationMS.count() / 1000.0f));
+        prevCaptureResults_.averageMS = static_cast<float>(durationMS.count() / totalFrameCount_);
 
-  std::sort(frameTimes_.begin(), frameTimes_.end(), std::less<double>());
-  const auto rank = static_cast<int>(percentile * frameTimes_.size());
-  prevCaptureResults_.frameTimePercentile = static_cast<float>(frameTimes_[rank]);
-}
+        std::sort(frameTimes_.begin(), frameTimes_.end(), std::less<double>());
+        const auto rank = static_cast<int>(percentile * frameTimes_.size());
+        prevCaptureResults_.frameTimePercentile = static_cast<float>(frameTimes_[rank]);
+    }
 }

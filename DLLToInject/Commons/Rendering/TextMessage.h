@@ -32,33 +32,33 @@
 #include "../Logging/MessageLog.h"
 
 class TextMessage final {
- public:
-  TextMessage(ID2D1RenderTarget* renderTarget, const D2D1_COLOR_F& textColor,
-              const D2D1_COLOR_F& numberColor);
-  ~TextMessage();
+public:
+    TextMessage(ID2D1RenderTarget* renderTarget, const D2D1_COLOR_F& textColor,
+        const D2D1_COLOR_F& numberColor);
+    ~TextMessage();
 
-  TextMessage(const TextMessage&) = delete;
-  TextMessage& operator=(const TextMessage&) = delete;
+    TextMessage(const TextMessage&) = delete;
+    TextMessage& operator=(const TextMessage&) = delete;
 
-  void SetArea(float x, float y, float width, float height);
+    void SetArea(float x, float y, float width, float height);
 
-  void WriteMessage(const std::wstring& msg);
-  void WriteMessage(float value, const std::wstring& msg, int precision);
-  void WriteMessage(int value, const std::wstring& msg);
-  void WriteMessage(const std::wstring& msgA, const std::wstring& msgB);
+    void WriteMessage(const std::wstring& msg);
+    void WriteMessage(float value, const std::wstring& msg, int precision);
+    void WriteMessage(int value, const std::wstring& msg);
+    void WriteMessage(const std::wstring& msgA, const std::wstring& msgB);
 
-  void SetText(IDWriteFactory* writeFactory, IDWriteTextFormat* textFormat);
-  void Draw(ID2D1RenderTarget* renderTarget);
+    void SetText(IDWriteFactory* writeFactory, IDWriteTextFormat* textFormat);
+    void Draw(ID2D1RenderTarget* renderTarget);
 
- private:
-  Microsoft::WRL::ComPtr<IDWriteTextLayout> textLayout_;
-  Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> numberBrush_;
-  Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> textBrush_;
+private:
+    Microsoft::WRL::ComPtr<IDWriteTextLayout> textLayout_;
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> numberBrush_;
+    Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> textBrush_;
 
-  std::wstringstream message_;
-  std::vector<DWRITE_TEXT_RANGE> numberRanges_;
+    std::wstringstream message_;
+    std::vector<DWRITE_TEXT_RANGE> numberRanges_;
 
-  D2D1_POINT_2F screenPos_;
-  float maxWidth_;
-  float maxHeight_;
+    D2D1_POINT_2F screenPos_;
+    float maxWidth_;
+    float maxHeight_;
 };

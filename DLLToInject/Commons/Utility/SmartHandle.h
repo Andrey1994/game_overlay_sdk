@@ -27,16 +27,16 @@
 class Win32Handle
 {
 public:
-  Win32Handle(HANDLE handle) : handle_(handle) {}
-  ~Win32Handle();
+    Win32Handle(HANDLE handle) : handle_(handle) {}
+    ~Win32Handle();
 
-  Win32Handle(const Win32Handle& other) = delete;
-  Win32Handle& operator=(const Win32Handle& other) = delete;
-  Win32Handle(Win32Handle&& other) = delete;
+    Win32Handle(const Win32Handle& other) = delete;
+    Win32Handle& operator=(const Win32Handle& other) = delete;
+    Win32Handle(Win32Handle&& other) = delete;
 
-  HANDLE Get() const;
+    HANDLE Get() const;
 
 private:
-  void Close();
-  HANDLE handle_;
+    void Close();
+    HANDLE handle_;
 };

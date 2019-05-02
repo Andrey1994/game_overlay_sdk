@@ -24,49 +24,49 @@
 
 #include <chrono>
 
-enum class TextureState 
+enum class TextureState
 {
-  Default, 
-  Start, 
-  Stop 
+    Default,
+    Start,
+    Stop
 };
 
 class RecordingState final {
- public:
-  static RecordingState& GetInstance();
-  RecordingState(RecordingState const&) = delete;
-  void operator=(RecordingState const&) = delete;
+public:
+    static RecordingState& GetInstance();
+    RecordingState(RecordingState const&) = delete;
+    void operator=(RecordingState const&) = delete;
 
-  bool Started();
-  bool Stopped();
-  bool IsOverlayShowing();
-  bool IsGraphOverlayShowing();
-  bool IsBarOverlayShowing();
-  void Start();
-  void Stop();
+    bool Started();
+    bool Stopped();
+    bool IsOverlayShowing();
+    bool IsGraphOverlayShowing();
+    bool IsBarOverlayShowing();
+    void Start();
+    void Stop();
 
-  TextureState Update();
-  void SetDisplayTimes(float start, float end);
-  void SetRecordingTime(float time);
-  void HideOverlay();
-  void ShowOverlay();
-  void HideGraphOverlay();
-  void ShowGraphOverlay();
-  void HideBarOverlay();
-  void ShowBarOverlay();
+    TextureState Update();
+    void SetDisplayTimes(float start, float end);
+    void SetRecordingTime(float time);
+    void HideOverlay();
+    void ShowOverlay();
+    void HideGraphOverlay();
+    void ShowGraphOverlay();
+    void HideBarOverlay();
+    void ShowBarOverlay();
 
- private:
-  RecordingState();
+private:
+    RecordingState();
 
-  bool recording_ = false;
-  bool stateChanged_ = false;
-  bool showOverlay_ = true;
-  bool showGraphOverlay_ = true;
-  bool showBarOverlay_ = false;
-  float startDisplayTime_ = 1.0f;
-  float endDisplayTime_ = 1.0f;
-  float recordingTime_ = 0.0f;
+    bool recording_ = false;
+    bool stateChanged_ = false;
+    bool showOverlay_ = true;
+    bool showGraphOverlay_ = true;
+    bool showBarOverlay_ = false;
+    float startDisplayTime_ = 1.0f;
+    float endDisplayTime_ = 1.0f;
+    float recordingTime_ = 0.0f;
 
-  TextureState currentTextureState_ = TextureState::Default;
-  std::chrono::high_resolution_clock::time_point currentStateStart_;
+    TextureState currentTextureState_ = TextureState::Default;
+    std::chrono::high_resolution_clock::time_point currentStateStart_;
 };

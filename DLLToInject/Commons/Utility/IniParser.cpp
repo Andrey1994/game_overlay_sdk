@@ -26,46 +26,46 @@
 
 std::wstring ReadStringFromIni(LPCTSTR appName, LPCWSTR keyName, LPCTSTR fileName)
 {
-  std::wstring buffer;
-  DWORD bufferSize = 256;
-  DWORD stringSize = 0;
-  do {
-    buffer.resize(bufferSize);
-    stringSize = GetPrivateProfileString(appName, keyName, NULL, &buffer[0], bufferSize, fileName);
-    if (errno == ENOENT) {
-      printf("Error reading string from ini file %lu\n", GetLastError());
-      return L"";
+    std::wstring buffer;
+    DWORD bufferSize = 256;
+    DWORD stringSize = 0;
+    do {
+        buffer.resize(bufferSize);
+        stringSize = GetPrivateProfileString(appName, keyName, NULL, &buffer[0], bufferSize, fileName);
+        if (errno == ENOENT) {
+            printf("Error reading string from ini file %lu\n", GetLastError());
+            return L"";
+        }
+        bufferSize *= 2;
     }
-    bufferSize *= 2;
-  }
-  // if buffer is too small buffer.size() - 1 is returned
-  while (stringSize == buffer.size() - 1);
+    // if buffer is too small buffer.size() - 1 is returned
+    while (stringSize == buffer.size() - 1);
 
-  // stringSize without terminating null character
-  buffer.resize(stringSize);
-  return buffer;
+    // stringSize without terminating null character
+    buffer.resize(stringSize);
+    return buffer;
 }
 
 float ReadFloatFromIni(LPCTSTR appName, LPCWSTR keyName, const float defaultValue, LPCTSTR fileName)
 {
-  const auto string = ReadStringFromIni(appName, keyName, fileName);
-  if (string.empty()) {
-    return defaultValue;
-  }
+    const auto string = ReadStringFromIni(appName, keyName, fileName);
+    if (string.empty()) {
+        return defaultValue;
+    }
 
-  size_t processed = 0;
-  const float result = std::stof(string, &processed);
-  if (processed != string.size()) {
-    printf("String was not completely converted to float\n");
-    return defaultValue;
-  }
+    size_t processed = 0;
+    const float result = std::stof(string, &processed);
+    if (processed != string.size()) {
+        printf("String was not completely converted to float\n");
+        return defaultValue;
+    }
 
-  return result;
+    return result;
 }
 
 bool ReadBoolFromIni(LPCTSTR appName, LPCWSTR keyName, const bool defaultValue, LPCTSTR fileName)
 {
-  int defaultInt = static_cast<int>(defaultValue);
-  int value = GetPrivateProfileInt(appName, keyName, defaultInt, fileName);
-  return value == 0 ? false : true;
+    int defaultInt = static_cast<int>(defaultValue);
+    int value = GetPrivateProfileInt(appName, keyName, defaultInt, fileName);
+    return value == 0 ? false : true;
 }

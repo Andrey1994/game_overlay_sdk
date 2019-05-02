@@ -34,25 +34,25 @@
 #include "SwapchainQueueMapping.h"
 
 struct SwapchainMapping {
-  VkDevice device;
-  VkFormat format;
-  VkFormat overlayFormat;
-  VkExtent2D extent;
-  VkImageUsageFlags usage;
-  VkRect2D overlayRect;
-  OverlayImageData overlayImages[2];
-  uint32_t lastOverlayBufferSize;
-  uint32_t nextOverlayImage;
-  VkRenderPass renderPass;
-  VkPipeline gfxPipeline;
-  VkPipelineLayout gfxPipelineLayout;
-  VkPipelineLayout computePipelineLayout;
-  VkPipeline computePipeline;
-  VkDescriptorPool descriptorPool;
-  VkBuffer uniformBuffer;
-  VkDeviceMemory uniformMemory;
-  std::vector<SwapchainImageData> imageData;
-  std::unordered_map<uint32_t, SwapchainQueueMapping> queueMappings;
+    VkDevice device;
+    VkFormat format;
+    VkFormat overlayFormat;
+    VkExtent2D extent;
+    VkImageUsageFlags usage;
+    VkRect2D overlayRect;
+    OverlayImageData overlayImages[2];
+    uint32_t lastOverlayBufferSize;
+    uint32_t nextOverlayImage;
+    VkRenderPass renderPass;
+    VkPipeline gfxPipeline;
+    VkPipelineLayout gfxPipelineLayout;
+    VkPipelineLayout computePipelineLayout;
+    VkPipeline computePipeline;
+    VkDescriptorPool descriptorPool;
+    VkBuffer uniformBuffer;
+    VkDeviceMemory uniformMemory;
+    std::vector<SwapchainImageData> imageData;
+    std::unordered_map<uint32_t, SwapchainQueueMapping> queueMappings;
 
-  void ClearImageData(VkLayerDispatchTable* pTable);
+    void ClearImageData(VkLayerDispatchTable* pTable);
 };

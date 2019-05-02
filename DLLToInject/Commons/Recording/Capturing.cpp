@@ -34,26 +34,26 @@
 #include "../Utility/StringUtils.h"
 
 namespace GameOverlay {
-  OverlayThread g_overlayThread;
+    OverlayThread g_overlayThread;
 
 #if _WIN64
-  const std::wstring g_overlayLibName = L"GameOverlay64.dll";
+    const std::wstring g_overlayLibName = L"GameOverlay64.dll";
 #else
-  const std::wstring g_overlayLibName = L"GameOverlay32.dll";
+    const std::wstring g_overlayLibName = L"GameOverlay32.dll";
 #endif
 
-  void InitLogging(const std::string& callerName)
-  {
-    g_messageLog.Start(g_fileDirectory.GetDirectory(DirectoryType::Log) + L"GameOverlayLog",
-      ConvertUTF8StringToUTF16String(callerName));
-  }
-
-  void InitCapturing()
-  {
-    static bool initialized = false;
-    if (!initialized) {
-      g_overlayThread.Start();
-      initialized = true;
+    void InitLogging(const std::string& callerName)
+    {
+        g_messageLog.Start(g_fileDirectory.GetDirectory(DirectoryType::Log) + L"GameOverlayLog",
+            ConvertUTF8StringToUTF16String(callerName));
     }
-  }
+
+    void InitCapturing()
+    {
+        static bool initialized = false;
+        if (!initialized) {
+            g_overlayThread.Start();
+            initialized = true;
+        }
+    }
 }

@@ -29,26 +29,26 @@
 
 class Overlay {
 public:
-  Overlay();
+    Overlay();
 
-  // Starts the given executable and suspends the process to load the overlay dll
-  // if failed the process will be resumed without overlay
-  bool StartProcess(const std::wstring& path, std::wstring& cmdArgs, bool enableOverlay);
-  void Stop();
+    // Starts the given executable and suspends the process to load the overlay dll
+    // if failed the process will be resumed without overlay
+    bool StartProcess(const std::wstring& path, std::wstring& cmdArgs, bool enableOverlay);
+    void Stop();
 
-  // returns the process name, empty if no process is attached
-  const std::wstring& GetProcessName() const { return processName_; }
-  const DWORD GetProcessID() const;
+    // returns the process name, empty if no process is attached
+    const std::wstring& GetProcessName() const { return processName_; }
+    const DWORD GetProcessID() const;
 
 private:
-  // Returns ERROR_SUCCES if a normal process was started, ERROR_APPCONTAINER_REQUIRED if tried to
-  // start uwp app
-  DWORD CreateDesktopProcess(const std::wstring& path, std::wstring& cmdArgs, bool enableOverlay);
-  void SetProcessInfo(DWORD id);
+    // Returns ERROR_SUCCES if a normal process was started, ERROR_APPCONTAINER_REQUIRED if tried to
+    // start uwp app
+    DWORD CreateDesktopProcess(const std::wstring& path, std::wstring& cmdArgs, bool enableOverlay);
+    void SetProcessInfo(DWORD id);
 
-  PROCESS_INFORMATION processInfo_{};
-  DWORD processID_ = 0;
-  std::wstring processName_;
-  Hook hook_;
-  ProcessTermination processTermination_;
+    PROCESS_INFORMATION processInfo_{};
+    DWORD processID_ = 0;
+    std::wstring processName_;
+    Hook hook_;
+    ProcessTermination processTermination_;
 };

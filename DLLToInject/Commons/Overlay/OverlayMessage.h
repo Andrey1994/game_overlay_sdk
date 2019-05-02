@@ -27,39 +27,39 @@
 // Keep in sync with OverlayMessageType in Frontend.
 enum class OverlayMessageType
 {
-  StartRecording,
-  StopRecording,
-  FreeLibrary,
-  AttachDll,
-  DetachDll,
-  ThreadInitialized,
-  ThreadTerminating,
-  Initialized,
-  // Visibility of the overlay while active
-  ShowOverlay, 
-  HideOverlay,
-  // Visibility of the bar overlay while active
-  ShowGraphOverlay,
-  HideGraphOverlay,
-  // Visibility of the bar overlay while active
-  ShowBarOverlay,
-  HideBarOverlay,
-  // Position of the overlay while active
-  UpperLeft,
-  UpperRight,
-  LowerLeft,
-  LowerRight,
-  // Capture time
-  CaptureTime
+    StartRecording,
+    StopRecording,
+    FreeLibrary,
+    AttachDll,
+    DetachDll,
+    ThreadInitialized,
+    ThreadTerminating,
+    Initialized,
+    // Visibility of the overlay while active
+    ShowOverlay,
+    HideOverlay,
+    // Visibility of the bar overlay while active
+    ShowGraphOverlay,
+    HideGraphOverlay,
+    // Visibility of the bar overlay while active
+    ShowBarOverlay,
+    HideBarOverlay,
+    // Position of the overlay while active
+    UpperLeft,
+    UpperRight,
+    LowerLeft,
+    LowerRight,
+    // Capture time
+    CaptureTime
 };
 
 class OverlayMessage
 {
 public:
-  // Send a message to the frontend window.
-  static bool PostFrontendMessage(HWND window, OverlayMessageType type, LPARAM message);
-  // Send a message to a specific overlay thread.
-  static bool PostOverlayMessage(DWORD threadID, OverlayMessageType type, LPARAM message);
-  static const unsigned int overlayMessageType = WM_APP + 1;
+    // Send a message to the frontend window.
+    static bool PostFrontendMessage(HWND window, OverlayMessageType type, LPARAM message);
+    // Send a message to a specific overlay thread.
+    static bool PostOverlayMessage(DWORD threadID, OverlayMessageType type, LPARAM message);
+    static const unsigned int overlayMessageType = WM_APP + 1;
 };
 

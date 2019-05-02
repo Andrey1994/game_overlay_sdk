@@ -27,8 +27,8 @@
 #include <vulkan/vulkan.h>
 
 struct SwapchainImageData {
-  VkImage image;
-  VkImageView view;
-  VkFramebuffer framebuffer;
-  VkDescriptorSet computeDescriptorSet[2];
+    VkImage image;
+    VkImageView view;
+    VkFramebuffer framebuffer;
+    VkDescriptorSet computeDescriptorSet[2];
 };

@@ -24,19 +24,19 @@
 
 Win32Handle::~Win32Handle()
 {
-  Close();
+    Close();
 }
 
 HANDLE Win32Handle::Get() const
 {
-  return handle_;
+    return handle_;
 }
 
 void Win32Handle::Close()
 {
-  if (handle_ != INVALID_HANDLE_VALUE)
-  {
-    CloseHandle(handle_);
-    handle_ = INVALID_HANDLE_VALUE;
-  }
+    if (handle_ != INVALID_HANDLE_VALUE)
+    {
+        CloseHandle(handle_);
+        handle_ = INVALID_HANDLE_VALUE;
+    }
 }

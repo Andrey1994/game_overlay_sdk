@@ -27,39 +27,39 @@
 #include <vector>
 
 namespace GameOverlay {
-class PerformanceCounter {
- public:
-  struct FrameInfo {
-    std::int32_t fps = 0;
-    float ms = 0.0f;
-    float frameTime = 0.0f;
-  };
+    class PerformanceCounter {
+    public:
+        struct FrameInfo {
+            std::int32_t fps = 0;
+            float ms = 0.0f;
+            float frameTime = 0.0f;
+        };
 
-  struct CaptureResults {
-    float averageFPS = 0.0f;
-    float averageMS = 0.0f;
-    float frameTimePercentile = 0.0f;
-  };
+        struct CaptureResults {
+            float averageFPS = 0.0f;
+            float averageMS = 0.0f;
+            float frameTimePercentile = 0.0f;
+        };
 
-  PerformanceCounter();
+        PerformanceCounter();
 
-  const FrameInfo& NextFrame();
-  const CaptureResults& GetLastCaptureResults() const;
-  void Start();
-  void Stop();
+        const FrameInfo& NextFrame();
+        const CaptureResults& GetLastCaptureResults() const;
+        void Start();
+        void Stop();
 
- private:
-  const static std::chrono::duration<double, std::milli> refreshRate_;
+    private:
+        const static std::chrono::duration<double, std::milli> refreshRate_;
 
-  std::chrono::high_resolution_clock::time_point lastFrame_;
-  std::chrono::high_resolution_clock::time_point recordingStart_;
-  std::chrono::duration<double, std::milli> deltaTime_;
+        std::chrono::high_resolution_clock::time_point lastFrame_;
+        std::chrono::high_resolution_clock::time_point recordingStart_;
+        std::chrono::duration<double, std::milli> deltaTime_;
 
-  FrameInfo currentFrameInfo_;
-  CaptureResults prevCaptureResults_;
-  std::int64_t currentFrameCount_ = 0;
-  std::int64_t totalFrameCount_ = 0;
+        FrameInfo currentFrameInfo_;
+        CaptureResults prevCaptureResults_;
+        std::int64_t currentFrameCount_ = 0;
+        std::int64_t totalFrameCount_ = 0;
 
-  std::vector<double> frameTimes_;
-};
+        std::vector<double> frameTimes_;
+    };
 }

@@ -27,40 +27,40 @@
 
 std::vector<std::string> Split(const std::string& text, const char delimiter)
 {
-  std::vector<std::string> result;
-  size_t position = 0;
-  size_t hit;
-  while ((hit = text.find_first_of(delimiter, position)) != std::string::npos)
-  {
-    result.push_back(text.substr(position, hit - position));
-    position = hit + 1;
-  }
-  // Append remaining characters.
-  result.push_back(text.substr(position));
-  return result;
+    std::vector<std::string> result;
+    size_t position = 0;
+    size_t hit;
+    while ((hit = text.find_first_of(delimiter, position)) != std::string::npos)
+    {
+        result.push_back(text.substr(position, hit - position));
+        position = hit + 1;
+    }
+    // Append remaining characters.
+    result.push_back(text.substr(position));
+    return result;
 }
 
 std::wstring Join(const std::vector<std::wstring>& elements, const wchar_t delimiter)
 {
-  std::wstringstream stream;
-  for (const auto& element : elements)
-  {
-    stream << element << delimiter;
-  }
-  return stream.str();
+    std::wstringstream stream;
+    for (const auto& element : elements)
+    {
+        stream << element << delimiter;
+    }
+    return stream.str();
 }
 
 
 std::wstring ConvertUTF8StringToUTF16String(const std::string& input)
 {
-  std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-  std::wstring result = converter.from_bytes(input);
-  return result;
+    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+    std::wstring result = converter.from_bytes(input);
+    return result;
 }
 
 std::string ConvertUTF16StringToUTF8String(const std::wstring& input)
 {
-  std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
-  std::string result = converter.to_bytes(input);
-  return result;
+    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
+    std::string result = converter.to_bytes(input);
+    return result;
 }

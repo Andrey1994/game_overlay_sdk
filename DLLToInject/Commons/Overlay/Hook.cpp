@@ -27,38 +27,38 @@ Hook::Hook() {}
 Hook::~Hook() { Deactivate(); }
 bool Hook::Activate(const HookInfo& info)
 {
-  if (hook_) return true;
+    if (hook_) return true;
 
-  g_messageLog.LogInfo("Hook", " Activating hook");
+    g_messageLog.LogInfo("Hook", " Activating hook");
 
-  const HMODULE dll = LoadLibrary(info.libName.c_str());
-  if (!dll) {
-    g_messageLog.LogError("Hook", L" DLL not found (" + info.libName + L")", GetLastError());
-    return false;
-  }
+    const HMODULE dll = LoadLibrary(info.libName.c_str());
+    if (!dll) {
+        g_messageLog.LogError("Hook", L" DLL not found (" + info.libName + L")", GetLastError());
+        return false;
+    }
 
-  const HOOKPROC addr = reinterpret_cast<HOOKPROC>(GetProcAddress(dll, info.hookFunction.c_str()));
-  if (!addr) {
-    g_messageLog.LogError("Hook", " Hooking function not found (" + info.hookFunction + ")", GetLastError());
-    return false;
-  }
+    const HOOKPROC addr = reinterpret_cast<HOOKPROC>(GetProcAddress(dll, info.hookFunction.c_str()));
+    if (!addr) {
+        g_messageLog.LogError("Hook", " Hooking function not found (" + info.hookFunction + ")", GetLastError());
+        return false;
+    }
 
-  hook_ = SetWindowsHookEx(info.hookID, addr, dll, info.threadID);
-  if (!hook_) {
-    g_messageLog.LogError("Hook", " Unable to hook", GetLastError());
-    return false;
-  }
+    hook_ = SetWindowsHookEx(info.hookID, addr, dll, info.threadID);
+    if (!hook_) {
+        g_messageLog.LogError("Hook", " Unable to hook", GetLastError());
+        return false;
+    }
 
-  g_messageLog.LogInfo("Hook", " activated successfully");
-  return true;
+    g_messageLog.LogInfo("Hook", " activated successfully");
+    return true;
 }
 
 void Hook::Deactivate()
 {
-  if (hook_) {
-    if (!UnhookWindowsHookEx(hook_)) {
-      g_messageLog.LogWarning("Hook", " Error unhooking", GetLastError());
+    if (hook_) {
+        if (!UnhookWindowsHookEx(hook_)) {
+            g_messageLog.LogWarning("Hook", " Error unhooking", GetLastError());
+        }
+        hook_ = nullptr;
     }
-    hook_ = nullptr;
-  }
 }

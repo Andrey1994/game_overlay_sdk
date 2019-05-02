@@ -26,21 +26,21 @@
 #include <thread>
 
 namespace GameOverlay {
-class OverlayThread {
- public:
-  ~OverlayThread();
+    class OverlayThread {
+    public:
+        ~OverlayThread();
 
-  void Stop();
-  void Start();
+        void Stop();
+        void Start();
 
- private:
-  static void ThreadProc();
-  static bool ThreadStartup(HWND& windowHandle);
-  static bool ThreadCleanup(HWND windowHandle);
+    private:
+        static void ThreadProc();
+        static bool ThreadStartup(HWND& windowHandle);
+        static bool ThreadCleanup(HWND windowHandle);
 
-  static void DisableOverlay();
+        static void DisableOverlay();
 
-  std::thread overlayThread_;
-  bool quit_ = false;
-};
+        std::thread overlayThread_;
+        bool quit_ = false;
+    };
 }

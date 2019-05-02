@@ -34,57 +34,57 @@
 #include "Rendering/OverlayBitmap.h"
 
 namespace GameOverlay {
-enum class InitializationStatus
-{
-  DEFERRED_CONTEXT_INITIALIZED,
-  IMMEDIATE_CONTEXT_INITIALIZED,
-  UNINITIALIZED
-};
+    enum class InitializationStatus
+    {
+        DEFERRED_CONTEXT_INITIALIZED,
+        IMMEDIATE_CONTEXT_INITIALIZED,
+        UNINITIALIZED
+    };
 
-class d3d11_renderer final 
-{
-public:
-  d3d11_renderer(ID3D11Device *device, IDXGISwapChain *swapchain);
-  d3d11_renderer(ID3D11Device *device,
-    std::vector<Microsoft::WRL::ComPtr<ID3D11RenderTargetView>> renderTargets_,
-    int backBufferWidth, int backBufferHeight);
-  ~d3d11_renderer();
+    class d3d11_renderer final
+    {
+    public:
+        d3d11_renderer(ID3D11Device *device, IDXGISwapChain *swapchain);
+        d3d11_renderer(ID3D11Device *device,
+            std::vector<Microsoft::WRL::ComPtr<ID3D11RenderTargetView>> renderTargets_,
+            int backBufferWidth, int backBufferHeight);
+        ~d3d11_renderer();
 
 
-  bool on_present();
-  bool on_present(int backBufferIndex);
+        bool on_present();
+        bool on_present(int backBufferIndex);
 
-  D3D11_VIEWPORT GetViewport() { return viewPort_; }
+        D3D11_VIEWPORT GetViewport() { return viewPort_; }
 
-private:
+    private:
 
-  bool CreateOverlayRenderTarget();
-  bool CreateOverlayTexture();
-  bool CreateOverlayResources(int backBufferWidth, int backBufferHeight);
-  bool RecordOverlayCommandList();
+        bool CreateOverlayRenderTarget();
+        bool CreateOverlayTexture();
+        bool CreateOverlayResources(int backBufferWidth, int backBufferHeight);
+        bool RecordOverlayCommandList();
 
-  void CopyOverlayTexture();
-  bool UpdateOverlayPosition();
-  void UpdateOverlayTexture();
+        void CopyOverlayTexture();
+        bool UpdateOverlayPosition();
+        void UpdateOverlayTexture();
 
-  Microsoft::WRL::ComPtr<ID3D11Device> device_;
-  Microsoft::WRL::ComPtr<ID3D11DeviceContext> context_;
-  Microsoft::WRL::ComPtr<IDXGISwapChain> swapchain_;
+        Microsoft::WRL::ComPtr<ID3D11Device> device_;
+        Microsoft::WRL::ComPtr<ID3D11DeviceContext> context_;
+        Microsoft::WRL::ComPtr<IDXGISwapChain> swapchain_;
 
-  Microsoft::WRL::ComPtr<ID3D11VertexShader> overlayVS_;
-  Microsoft::WRL::ComPtr<ID3D11PixelShader> overlayPS_;
+        Microsoft::WRL::ComPtr<ID3D11VertexShader> overlayVS_;
+        Microsoft::WRL::ComPtr<ID3D11PixelShader> overlayPS_;
 
-  Microsoft::WRL::ComPtr<ID3D11Texture2D> stagingTexture_;
-  Microsoft::WRL::ComPtr<ID3D11Texture2D> displayTexture_;
-  Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> displaySRV_;
-  Microsoft::WRL::ComPtr<ID3D11Buffer> viewportOffsetCB_;
-  std::vector<Microsoft::WRL::ComPtr<ID3D11RenderTargetView>> renderTargets_;
-  Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterizerState_;
-  Microsoft::WRL::ComPtr<ID3D11BlendState> blendState_;
-  std::vector<Microsoft::WRL::ComPtr<ID3D11CommandList>> overlayCommandList_;
-  D3D11_VIEWPORT viewPort_;
-  std::unique_ptr<OverlayBitmap> overlayBitmap_;
+        Microsoft::WRL::ComPtr<ID3D11Texture2D> stagingTexture_;
+        Microsoft::WRL::ComPtr<ID3D11Texture2D> displayTexture_;
+        Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> displaySRV_;
+        Microsoft::WRL::ComPtr<ID3D11Buffer> viewportOffsetCB_;
+        std::vector<Microsoft::WRL::ComPtr<ID3D11RenderTargetView>> renderTargets_;
+        Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterizerState_;
+        Microsoft::WRL::ComPtr<ID3D11BlendState> blendState_;
+        std::vector<Microsoft::WRL::ComPtr<ID3D11CommandList>> overlayCommandList_;
+        D3D11_VIEWPORT viewPort_;
+        std::unique_ptr<OverlayBitmap> overlayBitmap_;
 
-  InitializationStatus status = InitializationStatus::UNINITIALIZED;
-};
+        InitializationStatus status = InitializationStatus::UNINITIALIZED;
+    };
 }

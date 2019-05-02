@@ -25,20 +25,20 @@
 
 bool OverlayMessage::PostFrontendMessage(HWND window, OverlayMessageType type, LPARAM message)
 {
-  if (!PostMessage(window, overlayMessageType, static_cast<WPARAM>(type), message))
-  {
-    g_messageLog.LogWarning("OverlayMessage", "Post frontend message failed.", GetLastError());
-    return false;
-  }
-  return true;
+    if (!PostMessage(window, overlayMessageType, static_cast<WPARAM>(type), message))
+    {
+        g_messageLog.LogWarning("OverlayMessage", "Post frontend message failed.", GetLastError());
+        return false;
+    }
+    return true;
 }
 
 bool OverlayMessage::PostOverlayMessage(DWORD threadID, OverlayMessageType type, LPARAM message)
 {
-  if (!PostThreadMessage(threadID, overlayMessageType, static_cast<WPARAM>(type), message))
-  {
-    g_messageLog.LogWarning("OverlayMessage", "Post overlay message failed.", GetLastError());
-    return false;
-  }
-  return true;
+    if (!PostThreadMessage(threadID, overlayMessageType, static_cast<WPARAM>(type), message))
+    {
+        g_messageLog.LogWarning("OverlayMessage", "Post overlay message failed.", GetLastError());
+        return false;
+    }
+    return true;
 }

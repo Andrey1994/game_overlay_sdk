@@ -29,40 +29,40 @@
 #include "HashMap.h"
 
 class AppResMapping {
- public:
-  AppResMapping() {}
-  void CreateInstance(VkInstance instance, const VkInstanceCreateInfo* pCreateInfo);
-  void DestroyInstance(VkInstance instance);
+public:
+    AppResMapping() {}
+    void CreateInstance(VkInstance instance, const VkInstanceCreateInfo* pCreateInfo);
+    void DestroyInstance(VkInstance instance);
 
-  void EnumeratePhysicalDevices(VkInstance instance, VkLayerInstanceDispatchTable* pTable,
-                                uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices);
-  void CreateDevice(VkDevice device, VkPhysicalDevice physicalDevice,
-                    const VkDeviceCreateInfo* pCreateInfo);
-  void DestroyDevice(VkDevice device);
+    void EnumeratePhysicalDevices(VkInstance instance, VkLayerInstanceDispatchTable* pTable,
+        uint32_t* pPhysicalDeviceCount, VkPhysicalDevice* pPhysicalDevices);
+    void CreateDevice(VkDevice device, VkPhysicalDevice physicalDevice,
+        const VkDeviceCreateInfo* pCreateInfo);
+    void DestroyDevice(VkDevice device);
 
-  void GetDeviceQueue(VkQueue queue, VkDevice device, uint32_t queueFamilyIndex,
-                      uint32_t queueIndex);
+    void GetDeviceQueue(VkQueue queue, VkDevice device, uint32_t queueFamilyIndex,
+        uint32_t queueIndex);
 
-  struct PhysicalDeviceMapping {
-    VkInstance instance;
-    VkPhysicalDeviceMemoryProperties memoryProperties;
-    std::vector<VkQueueFamilyProperties> queueProperties;
-  };
-  PhysicalDeviceMapping* GetPhysicalDeviceMapping(VkPhysicalDevice physicalDevice) const;
+    struct PhysicalDeviceMapping {
+        VkInstance instance;
+        VkPhysicalDeviceMemoryProperties memoryProperties;
+        std::vector<VkQueueFamilyProperties> queueProperties;
+    };
+    PhysicalDeviceMapping* GetPhysicalDeviceMapping(VkPhysicalDevice physicalDevice) const;
 
-  struct DeviceMapping {
-    VkPhysicalDevice physicalDevice;
-  };
-  DeviceMapping* GetDeviceMapping(VkDevice device) const;
+    struct DeviceMapping {
+        VkPhysicalDevice physicalDevice;
+    };
+    DeviceMapping* GetDeviceMapping(VkDevice device) const;
 
-  struct QueueMapping {
-    VkDevice device;
-    uint32_t queueFamilyIndex;
-  };
-  QueueMapping* GetQueueMapping(VkQueue queue) const;
+    struct QueueMapping {
+        VkDevice device;
+        uint32_t queueFamilyIndex;
+    };
+    QueueMapping* GetQueueMapping(VkQueue queue) const;
 
- protected:
-  HashMap<VkPhysicalDevice, PhysicalDeviceMapping*> physicalDeviceMapping_;
-  HashMap<VkDevice, DeviceMapping*> deviceMapping_;
-  HashMap<VkQueue, QueueMapping*> queueMapping_;
+protected:
+    HashMap<VkPhysicalDevice, PhysicalDeviceMapping*> physicalDeviceMapping_;
+    HashMap<VkDevice, DeviceMapping*> deviceMapping_;
+    HashMap<VkQueue, QueueMapping*> queueMapping_;
 };

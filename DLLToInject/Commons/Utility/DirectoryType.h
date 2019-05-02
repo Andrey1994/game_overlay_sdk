@@ -23,9 +23,9 @@
 
 enum class DirectoryType
 {
-  Documents,
-  Log,
-  Config,
-  Recording,
-  Bin
+    Documents,
+    Log,
+    Config,
+    Recording,
+    Bin
 };

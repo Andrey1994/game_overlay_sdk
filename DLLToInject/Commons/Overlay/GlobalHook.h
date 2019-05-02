@@ -25,18 +25,18 @@
 #include "Hook.h"
 
 class GlobalHook {
- public:
-  void Activate();
-  void Deactivate();
+public:
+    void Activate();
+    void Deactivate();
 
-  void CleanupOldHooks();
+    void CleanupOldHooks();
 
- private:
-  bool StartGlobalHookProcess(PROCESS_INFORMATION& procInfo, const std::wstring& hookExe);
-  void StopGlobalHookProcess(PROCESS_INFORMATION& procInfo);
+private:
+    bool StartGlobalHookProcess(PROCESS_INFORMATION& procInfo, const std::wstring& hookExe);
+    void StopGlobalHookProcess(PROCESS_INFORMATION& procInfo);
 
-  void SendQuitMessage(DWORD threadID);
+    void SendQuitMessage(DWORD threadID);
 
-  PROCESS_INFORMATION globalHookProcess32_{};
-  PROCESS_INFORMATION globalHookProcess64_{};
+    PROCESS_INFORMATION globalHookProcess32_{};
+    PROCESS_INFORMATION globalHookProcess64_{};
 };

@@ -22,80 +22,80 @@
 
 #include "AppResMapping.h"
 
-void AppResMapping::CreateInstance(VkInstance instance, const VkInstanceCreateInfo* pCreateInfo) 
+void AppResMapping::CreateInstance(VkInstance instance, const VkInstanceCreateInfo* pCreateInfo)
 {
-  // Empty
+    // Empty
 }
 
 void AppResMapping::DestroyInstance(VkInstance instance)
 {
-  physicalDeviceMapping_.RemoveKeys_if(
-      [&instance](const std::pair<VkPhysicalDevice, PhysicalDeviceMapping*>& v) {
+    physicalDeviceMapping_.RemoveKeys_if(
+        [&instance](const std::pair<VkPhysicalDevice, PhysicalDeviceMapping*>& v) {
         if (v.second->instance == instance) {
-          delete v.second;
-          return true;
+            delete v.second;
+            return true;
         }
         return false;
-      });
+    });
 }
 
 void AppResMapping::EnumeratePhysicalDevices(VkInstance instance,
-                                             VkLayerInstanceDispatchTable* pTable,
-                                             uint32_t* pPhysicalDeviceCount,
-                                             VkPhysicalDevice* pPhysicalDevices)
+    VkLayerInstanceDispatchTable* pTable,
+    uint32_t* pPhysicalDeviceCount,
+    VkPhysicalDevice* pPhysicalDevices)
 {
-  if (pPhysicalDevices && *pPhysicalDeviceCount > 0) {
-    for (uint32_t i = 0; i < *pPhysicalDeviceCount; ++i) {
-      VkPhysicalDeviceMemoryProperties memoryProperties;
-      pTable->GetPhysicalDeviceMemoryProperties(pPhysicalDevices[i], &memoryProperties);
-      physicalDeviceMapping_.Add(pPhysicalDevices[i],
-                                 new PhysicalDeviceMapping{instance, memoryProperties});
+    if (pPhysicalDevices && *pPhysicalDeviceCount > 0) {
+        for (uint32_t i = 0; i < *pPhysicalDeviceCount; ++i) {
+            VkPhysicalDeviceMemoryProperties memoryProperties;
+            pTable->GetPhysicalDeviceMemoryProperties(pPhysicalDevices[i], &memoryProperties);
+            physicalDeviceMapping_.Add(pPhysicalDevices[i],
+                new PhysicalDeviceMapping{ instance, memoryProperties });
+        }
     }
-  }
 }
 
 void AppResMapping::CreateDevice(VkDevice device, VkPhysicalDevice physicalDevice,
-                                 const VkDeviceCreateInfo* pCreateInfo)
+    const VkDeviceCreateInfo* pCreateInfo)
 {
-  deviceMapping_.Add(device, new DeviceMapping{physicalDevice});
+    deviceMapping_.Add(device, new DeviceMapping{ physicalDevice });
 }
 
 void AppResMapping::DestroyDevice(VkDevice device)
 {
-  delete deviceMapping_.Get(device);
-  deviceMapping_.Remove(device);
+    delete deviceMapping_.Get(device);
+    deviceMapping_.Remove(device);
 
-  if (queueMapping_.GetSize() == 0) {
-    return;
-  }
-
-  queueMapping_.RemoveKeys_if([&device](const std::pair<VkQueue, QueueMapping*>& v) {
-    if (v.second->device == device) {
-      delete v.second;
-      return true;
+    if (queueMapping_.GetSize() == 0) {
+        return;
     }
-    return false;
-  });
+
+    queueMapping_.RemoveKeys_if([&device](const std::pair<VkQueue, QueueMapping*>& v) {
+        if (v.second->device == device) {
+            delete v.second;
+            return true;
+        }
+        return false;
+    });
 }
 
 void AppResMapping::GetDeviceQueue(VkQueue queue, VkDevice device, uint32_t queueFamilyIndex,
-                                   uint32_t queueIndex)
+    uint32_t queueIndex)
 {
-  queueMapping_.Add(queue, new QueueMapping{device, queueFamilyIndex});
+    queueMapping_.Add(queue, new QueueMapping{ device, queueFamilyIndex });
 }
 
 AppResMapping::PhysicalDeviceMapping* AppResMapping::GetPhysicalDeviceMapping(
     VkPhysicalDevice physicalDevice) const
 {
-  return physicalDeviceMapping_.Get(physicalDevice);
+    return physicalDeviceMapping_.Get(physicalDevice);
 }
 
 AppResMapping::DeviceMapping* AppResMapping::GetDeviceMapping(VkDevice device) const
 {
-  return deviceMapping_.Get(device);
+    return deviceMapping_.Get(device);
 }
 
 AppResMapping::QueueMapping* AppResMapping::GetQueueMapping(VkQueue queue) const
 {
-  return queueMapping_.Get(queue);
+    return queueMapping_.Get(queue);
 }

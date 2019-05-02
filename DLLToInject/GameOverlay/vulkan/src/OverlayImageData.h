@@ -27,19 +27,19 @@
 #include <vulkan/vulkan.h>
 
 struct OverlayImageData {
-  VkBuffer overlayHostBuffer;
-  VkDeviceMemory overlayHostMemory;
-  VkBuffer overlayBuffer;
-  VkBufferView bufferView;
-  VkDeviceMemory overlayMemory;
-  uint32_t commandBufferIndex;
-  VkCommandBuffer commandBuffer[2];
-  VkFence commandBufferFence[2];
-  VkSemaphore overlayCopySemaphore;
-  VkDescriptorSet descriptorSet;
-  bool valid;
+    VkBuffer overlayHostBuffer;
+    VkDeviceMemory overlayHostMemory;
+    VkBuffer overlayBuffer;
+    VkBufferView bufferView;
+    VkDeviceMemory overlayMemory;
+    uint32_t commandBufferIndex;
+    VkCommandBuffer commandBuffer[2];
+    VkFence commandBufferFence[2];
+    VkSemaphore overlayCopySemaphore;
+    VkDescriptorSet descriptorSet;
+    bool valid;
 
-  bool CopyBuffer(VkDevice device, VkDeviceSize size, VkLayerDispatchTable* pTable,
-    PFN_vkSetDeviceLoaderData setDeviceLoaderDataFuncPtr,
-    VkCommandPool commandPool, VkQueue queue);
+    bool CopyBuffer(VkDevice device, VkDeviceSize size, VkLayerDispatchTable* pTable,
+        PFN_vkSetDeviceLoaderData setDeviceLoaderDataFuncPtr,
+        VkCommandPool commandPool, VkQueue queue);
 };

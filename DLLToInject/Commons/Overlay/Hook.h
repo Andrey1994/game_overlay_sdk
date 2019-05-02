@@ -26,20 +26,20 @@
 #include <string>
 
 class Hook {
- public:
-  struct HookInfo {
-    std::wstring libName;
-    std::string hookFunction;
-    DWORD threadID = 0;
-    int hookID;
-  };
+public:
+    struct HookInfo {
+        std::wstring libName;
+        std::string hookFunction;
+        DWORD threadID = 0;
+        int hookID;
+    };
 
-  Hook();
-  ~Hook();
+    Hook();
+    ~Hook();
 
-  bool Activate(const HookInfo& info);
-  void Deactivate();
+    bool Activate(const HookInfo& info);
+    void Deactivate();
 
- private:
-  HHOOK hook_ = nullptr;
+private:
+    HHOOK hook_ = nullptr;
 };

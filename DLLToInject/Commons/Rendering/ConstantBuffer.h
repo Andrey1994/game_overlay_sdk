@@ -22,7 +22,7 @@
 
 struct ConstantBuffer
 {
-  float screenPosX;
-  float screenPosY;
-  uint32_t padding[2];
+    float screenPosX;
+    float screenPosY;
+    uint32_t padding[2];
 };

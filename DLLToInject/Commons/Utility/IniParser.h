@@ -27,5 +27,5 @@
 
 std::wstring ReadStringFromIni(LPCTSTR appName, LPCWSTR keyName, LPCTSTR fileName);
 float ReadFloatFromIni(LPCTSTR appName, LPCWSTR keyName, const float defaultValue,
-                       LPCTSTR fileName);
+    LPCTSTR fileName);
 bool ReadBoolFromIni(LPCTSTR appName, LPCWSTR keyName, const bool defaultValue, LPCTSTR fileName);
