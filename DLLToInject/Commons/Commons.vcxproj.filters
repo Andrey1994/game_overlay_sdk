@@ -33,9 +33,6 @@
     <ClCompile Include="Logging\MessageLog.cpp">
       <Filter>Logging</Filter>
     </ClCompile>
-    <ClCompile Include="Overlay\GlobalHook.cpp">
-      <Filter>Overlay</Filter>
-    </ClCompile>
     <ClCompile Include="Overlay\Hook.cpp">
       <Filter>Overlay</Filter>
     </ClCompile>
@@ -88,9 +85,6 @@
   <ItemGroup>
     <ClInclude Include="Logging\MessageLog.h">
       <Filter>Logging</Filter>
-    </ClInclude>
-    <ClInclude Include="Overlay\GlobalHook.h">
-      <Filter>Overlay</Filter>
     </ClInclude>
     <ClInclude Include="Overlay\Hook.h">
       <Filter>Overlay</Filter>
