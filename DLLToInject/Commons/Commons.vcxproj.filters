@@ -42,9 +42,6 @@
     <ClCompile Include="Utility\FileDirectory.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="Utility\IniParser.cpp">
-      <Filter>Utility</Filter>
-    </ClCompile>
     <ClCompile Include="Utility\ProcessHelper.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
@@ -96,9 +93,6 @@
       <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="Utility\FileDirectory.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Utility\IniParser.h">
       <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="Utility\ProcessHelper.h">

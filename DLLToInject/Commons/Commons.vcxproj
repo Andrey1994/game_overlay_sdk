@@ -31,7 +31,6 @@
     <ClCompile Include="Rendering\OverlayBitmap.cpp" />
     <ClCompile Include="Utility\FileDirectory.cpp" />
     <ClCompile Include="Utility\FileUtils.cpp" />
-    <ClCompile Include="Utility\IniParser.cpp" />
     <ClCompile Include="Utility\ProcessHelper.cpp" />
     <ClCompile Include="Utility\ProcessTermination.cpp" />
     <ClCompile Include="Utility\SmartHandle.cpp" />
@@ -53,7 +52,6 @@
     <ClInclude Include="Utility\DirectoryType.h" />
     <ClInclude Include="Utility\FileDirectory.h" />
     <ClInclude Include="Utility\FileUtils.h" />
-    <ClInclude Include="Utility\IniParser.h" />
     <ClInclude Include="Utility\ProcessHelper.h" />
     <ClInclude Include="Utility\ProcessTermination.h" />
     <ClInclude Include="Utility\SmartHandle.h" />

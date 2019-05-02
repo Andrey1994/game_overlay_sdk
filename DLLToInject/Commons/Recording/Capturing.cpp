@@ -24,7 +24,7 @@
 
 #include <tlhelp32.h>
 #include <thread>
-#include "../Utility/Constants.h"
+
 #include "OverlayThread.h"
 #include "../Logging/MessageLog.h"
 #include "../Utility/ProcessHelper.h"

@@ -428,21 +428,6 @@ namespace GameOverlay {
             return trampoline(lpFileName, hFile, dwFlags);
         }
 
-        void Inject(DWORD processID)
-        {
-            if (processID) {
-                auto module = GetModuleHandle(g_overlayLibName.c_str());
-                if (!module) {
-                    g_messageLog.LogError("Hook Manager", "Inject - GetModuleHandle failed",
-                        GetLastError());
-                    return;
-                }
-                s_delayed_hook_modules.push_back(module);
-
-                //InjectDLL(processID, g_fileDirectory.GetDirectory(DirectoryType::Bin));
-            }
-        }
-
         std::wstring GetProcessName(LPCTSTR lpApplicationName, LPTSTR lpCommandLine)
         {
             std::wstring path;
@@ -472,100 +457,6 @@ namespace GameOverlay {
         {
             vkEnv.SetVKEnvironment(g_dllDirectory);
         }
-
-        BOOL WINAPI HookCreateProcessA(_In_opt_ LPCTSTR lpApplicationName, _Inout_opt_ LPTSTR lpCommandLine,
-            _In_opt_ LPSECURITY_ATTRIBUTES lpProcessAttributes,
-            _In_opt_ LPSECURITY_ATTRIBUTES lpThreadAttributes,
-            _In_ BOOL bInheritHandles, _In_ DWORD dwCreationFlags,
-            _In_opt_ LPVOID lpEnvironment, _In_opt_ LPCTSTR lpCurrentDirectory,
-            _In_ LPSTARTUPINFO lpStartupInfo,
-            _Out_ LPPROCESS_INFORMATION lpProcessInformation)
-        {
-            g_messageLog.LogVerbose("HookCreateProcessA", "Entered");
-
-            static const auto trampoline = find_hook_trampoline_unchecked(&HookCreateProcessA);
-
-            const auto processName = GetProcessName(lpApplicationName, lpCommandLine);
-            if (IsDLLInjectionProcess(processName)) {
-                return trampoline(lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes,
-                    bInheritHandles, dwCreationFlags, NULL, lpCurrentDirectory, lpStartupInfo,
-                    lpProcessInformation);
-            }
-
-            HookAllModules();
-
-            g_messageLog.LogVerbose("HookCreateProcessA", "Init Vulkan");
-            VK_Environment vkEnv;
-            EnableVulkan(vkEnv, processName);
-            const auto result = trampoline(lpApplicationName, lpCommandLine, lpProcessAttributes,
-                lpThreadAttributes, bInheritHandles, dwCreationFlags, NULL,
-                lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
-            vkEnv.ResetVKEnvironment();
-            Inject(lpProcessInformation->dwProcessId);
-
-            return result;
-        }
-
-        BOOL WINAPI HookCreateProcessW(_In_opt_ LPCTSTR lpApplicationName, _Inout_opt_ LPTSTR lpCommandLine,
-            _In_opt_ LPSECURITY_ATTRIBUTES lpProcessAttributes,
-            _In_opt_ LPSECURITY_ATTRIBUTES lpThreadAttributes,
-            _In_ BOOL bInheritHandles, _In_ DWORD dwCreationFlags,
-            _In_opt_ LPVOID lpEnvironment, _In_opt_ LPCTSTR lpCurrentDirectory,
-            _In_ LPSTARTUPINFO lpStartupInfo,
-            _Out_ LPPROCESS_INFORMATION lpProcessInformation)
-        {
-            g_messageLog.LogVerbose("HookCreateProcessW", "Entered");
-            static const auto trampoline = find_hook_trampoline_unchecked(&HookCreateProcessW);
-
-            const auto processName = GetProcessName(lpApplicationName, lpCommandLine);
-            if (IsDLLInjectionProcess(processName)) {
-                return trampoline(lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes,
-                    bInheritHandles, dwCreationFlags, NULL, lpCurrentDirectory, lpStartupInfo,
-                    lpProcessInformation);
-            }
-
-            HookAllModules();
-
-            g_messageLog.LogVerbose("HookCreateProcessW", "Init Vulkan");
-            VK_Environment vkEnv;
-            EnableVulkan(vkEnv, processName);
-            const auto result = trampoline(lpApplicationName, lpCommandLine, lpProcessAttributes,
-                lpThreadAttributes, bInheritHandles, dwCreationFlags, NULL,
-                lpCurrentDirectory, lpStartupInfo, lpProcessInformation);
-            vkEnv.ResetVKEnvironment();
-            Inject(lpProcessInformation->dwProcessId);
-
-            return result;
-        }
-    }
-
-    bool InstallCreateProcessHook()
-    {
-        int numHooksInstalled = 0;
-        g_messageLog.LogInfo("Hook Manager", "Install hooks for CreateProcess");
-        if (!GameOverlay::install_hook(reinterpret_cast<hook::address>(&::CreateProcessA),
-            reinterpret_cast<hook::address>(&HookCreateProcessA))) {
-            g_messageLog.LogError("Hook Manager",
-                "install_hook failed for CreateProcessA");
-        }
-        else {
-            g_messageLog.LogInfo("Hook Manager",
-                "Successfully installed hook for CreateProcessA");
-            numHooksInstalled++;
-        }
-
-        if (!GameOverlay::install_hook(reinterpret_cast<hook::address>(&::CreateProcessW),
-            reinterpret_cast<hook::address>(&HookCreateProcessW))) {
-            g_messageLog.LogError("Hook Manager",
-                " install_hook failed for CreateProcessW");
-        }
-        else {
-            g_messageLog.LogInfo("Hook Manager",
-                "Successfully installed hook for CreateProcessW");
-            numHooksInstalled++;
-        }
-
-        return numHooksInstalled > 0;
     }
 
     void HookAllModulesInSnapshot(const Win32Handle& hModuleSnapshot)

@@ -60,7 +60,6 @@ namespace GameOverlay {
     bool register_module(const std::wstring &path);
     void register_additional_module(const std::wstring &module_name);
     __declspec(dllexport) void add_function_hooks(const std::wstring &module_name, const HMODULE replacement_module);
-    bool InstallCreateProcessHook();
     void HookAllModules();
 
     /// <summary>

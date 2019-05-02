@@ -129,13 +129,6 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
         InitLogging();
         SendDllStateMessage(OverlayMessageType::AttachDll);
 
-        // Vulkan
-        g_messageLog.LogInfo("GameOverlay", "Install process hooks for Vulkan");
-        if (!GameOverlay::InstallCreateProcessHook())
-        {
-            g_messageLog.LogError("GameOverlay", "Failed to install process hooks for Vulkan");
-        }
-
         // DXGI
         GetSystemDirectoryW(system_path_buffer, MAX_PATH);
         if (!GameOverlay::register_module(system_path + L"\\dxgi.dll"))
