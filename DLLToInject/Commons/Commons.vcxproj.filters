@@ -33,16 +33,10 @@
     <ClCompile Include="Logging\MessageLog.cpp">
       <Filter>Logging</Filter>
     </ClCompile>
-    <ClCompile Include="Overlay\DLLInjection.cpp">
-      <Filter>Overlay</Filter>
-    </ClCompile>
     <ClCompile Include="Overlay\GlobalHook.cpp">
       <Filter>Overlay</Filter>
     </ClCompile>
     <ClCompile Include="Overlay\Hook.cpp">
-      <Filter>Overlay</Filter>
-    </ClCompile>
-    <ClCompile Include="Overlay\Overlay.cpp">
       <Filter>Overlay</Filter>
     </ClCompile>
     <ClCompile Include="Overlay\OverlayMessage.cpp">
@@ -61,9 +55,6 @@
       <Filter>Utility</Filter>
     </ClCompile>
     <ClCompile Include="Overlay\VK_Environment.cpp">
-      <Filter>Overlay</Filter>
-    </ClCompile>
-    <ClCompile Include="Overlay\OverlayInterface.cpp">
       <Filter>Overlay</Filter>
     </ClCompile>
     <ClCompile Include="Rendering\TextMessage.cpp">
@@ -98,16 +89,10 @@
     <ClInclude Include="Logging\MessageLog.h">
       <Filter>Logging</Filter>
     </ClInclude>
-    <ClInclude Include="Overlay\DLLInjection.h">
-      <Filter>Overlay</Filter>
-    </ClInclude>
     <ClInclude Include="Overlay\GlobalHook.h">
       <Filter>Overlay</Filter>
     </ClInclude>
     <ClInclude Include="Overlay\Hook.h">
-      <Filter>Overlay</Filter>
-    </ClInclude>
-    <ClInclude Include="Overlay\Overlay.h">
       <Filter>Overlay</Filter>
     </ClInclude>
     <ClInclude Include="Overlay\OverlayMessage.h">
@@ -129,9 +114,6 @@
       <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="Overlay\VK_Environment.h">
-      <Filter>Overlay</Filter>
-    </ClInclude>
-    <ClInclude Include="Overlay\OverlayInterface.h">
       <Filter>Overlay</Filter>
     </ClInclude>
     <ClInclude Include="Rendering\TextMessage.h">

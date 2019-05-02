@@ -20,11 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Logging\MessageLog.cpp" />
-    <ClCompile Include="Overlay\DLLInjection.cpp" />
     <ClCompile Include="Overlay\GlobalHook.cpp" />
     <ClCompile Include="Overlay\Hook.cpp" />
-    <ClCompile Include="Overlay\Overlay.cpp" />
-    <ClCompile Include="Overlay\OverlayInterface.cpp" />
     <ClCompile Include="Overlay\OverlayMessage.cpp" />
     <ClCompile Include="Overlay\VK_Environment.cpp" />
     <ClCompile Include="Recording\Capturing.cpp" />
@@ -43,11 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Logging\MessageLog.h" />
-    <ClInclude Include="Overlay\DLLInjection.h" />
     <ClInclude Include="Overlay\GlobalHook.h" />
     <ClInclude Include="Overlay\Hook.h" />
-    <ClInclude Include="Overlay\Overlay.h" />
-    <ClInclude Include="Overlay\OverlayInterface.h" />
     <ClInclude Include="Overlay\OverlayMessage.h" />
     <ClInclude Include="Overlay\VK_Environment.h" />
     <ClInclude Include="Recording\Capturing.h" />

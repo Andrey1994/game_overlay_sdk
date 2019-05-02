@@ -30,7 +30,6 @@
 #include <algorithm>
 #include <unordered_map>
 #include <vector>
-#include "Overlay/DLLInjection.h"
 #include "Overlay/VK_Environment.h"
 #include "Recording/Capturing.h"
 #include "Utility/FileDirectory.h"
@@ -440,7 +439,7 @@ namespace GameOverlay {
                 }
                 s_delayed_hook_modules.push_back(module);
 
-                InjectDLL(processID, g_fileDirectory.GetDirectory(DirectoryType::Bin));
+                //InjectDLL(processID, g_fileDirectory.GetDirectory(DirectoryType::Bin));
             }
         }
 
