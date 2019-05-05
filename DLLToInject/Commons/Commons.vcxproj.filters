@@ -60,9 +60,6 @@
     <ClCompile Include="Recording\OverlayThread.cpp">
       <Filter>Recording</Filter>
     </ClCompile>
-    <ClCompile Include="Recording\PerformanceCounter.cpp">
-      <Filter>Recording</Filter>
-    </ClCompile>
     <ClCompile Include="Recording\RecordingState.cpp">
       <Filter>Recording</Filter>
     </ClCompile>
@@ -111,9 +108,6 @@
       <Filter>Recording</Filter>
     </ClInclude>
     <ClInclude Include="Recording\OverlayThread.h">
-      <Filter>Recording</Filter>
-    </ClInclude>
-    <ClInclude Include="Recording\PerformanceCounter.hpp">
       <Filter>Recording</Filter>
     </ClInclude>
     <ClInclude Include="Recording\RecordingState.h">

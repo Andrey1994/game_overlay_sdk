@@ -34,13 +34,8 @@ namespace GameOverlay {
         void Start();
 
     private:
-        static void ThreadProc();
-        static bool ThreadStartup(HWND& windowHandle);
-        static bool ThreadCleanup(HWND windowHandle);
-
-        static void DisableOverlay();
-
+        void ThreadProc();
         std::thread overlayThread_;
-        bool quit_ = false;
+        volatile bool quit_ = false;
     };
 }

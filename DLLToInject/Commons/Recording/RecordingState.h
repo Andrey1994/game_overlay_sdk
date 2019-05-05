@@ -23,6 +23,7 @@
 #pragma once
 
 #include <chrono>
+#include <string>
 
 enum class TextureState
 {
@@ -55,6 +56,9 @@ public:
     void HideBarOverlay();
     void ShowBarOverlay();
 
+    char* GetOverlayMessage();
+    void SetOverlayMessage(char *message);
+
 private:
     RecordingState();
 
@@ -66,6 +70,8 @@ private:
     float startDisplayTime_ = 1.0f;
     float endDisplayTime_ = 1.0f;
     float recordingTime_ = 0.0f;
+
+    volatile char overlayMessage_[2048];
 
     TextureState currentTextureState_ = TextureState::Default;
     std::chrono::high_resolution_clock::time_point currentStateStart_;

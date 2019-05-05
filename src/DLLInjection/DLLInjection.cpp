@@ -165,6 +165,7 @@ bool DLLInjection::ExecuteLoadLibrary ()
         DLLInjection::injectLogger->error ("failed to write process memory {}, error {}", this->pid, GetLastError ());
         return false;
     }
+    DLLInjection::injectLogger->trace ("wrote process memory {}", this->pip);
     return ExecuteRemoteThread ("LoadLibraryW", this->remoteDLLAddress);
 }
 
@@ -214,6 +215,7 @@ bool DLLInjection::ExecuteRemoteThread (const std::string& functionName, void* f
 {
     const auto threadRoutine = reinterpret_cast<PTHREAD_START_ROUTINE>(
         GetProcAddress (GetModuleHandle (TEXT ("Kernel32")), functionName.c_str ()));
+    DLLInjection::injectLogger->trace ("got threadRoutine for {}", this->pip);
     if (!threadRoutine)
     {
         DLLInjection::injectLogger->error ("GetProcAddress failed for  {}, error {}", this->pid, GetLastError ());
@@ -226,8 +228,9 @@ bool DLLInjection::ExecuteRemoteThread (const std::string& functionName, void* f
         DLLInjection::injectLogger->error ("CreateRemoteThread failed for  {}, error {}", this->pid, GetLastError ());
         return false;
     }
-
+    DLLInjection::injectLogger->trace ("Creating remote thread for {}", this->pip);
     WaitForSingleObject (remoteThread.Get (), INFINITE);
+    DLLInjection::injectLogger->trace ("Created remote thread for {}", this->pip);
     DWORD exitCode = 0;
     if (!GetExitCodeThread (remoteThread.Get (), &exitCode))
     {

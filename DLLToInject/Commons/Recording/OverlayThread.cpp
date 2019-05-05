@@ -42,13 +42,10 @@ namespace GameOverlay {
         if (thread)
         {
             const auto threadID = GetThreadId(thread);
-            if (threadID)
+            if (overlayThread_.joinable())
             {
-                PostThreadMessage(threadID, WM_QUIT, 0, 0);
-                if (overlayThread_.joinable())
-                {
-                    overlayThread_.join();
-                }
+                this->quit_ = true;
+                overlayThread_.join();
             }
         }
     }
@@ -56,97 +53,18 @@ namespace GameOverlay {
     void OverlayThread::Start()
     {
         g_messageLog.LogInfo("OverlayThread", "Start overlay thread ");
-        overlayThread_ = std::thread(ThreadProc);
+        quit_ = false;
+        overlayThread_ = std::thread([this] {this->ThreadProc();});
     }
 
     void OverlayThread::ThreadProc()
     {
-        if (!ThreadStartup(g_windowHandle))
-        {
-            return;
-        }
-
-        OverlayMessage::PostFrontendMessage(g_windowHandle, OverlayMessageType::Initialized, GetCurrentProcessId());
-
         MSG msg;
-        while (GetMessage(&msg, nullptr, 0, 0))
+        RecordingState::GetInstance().Start();
+        while (!this->quit_)
         {
-            if (OverlayMessage::overlayMessageType == msg.message)
-            {
-                OverlayMessageType messageType = (OverlayMessageType)msg.wParam;
-                switch (messageType)
-                {
-                case OverlayMessageType::FreeLibrary:
-                    DisableOverlay();
-                    break;
-                case OverlayMessageType::StartRecording:
-                    RecordingState::GetInstance().Start();
-                    break;
-                case OverlayMessageType::StopRecording:
-                    RecordingState::GetInstance().Stop();
-                    break;
-                case OverlayMessageType::ShowOverlay:
-                    RecordingState::GetInstance().ShowOverlay();
-                    break;
-                case OverlayMessageType::HideOverlay:
-                    RecordingState::GetInstance().HideOverlay();
-                    break;
-                case OverlayMessageType::ShowGraphOverlay:
-                    RecordingState::GetInstance().ShowGraphOverlay();
-                    break;
-                case OverlayMessageType::HideGraphOverlay:
-                    RecordingState::GetInstance().HideGraphOverlay();
-                    break;
-                case OverlayMessageType::ShowBarOverlay:
-                    RecordingState::GetInstance().ShowBarOverlay();
-                    break;
-                case OverlayMessageType::HideBarOverlay:
-                    RecordingState::GetInstance().HideBarOverlay();
-                    break;
-                default:
-                    break;
-                }
-            }
+
         }
-
-        ThreadCleanup(g_windowHandle);
-    }
-
-    void OverlayThread::DisableOverlay()
-    {
-        ThreadCleanup(g_windowHandle);
-
-        HMODULE dll = NULL;
-#if _WIN64
-        auto& dllName = g_libraryName64;
-#else
-        auto& dllName = g_libraryName32;
-#endif
-        if (!GetModuleHandleEx(0, dllName.c_str(), &dll)) {
-            g_messageLog.LogWarning("OverlayThread", "GetModuleHandleEx failed ",
-                GetLastError());
-            return;
-        }
-        RecordingState::GetInstance().HideOverlay();
-        RecordingState::GetInstance().HideGraphOverlay();
-        RecordingState::GetInstance().HideBarOverlay();
-        FreeLibraryAndExitThread(dll, 0);
-    }
-
-    bool OverlayThread::ThreadStartup(HWND& windowHandle)
-    {
-        windowHandle = FindOcatWindowHandle();
-        if (!windowHandle)
-        {
-            return false;
-        }
-
-        return OverlayMessage::PostFrontendMessage(windowHandle, OverlayMessageType::ThreadInitialized, GetCurrentThreadId());
-    }
-
-    bool OverlayThread::ThreadCleanup(HWND windowHandle)
-    {
-        return OverlayMessage::PostFrontendMessage(windowHandle, OverlayMessageType::ThreadTerminating, GetCurrentThreadId());
     }
 
 }

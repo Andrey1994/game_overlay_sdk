@@ -20,6 +20,9 @@
 // SOFTWARE.
 //
 
+#define _CRT_SECURE_NO_WARNINGS
+#include <string.h>
+
 #include "RecordingState.h"
 #include "../Logging/MessageLog.h"
 
@@ -36,6 +39,7 @@ RecordingState& RecordingState::GetInstance()
 
 RecordingState::RecordingState()
 {
+    strcpy((char *)this->overlayMessage_, "Welcome to GameOverlay, waiting for data");
     currentStateStart_ = Clock::now();
 }
 
@@ -150,4 +154,14 @@ void RecordingState::Stop()
     currentTextureState_ = TextureState::Stop;
     currentStateStart_ = Clock::now();
     stateChanged_ = true;
+}
+
+void RecordingState::SetOverlayMessage(char *message)
+{
+    strcpy((char *)this->overlayMessage_, message);
+}
+
+char* RecordingState::GetOverlayMessage()
+{
+    return (char *)this->overlayMessage_;
 }

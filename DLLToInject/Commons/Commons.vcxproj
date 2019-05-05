@@ -25,7 +25,6 @@
     <ClCompile Include="Overlay\VK_Environment.cpp" />
     <ClCompile Include="Recording\Capturing.cpp" />
     <ClCompile Include="Recording\OverlayThread.cpp" />
-    <ClCompile Include="Recording\PerformanceCounter.cpp" />
     <ClCompile Include="Recording\RecordingState.cpp" />
     <ClCompile Include="Rendering\TextMessage.cpp" />
     <ClCompile Include="Rendering\OverlayBitmap.cpp" />
@@ -43,7 +42,6 @@
     <ClInclude Include="Overlay\VK_Environment.h" />
     <ClInclude Include="Recording\Capturing.h" />
     <ClInclude Include="Recording\OverlayThread.h" />
-    <ClInclude Include="Recording\PerformanceCounter.hpp" />
     <ClInclude Include="Recording\RecordingState.h" />
     <ClInclude Include="Rendering\ConstantBuffer.h" />
     <ClInclude Include="Rendering\TextMessage.h" />
