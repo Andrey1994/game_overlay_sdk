@@ -9,6 +9,7 @@
 #include "ProcessHelpers.h"
 #include "EventSink.h"
 #include "Monitor.h"
+#include "suspend_threads.h"
 
 #pragma comment (lib, "wbemuuid.lib")
 
@@ -104,7 +105,9 @@ void Monitor::Callback (int pid, char *pName)
         Monitor::monitorLogger->info ("Target Process created, name {}, pid {}, architecture {}",
             pName, pid, architecture);
         DLLInjection dllInjection (pid, (char *)this->processName, architecture, (char *)this->dllLoc);
+        suspend_all_threads (pid);
         dllInjection.InjectDLL ();
+        resume_all_threads (pid);
         this->pid = pid;
     }
     else
@@ -163,7 +166,7 @@ bool Monitor::RegisterCreationCallback ()
     pStubUnk->QueryInterface (IID_IWbemObjectSink, (void**)&pSink->pStubSink);
 
     char buffer[512];
-    sprintf_s (buffer, "SELECT * FROM __InstanceCreationEvent WITHIN 0.1 WHERE TargetInstance ISA 'Win32_Process'");
+    sprintf_s (buffer, "SELECT * FROM __InstanceCreationEvent WITHIN 0.001 WHERE TargetInstance ISA 'Win32_Process'");
 
     hres = pSink->pSvc->ExecNotificationQueryAsync (_bstr_t ("WQL"), _bstr_t (buffer), WBEM_FLAG_SEND_STATUS, NULL, pSink->pStubSink);
 

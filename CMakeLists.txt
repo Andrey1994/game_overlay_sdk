@@ -50,6 +50,7 @@ add_library (
   src/Utils/Win32Handle.cpp
   src/Utils/ProcessHelpers.cpp
   src/Utils/StringUtils.cpp
+  src/Utils/suspend_threads.cpp
   src/DLLInjection/DLLInjection.cpp
   src/DLLInjection/Monitor.cpp
   src/DLLInjection/MonitorProcessCreation.cpp
