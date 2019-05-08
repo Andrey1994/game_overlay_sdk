@@ -3,7 +3,7 @@
 
 #include <windows.h>
 
-bool suspend_all_threads (DWORD pid);
-bool resume_all_threads (DWORD pid);
+bool SuspendAllThreads (DWORD pid);
+bool ResumeAllThreads (DWORD pid);
 
 #endif

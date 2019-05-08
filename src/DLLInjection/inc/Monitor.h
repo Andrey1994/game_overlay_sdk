@@ -15,15 +15,17 @@ class Monitor
         Monitor (char *processName, char *dllLoc);
         ~Monitor ();
 
-        bool StartMonitor ();
-        bool StopMonitor ();
+        int StartMonitor ();
+        int StopMonitor ();
         void Callback (int pid, char *pName);
         int GetPid ();
+        int SendMessageToOverlay (char *message);
 
     private:
         volatile HANDLE thread;
         volatile HANDLE createEvent;
         volatile HANDLE stopEvent;
+        volatile HANDLE mapFile;
         volatile char processName[1024];
         volatile char dllLoc[1024];
         volatile int pid;

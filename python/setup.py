@@ -19,7 +19,7 @@ setup (
         'Development Status :: 2 - Pre-Alpha',
         'Topic :: Utilities'
     ],
-    install_requires = [],
+    install_requires = ['numpy'],
     package_data = {
         'game_overlay_sdk': [
             os.path.join ('lib', 'DLLInjector.dll'),

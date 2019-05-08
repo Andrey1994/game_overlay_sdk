@@ -5,10 +5,23 @@ from numpy.ctypeslib import ndpointer
 import pkg_resources
 import platform
 import struct
+import enum
+
+
+class CustomExitCodes (enum.Enum):
+
+    STATUS_OK = 0
+    TARGET_PROCESS_IS_NOT_CREATED_ERROR = 1
+    PROCESS_MONITOR_ALREADY_RUNNING_ERROR = 2
+    PROCESS_MONITOR_IS_NOT_RUNNING_ERROR = 3
+    GENERAL_ERROR = 4
 
 
 class InjectionError (Exception):
-    pass
+    def __init__ (self, message, exit_code):
+        detailed_message = '%s:%d %s' % (CustomExitCodes (exit_code).name, exit_code, message)
+        super (InjectionError, self).__init__ (detailed_message)
+        self.exit_code = exit_code
 
 
 class InjectorDLL (object):
@@ -31,7 +44,7 @@ class InjectorDLL (object):
 
         # start monitoring
         self.StartMonitor = self.lib.StartMonitor
-        self.StartMonitor.restype = ctypes.c_bool
+        self.StartMonitor.restype = ctypes.c_int
         self.StartMonitor.argtypes = [
             ctypes.c_char_p,
             ctypes.c_char_p
@@ -39,12 +52,12 @@ class InjectorDLL (object):
 
         # stop monitorring
         self.StopMonitor = self.lib.StopMonitor
-        self.StopMonitor.restype = ctypes.c_bool
+        self.StopMonitor.restype = ctypes.c_int
         self.StopMonitor.argtypes = []
 
         # set log level
         self.SetLogLevel = self.lib.SetLogLevel
-        self.SetLogLevel.restype = None
+        self.SetLogLevel.restype = ctypes.c_int
         self.SetLogLevel.argtypes = [
             ctypes.c_int
         ]
@@ -52,24 +65,42 @@ class InjectorDLL (object):
         # get pid
         self.GetPid = self.lib.GetPid
         self.GetPid.restype = ctypes.c_int
-        self.GetPid.argtypes = []
+        self.GetPid.argtypes = [
+            ndpointer (ctypes.c_int64)
+        ]
+
+        # send message
+        self.SendMessageToOverlay = self.lib.SendMessageToOverlay
+        self.SendMessageToOverlay.restype = ctypes.c_bool
+        self.SendMessageToOverlay.argtypes = [
+            ctypes.c_char_p
+        ]
 
 
 def start_monitor (process_name):
     location = os.path.abspath (os.path.dirname (pkg_resources.resource_filename (__name__, os.path.join ('lib', 'GameOverlay64.dll'))))
     res = InjectorDLL.get_instance ().StartMonitor (process_name.encode (), location.encode ())
-    if not res:
-        raise InjectionError ('start process creation monitoring error please check logs')
+    if res != CustomExitCodes.STATUS_OK.value:
+        raise InjectionError ('start process creation monitoring error please check logs', res)
 
 def stop_monitor ():
     res = InjectorDLL.get_instance ().StopMonitor ()
-    if not res:
-        raise InjectionError ('stop monitoring error')
+    if res != CustomExitCodes.STATUS_OK.value:
+        raise InjectionError ('stop monitoring error', res)
 
 def set_log_level (level):
-    InjectorDLL.get_instance ().SetLogLevel (level)
+    res = InjectorDLL.get_instance ().SetLogLevel (level)
+    if res != CustomExitCodes.STATUS_OK.value:
+        raise InjectionError ('failed to set log level', res)
 
 def get_pid ():
-    res = InjectorDLL.get_instance ().GetPid ()
-    if res == 0:
+    pid = numpy.zeros (1).astype (numpy.int64)
+    res = InjectorDLL.get_instance ().GetPid (pid)
+    if res != CustomExitCodes.STATUS_OK.value:
         raise InjectionError ('Callback has not been called yet')
+    return pid[0]
+
+def send_message (message):
+    res = InjectorDLL.get_instance ().SendMessageToOverlay (message.encode ())
+    if res != CustomExitCodes.STATUS_OK.value:
+        raise InjectionError ('failed to send message', res)

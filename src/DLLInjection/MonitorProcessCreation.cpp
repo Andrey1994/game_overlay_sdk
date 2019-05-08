@@ -4,48 +4,61 @@
 
 Monitor *monitor = NULL;
 
-void SetLogLevel (int level)
+int SetLogLevel (int level)
 {
     Monitor::SetLogLevel (level);
+    return STATUS_OK;
 }
 
-bool StartMonitor (char *processName, char *dllLoc)
+int StartMonitor (char *processName, char *dllLoc)
 {
     if (monitor)
     {
         Monitor::monitorLogger->error ("process monitor already running");
-        return false;
+        return PROCESS_MONITOR_ALREADY_RUNNING_ERROR;
     }
     monitor = new Monitor (processName, dllLoc);
     if (!monitor)
     {
         Monitor::monitorLogger->error ("failed to create monitor");
-        return false;
+        return GENERAL_ERROR;
     }
     return monitor->StartMonitor ();
 }
 
-bool StopMonitor ()
+int StopMonitor ()
 {
     if (!monitor)
     {
         Monitor::monitorLogger->error ("process monitor is not running");
-        return false;
+        return PROCESS_MONITOR_IS_NOT_RUNNING_ERROR;
     }
-    bool res = monitor->StopMonitor ();
+    int res = monitor->StopMonitor ();
     delete monitor;
     monitor = NULL;
     return res;
 }
 
-int GetPid ()
+int GetPid (int *pid)
 {
     if (!monitor)
     {
         Monitor::monitorLogger->error ("process monitor is not running");
-        return 0;
+        return PROCESS_MONITOR_IS_NOT_RUNNING_ERROR;
     }
-    return monitor->GetPid ();
+    *pid = monitor->GetPid ();
+    if (pid == 0)
+        return TARGET_PROCESS_IS_NOT_CREATED_ERROR;
+}
+
+int SendMessageToOverlay (char *message)
+{
+    if (!monitor)
+    {
+        Monitor::monitorLogger->error ("process monitor is not running");
+        return PROCESS_MONITOR_IS_NOT_RUNNING_ERROR;
+    }
+    return monitor->SendMessageToOverlay (message);
 }
 
 BOOL WINAPI DllMain (HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)

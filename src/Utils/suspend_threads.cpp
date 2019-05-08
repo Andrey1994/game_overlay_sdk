@@ -2,7 +2,7 @@
 
 #include <tlhelp32.h>
 
-bool suspend_all_threads (DWORD pid)
+bool SuspendAllThreads (DWORD pid)
 {
     HANDLE hThreadSnap = INVALID_HANDLE_VALUE;
     THREADENTRY32 te32;
@@ -33,7 +33,7 @@ bool suspend_all_threads (DWORD pid)
     return true;
 }
 
-bool resume_all_threads (DWORD pid)
+bool ResumeAllThreads (DWORD pid)
 {
     HANDLE hThreadSnap = INVALID_HANDLE_VALUE;
     THREADENTRY32 te32;

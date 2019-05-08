@@ -4,6 +4,8 @@
 #include <atlstr.h>
 #include <string.h>
 
+#include "MonitorProcessCreation.h"
+
 #include "Win32Handle.h"
 #include "DLLInjection.h"
 #include "ProcessHelpers.h"
@@ -12,6 +14,8 @@
 #include "suspend_threads.h"
 
 #pragma comment (lib, "wbemuuid.lib")
+
+#define MMAPSIZE 4096
 
 std::shared_ptr<spdlog::logger> Monitor::monitorLogger = spdlog::stderr_logger_mt ("monitorLogger");
 
@@ -22,6 +26,7 @@ Monitor::Monitor (char *processName, char *dllLoc)
     this->thread = NULL;
     this->createEvent = NULL;
     this->stopEvent = NULL;
+    this->mapFile = NULL;
     this->pid = 0;
 }
 
@@ -42,27 +47,40 @@ void Monitor::SetLogLevel (int level)
     DLLInjection::SetLogLevel (level);
 }
 
-bool Monitor::StartMonitor ()
+int Monitor::StartMonitor ()
 {
     Monitor::monitorLogger->trace ("start monitorring");
+    this->mapFile = CreateFileMapping (
+        INVALID_HANDLE_VALUE,
+        NULL,
+        PAGE_READWRITE,
+        0,
+        MMAPSIZE,
+        TEXT ("Global\\GameOverlayMap")
+    );
+    if (this->mapFile == NULL)
+    {
+        Monitor::monitorLogger->error ("failed to create maped file Error {}", GetLastError ());
+        return GENERAL_ERROR;
+    }
     this->createEvent = CreateEvent (NULL, TRUE, FALSE, TEXT ("createEvent"));
     this->stopEvent = CreateEvent (NULL, TRUE, FALSE, TEXT ("stopEvent"));
     if ((!this->createEvent) && (!this->stopEvent))
     {
         Monitor::monitorLogger->error ("Failed to create event");
-        return false;
+        return GENERAL_ERROR;
     }
     this->thread = CreateThread (NULL, 0, Monitor::ThreadProc, this, 0, NULL);
     DWORD dwWait = WaitForSingleObject (createEvent, 3000);
     if (dwWait == WAIT_TIMEOUT)
     {
         Monitor::monitorLogger->error ("Failed to create monitorring thread");
-        return false;
+        return GENERAL_ERROR;
     }
-    return true;
+    return STATUS_OK;
 }
 
-bool Monitor::StopMonitor ()
+int Monitor::StopMonitor ()
 {
     Monitor::monitorLogger->trace ("stop monitorring");
     if (this->thread)
@@ -88,13 +106,42 @@ bool Monitor::StopMonitor ()
         CloseHandle (this->stopEvent);
         this->stopEvent = NULL;
     }
+    if (this->mapFile)
+    {
+        CloseHandle (this->mapFile);
+        this->mapFile = NULL;
+    }
     this->pid = 0;
-    return true;
+    return STATUS_OK;
 }
 
 int Monitor::GetPid ()
 {
     return this->pid;
+}
+
+int Monitor::SendMessageToOverlay (char *message)
+{
+    if ((this->mapFile == NULL) || (this->pid == 0))
+    {
+        monitorLogger->error ("Overlay is not ready");
+        return TARGET_PROCESS_IS_NOT_CREATED_ERROR;
+    }
+    LPTSTR buf = (LPTSTR) MapViewOfFile (
+        this->mapFile,
+        FILE_MAP_WRITE,
+        0,
+        0,
+        MMAPSIZE
+    );
+    if (buf == NULL)
+    {
+        monitorLogger->error ("failed to create MapViewOfFile {}", GetLastError ());
+        return GENERAL_ERROR;
+    }
+    CopyMemory ((PVOID)buf, message, (strlen (message) + 1) * sizeof(char));
+    UnmapViewOfFile (buf);
+    return STATUS_OK;
 }
 
 void Monitor::Callback (int pid, char *pName)
@@ -105,9 +152,9 @@ void Monitor::Callback (int pid, char *pName)
         Monitor::monitorLogger->info ("Target Process created, name {}, pid {}, architecture {}",
             pName, pid, architecture);
         DLLInjection dllInjection (pid, (char *)this->processName, architecture, (char *)this->dllLoc);
-        suspend_all_threads (pid);
+        SuspendAllThreads (pid);
         dllInjection.InjectDLL ();
-        resume_all_threads (pid);
+        ResumeAllThreads (pid);
         this->pid = pid;
     }
     else
