@@ -23,9 +23,11 @@
 #include "OverlayThread.h"
 #include "../Overlay/OverlayMessage.h"
 #include "../Utility/Constants.h"
+#include "../Utility/StringUtils.h"
 #include "../Logging/MessageLog.h"
 #include "../Utility/ProcessHelper.h"
 #include "RecordingState.h"
+
 
 namespace GameOverlay {
 
@@ -61,9 +63,39 @@ namespace GameOverlay {
     {
         MSG msg;
         RecordingState::GetInstance().Start();
+        HANDLE mapFile = OpenFileMapping(
+            FILE_MAP_ALL_ACCESS,
+            FALSE,
+            TEXT("Global\\GameOverlayMap")
+        );
+        if (mapFile == NULL)
+        {
+            g_messageLog.LogError("OverlayThread", "Failed to open file mapping", GetLastError());
+        }
+        g_messageLog.LogInfo("OverlayThread", "Opened mapped file");
         while (!this->quit_)
         {
-
+            if (mapFile)
+            {
+                char *buf = (char *)MapViewOfFile(
+                    mapFile,
+                    FILE_MAP_ALL_ACCESS,
+                    0,
+                    0,
+                    4096
+                );
+                if (buf)
+                {
+                    g_messageLog.LogInfo("OverlayThread", "Read from mapped file");
+                    RecordingState::GetInstance().SetOverlayMessage(buf);
+                    UnmapViewOfFile(buf);
+                }
+                else
+                {
+                    g_messageLog.LogError("OverlayThread", "Failed to read from mapped file");
+                }
+            }
+            Sleep(500);
         }
     }
 

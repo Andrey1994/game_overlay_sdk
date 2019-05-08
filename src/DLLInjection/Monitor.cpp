@@ -3,6 +3,8 @@
 #include <atlcomcli.h>
 #include <atlstr.h>
 #include <string.h>
+#include <accctrl.h>
+#include <aclapi.h>
 
 #include "MonitorProcessCreation.h"
 
@@ -63,6 +65,11 @@ int Monitor::StartMonitor ()
         Monitor::monitorLogger->error ("failed to create maped file Error {}", GetLastError ());
         return GENERAL_ERROR;
     }
+    SetSecurityInfo (this->mapFile, SE_KERNEL_OBJECT,
+        DACL_SECURITY_INFORMATION | PROTECTED_DACL_SECURITY_INFORMATION,
+        NULL, NULL, NULL, NULL
+    );
+
     this->createEvent = CreateEvent (NULL, TRUE, FALSE, TEXT ("createEvent"));
     this->stopEvent = CreateEvent (NULL, TRUE, FALSE, TEXT ("stopEvent"));
     if ((!this->createEvent) && (!this->stopEvent))
@@ -127,7 +134,8 @@ int Monitor::SendMessageToOverlay (char *message)
         monitorLogger->error ("Overlay is not ready");
         return TARGET_PROCESS_IS_NOT_CREATED_ERROR;
     }
-    LPTSTR buf = (LPTSTR) MapViewOfFile (
+    monitorLogger->info ("sending message '{}' to {}", message, this->pid);
+    char *buf = (char *) MapViewOfFile (
         this->mapFile,
         FILE_MAP_WRITE,
         0,

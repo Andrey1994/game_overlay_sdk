@@ -34,7 +34,7 @@ FileDirectory g_fileDirectory;
 
 FileDirectory::FileDirectory() : initialized_(false)
 {
-    folders_.emplace(DirectoryType::Documents, L"OCAT\\");
+    folders_.emplace(DirectoryType::Documents, L"GameOverlay\\");
     folders_.emplace(DirectoryType::Log, L"Logs\\");
     folders_.emplace(DirectoryType::Config, L"Config\\");
     folders_.emplace(DirectoryType::Recording, L"Captures\\");
