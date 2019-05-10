@@ -221,8 +221,12 @@ namespace GameOverlay {
             context_->RSGetState(&rasterizerState);
             UINT numViewports;
             context_->RSGetViewports(&numViewports, NULL);
-            std::vector<D3D11_VIEWPORT> viewports(numViewports);
-            context_->RSGetViewports(&numViewports, &viewports[0]);
+            std::vector<D3D11_VIEWPORT> viewports;
+            if (numViewports > 0)
+            {
+                viewports.reserve(numViewports);
+                context_->RSGetViewports(&numViewports, &viewports[0]);
+            }
 
             // record overlay commands
             context_->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -255,7 +259,10 @@ namespace GameOverlay {
             context_->OMSetRenderTargets(1, rtv_prev, pDepthStencilView.Get());
             context_->OMSetBlendState(pBlendState.Get(), blendFactor, sampleMask);
             context_->RSSetState(rasterizerState.Get());
-            context_->RSSetViewports(numViewports, viewports.data());
+            if (numViewports > 0)
+            {
+                context_->RSSetViewports(numViewports, viewports.data());
+            }
             return true;
         }
         }
@@ -459,7 +466,7 @@ namespace GameOverlay {
         viewPort_.MaxDepth = 1.0f;
         viewPort_.MinDepth = 0.0f;
 
-        // we are forced to record the command list again 
+        // we are forced to record the command list again
         // to apply the changes to the viewport.
         if (!RecordOverlayCommandList())
         {
