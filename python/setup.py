@@ -22,9 +22,8 @@ setup (
     install_requires = ['numpy'],
     package_data = {
         'game_overlay_sdk': [
-            os.path.join ('lib', 'DLLInjector.dll'),
-            os.path.join ('lib', 'GameOverlay64.dll'),
-            os.path.join ('lib', 'GameOverlay32.dll')
+            os.path.join ('lib', 'DLLInjection64.dll'),
+            os.path.join ('lib', 'GameOverlay64.dll')
         ]
     },
     zip_safe = True,
