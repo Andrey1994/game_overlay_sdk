@@ -745,7 +745,7 @@ namespace GameOverlay {
 
             if (!install_hook(handle, get_current_module(), hook_method::function_hook)) {
                 g_messageLog.LogError("register_module",
-                    L"Failed to install function hook for " + target_path);
+                    L"Failed to install function hook for " + target_path, GetLastError ());
             }
             else {
                 g_messageLog.LogInfo("register_module",
@@ -753,6 +753,8 @@ namespace GameOverlay {
             }
         }
         else {
+            g_messageLog.LogInfo("register_module",
+                    L"handle is nullptr for" + target_path);
             s_delayed_hook_paths.push_back(target_path);
         }
 
@@ -769,7 +771,7 @@ namespace GameOverlay {
 
             if (!install_hook(handle, get_current_module(), hook_method::function_hook)) {
                 g_messageLog.LogError("register_additional_module",
-                    L"Failed to install function hook for " + module_name);
+                    L"Failed to install function hook for " + module_name, GetLastError ());
             }
             else {
                 g_messageLog.LogInfo("register_additional_module",
@@ -777,6 +779,8 @@ namespace GameOverlay {
             }
         }
         else {
+            g_messageLog.LogInfo("register_additional_module",
+                    L"handle is nullptr for" + module_name);
             s_delayed_hook_paths.push_back(module_name);
         }
     }
