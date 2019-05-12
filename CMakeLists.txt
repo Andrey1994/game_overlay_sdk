@@ -195,4 +195,8 @@ target_compile_definitions(${GAME_OVERLAY_NAME} PUBLIC
   _UNICODE
   UNICODE
 )
+
+set_target_properties(${GAME_OVERLAY_NAME} PROPERTIES LINK_FLAGS_RELEASE "/DELAYLOAD:d3d12.dll" )
+set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE}  /DELAYLOAD:d3d12.dll")
+
 #----------------- GameOverlay END ------------------#
