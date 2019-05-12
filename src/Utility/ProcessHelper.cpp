@@ -22,9 +22,9 @@
 //
 
 #include "ProcessHelper.h"
-#include "../Logging/MessageLog.h"
-#include "../Utility/StringUtils.h"
-#include "../Utility/SmartHandle.h"
+#include "Utility/MessageLog.h"
+#include "Utility/StringUtils.h"
+#include "Utility/Win32Handle.h"
 
 #include <psapi.h>
 #include <assert.h>

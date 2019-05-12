@@ -31,7 +31,7 @@
 
 #include "../../OverlayPS_Byte.h"
 #include "../../OverlayVS_Byte.h"
-#include "Logging/MessageLog.h"
+#include "Utility/MessageLog.h"
 
 using Microsoft::WRL::ComPtr;
 

@@ -21,7 +21,7 @@
 //
 
 #include "OverlayMessage.h"
-#include "../Logging/MessageLog.h"
+#include "Utility/MessageLog.h"
 
 bool OverlayMessage::PostFrontendMessage(HWND window, OverlayMessageType type, LPARAM message)
 {

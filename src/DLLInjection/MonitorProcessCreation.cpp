@@ -49,6 +49,7 @@ int GetPid (int *pid)
     *pid = monitor->GetPid ();
     if (pid == 0)
         return TARGET_PROCESS_IS_NOT_CREATED_ERROR;
+    return STATUS_OK;
 }
 
 int SendMessageToOverlay (char *message)

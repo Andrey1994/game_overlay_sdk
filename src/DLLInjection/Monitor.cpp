@@ -10,10 +10,9 @@
 
 #include "Win32Handle.h"
 #include "DLLInjection.h"
-#include "ProcessHelpers.h"
 #include "EventSink.h"
 #include "Monitor.h"
-#include "suspend_threads.h"
+#include "SuspendThreads.h"
 
 #pragma comment (lib, "wbemuuid.lib")
 
@@ -260,4 +259,14 @@ int Monitor::GetArchitecture (int pid)
         return 86;
     else
         return 64;
+}
+
+HANDLE Monitor::GetProcessHandleFromID (DWORD id, DWORD access)
+{
+    HANDLE handle = OpenProcess (access, FALSE, id);
+    if (!handle)
+    {
+        return NULL;
+    }
+    return handle;
 }

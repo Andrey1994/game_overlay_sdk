@@ -21,7 +21,7 @@
 //
 
 #include "VK_Environment.h"
-#include "../Logging/MessageLog.h"
+#include "Utility/MessageLog.h"
 
 #include <cstdlib>
 

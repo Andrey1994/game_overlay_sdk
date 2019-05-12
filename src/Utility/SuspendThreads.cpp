@@ -1,4 +1,4 @@
-#include "suspend_threads.h"
+#include "SuspendThreads.h"
 
 #include <tlhelp32.h>
 

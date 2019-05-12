@@ -121,13 +121,16 @@ find_path(Vulkan_INCLUDE_DIR
     "$ENV{VULKAN_SDK}/Include"
 )
 
+################################### NOTE ###############################################
+## Injector is compiled without unicode while everything else - with unicode defined! ##
+########################################################################################
+
 #---------------- INJECTOR START -----------------#
 add_library (
   ${INJECTOR_NAME} SHARED
-  src/Utils/Win32Handle.cpp
-  src/Utils/ProcessHelpers.cpp
-  src/Utils/StringUtils.cpp
-  src/Utils/suspend_threads.cpp
+  src/Utility/Win32Handle.cpp
+  src/Utility/StringUtils.cpp
+  src/Utility/SuspendThreads.cpp
   src/DLLInjection/DLLInjection.cpp
   src/DLLInjection/Monitor.cpp
   src/DLLInjection/MonitorProcessCreation.cpp
@@ -135,14 +138,17 @@ add_library (
 
 target_include_directories (${INJECTOR_NAME} PUBLIC
   inc
-  src/Utils
+  src/Utility
   src/DLLInjection/inc
 )
 
 #----------------- INJECTOR END -------------------#
 
 #------------------ COMMON START ------------------#
-file(GLOB_RECURSE CommonSrc "src/DLLToInject/Commons/*.cpp")
+file(GLOB_RECURSE CommonSrc
+  "src/DLLToInject/Commons/*.cpp"
+  "src/Utility/*.cpp"
+)
 
 add_library (
   Commons STATIC
@@ -150,6 +156,7 @@ add_library (
 )
 
 target_include_directories (Commons PUBLIC
+  src
   ${Vulkan_INCLUDE_DIR}
 )
 
@@ -177,17 +184,20 @@ file(GLOB_RECURSE GameOverlayD3DSrc "src/DLLToInject/GameOverlay/d3d/*.cpp")
 add_library (
   ${GAME_OVERLAY_NAME} SHARED
   ${GameOverlayD3DSrc}
+  src/DLLToInject/GameOverlay/d3d/exports.def
+  src/DLLToInject/GameOverlay/d3d/res/resource.rc
 )
 
-target_link_libraries (${GAME_OVERLAY_NAME} MinHook Commons d3d12 d2d1 dwrite ${Vulkan_LIBRARY})
+target_link_libraries (${GAME_OVERLAY_NAME} MinHook Commons d3d12 d2d1 dwrite ${Vulkan_LIBRARY} comdlg32 advapi32 odbc32 odbccp32)
 
 target_include_directories ( ${GAME_OVERLAY_NAME} PUBLIC
+  src
   src/DLLToInject/Commons
   src/DLLToInject/MinHook/include
   src/DLLToInject/LibOVR/include
   src/DLLToInject/openvr/headers
   src/DLLToInject/GameOverlay/d3d/source
-  ${Vulkan_INCLUDE_DIR}
+  src/DLLToInject/GameOverlay/d3d/deps/d3dx12
 )
 
 target_compile_definitions(${GAME_OVERLAY_NAME} PUBLIC
@@ -196,7 +206,8 @@ target_compile_definitions(${GAME_OVERLAY_NAME} PUBLIC
   UNICODE
 )
 
-set_target_properties(${GAME_OVERLAY_NAME} PROPERTIES LINK_FLAGS_RELEASE "/DELAYLOAD:d3d12.dll" )
-set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE}  /DELAYLOAD:d3d12.dll")
+set_source_files_properties(src/DLLToInject/GameOverlay/d3d/exports.def PROPERTIES HEADER_FILE_ONLY TRUE)
+
+set_target_properties(${GAME_OVERLAY_NAME} PROPERTIES LINK_FLAGS "/DELAYLOAD:d3d12.dll /DEF:\"${CMAKE_SOURCE_DIR}/src/DLLToInject/GameOverlay/d3d/exports.def\"" )
 
 #----------------- GameOverlay END ------------------#

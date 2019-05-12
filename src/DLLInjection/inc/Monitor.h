@@ -34,6 +34,7 @@ class Monitor
         static DWORD WINAPI ThreadProc (LPVOID lpParameter);
         void WorkerThread ();
         int GetArchitecture (int pid);
+        HANDLE GetProcessHandleFromID (DWORD id, DWORD access);
 
 };
 

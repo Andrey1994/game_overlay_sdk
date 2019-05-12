@@ -22,10 +22,10 @@
 
 #include "OverlayThread.h"
 #include "../Overlay/OverlayMessage.h"
-#include "../Utility/Constants.h"
-#include "../Utility/StringUtils.h"
-#include "../Logging/MessageLog.h"
-#include "../Utility/ProcessHelper.h"
+#include "Utility/Constants.h"
+#include "Utility/StringUtils.h"
+#include "Utility/MessageLog.h"
+#include "Utility/ProcessHelper.h"
 #include "RecordingState.h"
 
 

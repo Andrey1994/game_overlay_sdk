@@ -40,7 +40,6 @@ std::wstring GetDirFromPathSlashes(const std::wstring& path)
 {
     const auto pathEnd = path.find_last_of('\\');
     if (pathEnd == std::string::npos) {
-        printf("Failed finding end of path\n");
         return L"";
     }
 

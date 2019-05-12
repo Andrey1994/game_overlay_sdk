@@ -28,7 +28,7 @@
 #include "Recording/Capturing.h"
 #include "Utility/Constants.h"
 #include "Utility/FileDirectory.h"
-#include "Logging/MessageLog.h"
+#include "Utility/MessageLog.h"
 #include "Utility/ProcessHelper.h"
 #include "hook_manager.hpp"
 #include "Overlay/OverlayMessage.h"
@@ -45,7 +45,6 @@ HWND sharedFrontendWindow = NULL;
 
 HMODULE g_module_handle = NULL;
 HHOOK g_hook = NULL;
-std::wstring g_dllDirectory;
 bool g_uwpApp = false;
 
 extern "C" __declspec(dllexport) LRESULT CALLBACK
@@ -86,7 +85,6 @@ void InitLogging()
     g_uwpApp = UWPApp();
     if (!g_uwpApp)
     {
-        g_dllDirectory = g_fileDirectory.GetDirectory(DirectoryType::Bin);
         const auto logDir = g_fileDirectory.GetDirectory(DirectoryType::Log);
 #if _WIN64
         g_messageLog.Start(logDir + L"GameOverlayLog", L"GameOverlay64");

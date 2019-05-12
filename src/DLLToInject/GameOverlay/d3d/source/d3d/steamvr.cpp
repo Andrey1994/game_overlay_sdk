@@ -3,7 +3,7 @@
 
 #include "steamvr.h"
 #include "hook_manager.hpp"
-#include "Logging/MessageLog.h"
+#include "Utility/MessageLog.h"
 
 vr::IVRCompositor* g_Compositor;
 std::unique_ptr<CompositorOverlay::SteamVR_D3D> g_SteamVRD3D;

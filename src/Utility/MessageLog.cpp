@@ -21,8 +21,8 @@
 //
 
 #include "MessageLog.h"
-#include "../Utility/ProcessHelper.h"
-#include "../Utility/StringUtils.h"
+#include "Utility/ProcessHelper.h"
+#include "Utility/StringUtils.h"
 
 #include <windows.h>
 #include <chrono>

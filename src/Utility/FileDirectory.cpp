@@ -24,11 +24,11 @@
 #include "FileDirectory.h"
 #include <shlobj.h>
 
-#include "../Utility/ProcessHelper.h"
-#include "../Utility/Constants.h"
-#include "../Logging/MessageLog.h"
-#include "../Utility/StringUtils.h"
-#include "../Utility/FileUtils.h"
+#include "Utility/ProcessHelper.h"
+#include "Utility/Constants.h"
+#include "Utility/MessageLog.h"
+#include "Utility/StringUtils.h"
+#include "Utility/FileUtils.h"
 
 FileDirectory g_fileDirectory;
 
@@ -36,9 +36,6 @@ FileDirectory::FileDirectory() : initialized_(false)
 {
     folders_.emplace(DirectoryType::Documents, L"GameOverlay\\");
     folders_.emplace(DirectoryType::Log, L"Logs\\");
-    folders_.emplace(DirectoryType::Config, L"Config\\");
-    folders_.emplace(DirectoryType::Recording, L"Captures\\");
-    folders_.emplace(DirectoryType::Bin, L"Bin\\");
 }
 
 FileDirectory::~FileDirectory()
@@ -52,11 +49,6 @@ bool FileDirectory::Initialize()
         return true;
     }
 
-    if (!FindBinaryDir())
-    {
-        return false;
-    }
-
     if (!FindDocumentsDir())
     {
         return false;
@@ -67,7 +59,7 @@ bool FileDirectory::Initialize()
         return false;
     }
 
-    std::vector<DirectoryType> documentDirectories = { DirectoryType::Log, DirectoryType::Config, DirectoryType::Recording };
+    std::vector<DirectoryType> documentDirectories = { DirectoryType::Log};
     for (const auto& type : documentDirectories)
     {
         bool success = CreateDir(directories_[DirectoryType::Documents].dirW + folders_[type].dirW, type);
@@ -122,53 +114,6 @@ bool FileDirectory::FindDocumentsDir()
     LogFileDirectory(directories_[DirectoryType::Documents].dirW, folders_[DirectoryType::Documents].dirW);
     CoTaskMemFree(docDir);
     return true;
-}
-
-
-bool FileDirectory::SetBinaryDirFromRegistryKey(HKEY registryKey)
-{
-    std::wstring ocatExecutableDirectory;
-    LONG result = GetStringRegKey(registryKey, L"InstallDir", ocatExecutableDirectory, L"");
-    if (result != ERROR_SUCCESS)
-    {
-        g_messageLog.LogError("FileDirectory", L"Failed to retrieve binary directory", result);
-        return false;
-    }
-
-    directories_[DirectoryType::Bin] = Directory(ocatExecutableDirectory + folders_[DirectoryType::Bin].dirW);
-    LogFileDirectory(directories_[DirectoryType::Bin].dirW, folders_[DirectoryType::Bin].dirW);
-    return true;
-}
-
-bool FileDirectory::FindBinaryDir()
-{
-    HKEY registryKey;
-    // Try to open 32bit registry key on local machine.
-    LONG result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"SOFTWARE\\OCAT\\", 0, KEY_READ | KEY_WOW64_32KEY, &registryKey);
-    if (result != ERROR_SUCCESS)
-    {
-        // Try to open 64bit registry key on local machine.
-        result = RegOpenKeyEx(HKEY_LOCAL_MACHINE, L"SOFTWARE\\OCAT\\", 0, KEY_READ | KEY_WOW64_64KEY, &registryKey);
-        if (result != ERROR_SUCCESS)
-        {
-            // Try to open 32bit registry key on current user.
-            result = RegOpenKeyEx(HKEY_CURRENT_USER, L"SOFTWARE\\OCAT\\", 0, KEY_READ | KEY_WOW64_32KEY, &registryKey);
-            if (result != ERROR_SUCCESS)
-            {
-                // Try to open 64bit registry key on current user.
-                result = RegOpenKeyEx(HKEY_CURRENT_USER, L"SOFTWARE\\OCAT\\", 0, KEY_READ | KEY_WOW64_64KEY, &registryKey);
-                if (result != ERROR_SUCCESS)
-                {
-                    g_messageLog.LogError("FileDirectory", L"Failed to open OCAT registry key", result);
-                    return false;
-                }
-            }
-        }
-    }
-
-    bool success = SetBinaryDirFromRegistryKey(registryKey);
-    RegCloseKey(registryKey);
-    return success;
 }
 
 void FileDirectory::LogFileDirectory(const std::wstring& value, const std::wstring& message)

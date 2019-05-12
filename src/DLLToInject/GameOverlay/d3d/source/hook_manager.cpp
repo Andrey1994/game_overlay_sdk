@@ -33,12 +33,10 @@
 #include "Overlay/VK_Environment.h"
 #include "Recording/Capturing.h"
 #include "Utility/FileDirectory.h"
-#include "Logging/MessageLog.h"
+#include "Utility/MessageLog.h"
 #include "critical_section.hpp"
 #include "Utility/ProcessHelper.h"
-#include "Utility/SmartHandle.h"
-
-extern std::wstring g_dllDirectory;
+#include "Utility/Win32Handle.h"
 
 std::vector<std::wstring> g_filter;
 
@@ -451,11 +449,6 @@ namespace GameOverlay {
         bool IsDLLInjectionProcess(const std::wstring &processName)
         {
             return (processName.compare(0, 11, L"DLLInjector") == 0);
-        }
-
-        void EnableVulkan(VK_Environment& vkEnv, const std::wstring& processName)
-        {
-            vkEnv.SetVKEnvironment(g_dllDirectory);
         }
     }
 

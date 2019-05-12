@@ -27,7 +27,7 @@
 #include <assert.h>
 #include <wrl.h>
 
-#include "Logging/MessageLog.h"
+#include "Utility/MessageLog.h"
 
 using namespace Microsoft::WRL;
 extern bool g_uwpApp;

@@ -8,8 +8,7 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
 //
-// The above copyright notice and this permission notice shall be included in
-// all
+// The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -20,23 +19,46 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-#include "SmartHandle.h"
+#pragma once
 
-Win32Handle::~Win32Handle()
-{
-    Close();
-}
+#include <string>
+#include <unordered_map>
+#include <windows.h>
 
-HANDLE Win32Handle::Get() const
+enum class DirectoryType
 {
-    return handle_;
-}
+    Documents,
+    Log,
+};
 
-void Win32Handle::Close()
+class FileDirectory
 {
-    if (handle_ != INVALID_HANDLE_VALUE)
+public:
+    FileDirectory();
+    ~FileDirectory();
+
+    // This method has to be called, before using the directory.
+    // Don't proceed, if this method returns false, as the file directory will not be usable.
+    bool Initialize();
+    const std::wstring& GetDirectory(DirectoryType type);
+    const std::wstring& GetFolder(DirectoryType type);
+
+private:
+    struct Directory
     {
-        CloseHandle(handle_);
-        handle_ = INVALID_HANDLE_VALUE;
-    }
-}
+        std::wstring dirW;
+        Directory();
+        Directory(const std::wstring& directory);
+    };
+
+    bool FindDocumentsDir();
+    bool CreateDir(const std::wstring& dir, DirectoryType type);
+    void LogFileDirectory(const std::wstring& value, const std::wstring& message);
+
+    bool initialized_;
+    std::unordered_map<DirectoryType, Directory> directories_;
+    std::unordered_map<DirectoryType, Directory> folders_;
+};
+
+extern FileDirectory g_fileDirectory;
+

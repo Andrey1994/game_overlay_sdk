@@ -22,8 +22,8 @@
 //
 
 #include "ProcessTermination.h"
-#include "../Logging/MessageLog.h"
-#include "../Utility/SmartHandle.h"
+#include "Utility/MessageLog.h"
+#include "Utility/Win32Handle.h"
 
 extern void CALLBACK OnProcessExit(_In_ PVOID lpParameter, _In_ BOOLEAN TimerOrWaitFired);
 

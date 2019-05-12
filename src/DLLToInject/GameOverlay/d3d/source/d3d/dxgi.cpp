@@ -24,7 +24,7 @@
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <wrl.h>
-#include "Logging/MessageLog.h"
+#include "Utility/MessageLog.h"
 #include "dxgi_swapchain.hpp"
 #include "hook_manager.hpp"
 #include "Utility/ProcessHelper.h"

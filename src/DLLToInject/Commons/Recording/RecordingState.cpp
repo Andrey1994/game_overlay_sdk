@@ -24,9 +24,9 @@
 #include <string.h>
 
 #include "RecordingState.h"
-#include "../Logging/MessageLog.h"
+#include "Utility/MessageLog.h"
 
-#include "../Utility/FileDirectory.h"
+#include "Utility/FileDirectory.h"
 
 using Clock = std::chrono::high_resolution_clock;
 using fSeconds = std::chrono::duration<float>;

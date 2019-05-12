@@ -4,7 +4,7 @@
 #include "d3d/steamvr.h"
 #include "hook_manager.hpp"
 
-#include "Logging/MessageLog.h"
+#include "Utility/MessageLog.h"
 #include "Utility/FileDirectory.h"
 
 
