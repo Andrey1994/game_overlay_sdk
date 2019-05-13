@@ -29,7 +29,6 @@
 #include "Utility/MessageLog.h"
 #include "Utility/ProcessHelper.h"
 #include "RecordingState.h"
-#include "../Overlay/VK_Environment.h"
 #include "Utility/FileDirectory.h"
 #include "Utility/StringUtils.h"
 

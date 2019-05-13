@@ -32,7 +32,6 @@
 #include "Utility/ProcessHelper.h"
 #include "hook_manager.hpp"
 #include "Overlay/OverlayMessage.h"
-#include "Overlay/VK_Environment.h"
 #include "Utility/StringUtils.h"
 
 #include <psapi.h>

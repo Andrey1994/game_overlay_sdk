@@ -14,3 +14,5 @@ cd ..
 echo F | xcopy /Y src\GameOverlay\vulkan\src\shader.vert python\game_overlay_sdk\lib\shader.vert
 echo F | xcopy /Y src\GameOverlay\vulkan\src\shader.frag python\game_overlay_sdk\lib\shader.frag
 echo F | xcopy /Y src\GameOverlay\vulkan\src\shader.comp python\game_overlay_sdk\lib\shader.comp
+
+echo F | xcopy /Y src\DLLToInject\GameOverlay\vulkan\VK_LAYER_OCAT_overlay32.json python\game_overlay_sdk\lib\VK_LAYER_OCAT_overlay32.json

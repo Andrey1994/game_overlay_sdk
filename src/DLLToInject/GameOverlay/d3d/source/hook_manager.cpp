@@ -30,7 +30,6 @@
 #include <algorithm>
 #include <unordered_map>
 #include <vector>
-#include "Overlay/VK_Environment.h"
 #include "Recording/Capturing.h"
 #include "Utility/FileDirectory.h"
 #include "Utility/MessageLog.h"

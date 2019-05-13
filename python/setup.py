@@ -33,7 +33,9 @@ setup (
             os.path.join ('lib', 'shader.vert'),
             os.path.join ('lib', 'comp.spv'),
             os.path.join ('lib', 'frag.spv'),
-            os.path.join ('lib', 'vert.spv')
+            os.path.join ('lib', 'vert.spv'),
+            os.path.join ('lib', 'VK_LAYER_OCAT_overlay64.json'),
+            os.path.join ('lib', 'VK_LAYER_OCAT_overlay32.json')
         ]
     },
     zip_safe = True,
