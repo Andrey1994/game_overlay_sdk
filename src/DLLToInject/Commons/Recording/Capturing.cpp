@@ -42,17 +42,17 @@ namespace GameOverlay {
     const std::wstring g_overlayLibName = L"GameOverlay32.dll";
 #endif
 
-    void InitLogging(const std::string& callerName)
+    void InitLogging (const std::string& callerName)
     {
-        g_messageLog.Start(g_fileDirectory.GetDirectory(DirectoryType::Log) + L"GameOverlayLog",
-            ConvertUTF8StringToUTF16String(callerName));
+        g_messageLog.Start (g_fileDirectory.GetDirectory (DirectoryType::Log) + L"GameOverlayLog",
+            ConvertUTF8StringToUTF16String (callerName));
     }
 
-    void InitCapturing()
+    void InitCapturing ()
     {
         static bool initialized = false;
         if (!initialized) {
-            g_overlayThread.Start();
+            g_overlayThread.Start ();
             initialized = true;
         }
     }

@@ -24,37 +24,37 @@
 #include "FileUtils.h"
 #include <windows.h>
 
-bool FileExists(const std::string& filePath)
+bool FileExists (const std::string& filePath)
 {
-    std::ifstream file(filePath);
-    return file.good();
+    std::ifstream file (filePath);
+    return file.good ();
 }
 
-bool FileExists(const std::wstring& fileName)
+bool FileExists (const std::wstring& fileName)
 {
-    std::ifstream file(fileName);
-    return file.good();
+    std::ifstream file (fileName);
+    return file.good ();
 }
 
-std::wstring GetDirFromPathSlashes(const std::wstring& path)
+std::wstring GetDirFromPathSlashes (const std::wstring& path)
 {
-    const auto pathEnd = path.find_last_of('\\');
+    const auto pathEnd = path.find_last_of ('\\');
     if (pathEnd == std::string::npos) {
         return L"";
     }
 
-    return path.substr(0, pathEnd + 1);
+    return path.substr (0, pathEnd + 1);
 }
 
-std::wstring GetDirFomPathSlashesRemoved(const std::wstring& path)
+std::wstring GetDirFomPathSlashesRemoved (const std::wstring& path)
 {
-    const size_t directoryEnd = path.find_last_of('\\');
+    const size_t directoryEnd = path.find_last_of ('\\');
     std::wstring directory;
     if (std::string::npos != directoryEnd) {
-        directory = path.substr(0, directoryEnd);
+        directory = path.substr (0, directoryEnd);
     }
     else {
-        MessageBox(NULL, L"Invalid file path ", NULL, MB_OK);
+        MessageBox (NULL, L"Invalid file path ", NULL, MB_OK);
     }
     return directory;
 }

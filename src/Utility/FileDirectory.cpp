@@ -32,107 +32,107 @@
 
 FileDirectory g_fileDirectory;
 
-FileDirectory::FileDirectory() : initialized_(false)
+FileDirectory::FileDirectory () : initialized_ (false)
 {
-    folders_.emplace(DirectoryType::Documents, L"GameOverlay\\");
-    folders_.emplace(DirectoryType::Log, L"Logs\\");
+    folders_.emplace (DirectoryType::Documents, L"GameOverlay\\");
+    folders_.emplace (DirectoryType::Log, L"Logs\\");
 }
 
-FileDirectory::~FileDirectory()
+FileDirectory::~FileDirectory ()
 {
 }
 
-bool FileDirectory::Initialize()
+bool FileDirectory::Initialize ()
 {
     if (initialized_)
     {
         return true;
     }
 
-    if (!FindDocumentsDir())
+    if (!FindDocumentsDir ())
     {
         return false;
     }
 
-    if (!CreateDir(directories_[DirectoryType::Documents].dirW, DirectoryType::Documents))
+    if (!CreateDir (directories_[DirectoryType::Documents].dirW, DirectoryType::Documents))
     {
         return false;
     }
 
-    std::vector<DirectoryType> documentDirectories = { DirectoryType::Log};
+    std::vector<DirectoryType> documentDirectories = { DirectoryType::Log };
     for (const auto& type : documentDirectories)
     {
-        bool success = CreateDir(directories_[DirectoryType::Documents].dirW + folders_[type].dirW, type);
+        bool success = CreateDir (directories_[DirectoryType::Documents].dirW + folders_[type].dirW, type);
         if (!success)
         {
             return false;
         }
-        LogFileDirectory(directories_[type].dirW, folders_[type].dirW);
+        LogFileDirectory (directories_[type].dirW, folders_[type].dirW);
     }
 
     initialized_ = true;
     return true;
 }
 
-const std::wstring& FileDirectory::GetDirectory(DirectoryType type)
+const std::wstring& FileDirectory::GetDirectory (DirectoryType type)
 {
     if (!initialized_)
     {
-        g_messageLog.LogError("FileDirectory", "Use of uninitialized file directory.");
-        throw std::runtime_error("Use of uninitialized file directory.");
+        g_messageLog.LogError ("FileDirectory", "Use of uninitialized file directory.");
+        throw std::runtime_error ("Use of uninitialized file directory.");
     }
     return directories_[type].dirW;
 }
 
-const std::wstring& FileDirectory::GetFolder(DirectoryType type)
+const std::wstring& FileDirectory::GetFolder (DirectoryType type)
 {
     return folders_[type].dirW;
 }
 
-FileDirectory::Directory::Directory()
+FileDirectory::Directory::Directory ()
 {
     // Do nothing.
 }
 
-FileDirectory::Directory::Directory(const std::wstring& directory)
-    : dirW(directory)
+FileDirectory::Directory::Directory (const std::wstring& directory)
+    : dirW (directory)
 {
     // Empty
 }
 
-bool FileDirectory::FindDocumentsDir()
+bool FileDirectory::FindDocumentsDir ()
 {
     PWSTR docDir = nullptr;
-    const auto hr = SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &docDir);
-    if (FAILED(hr))
+    const auto hr = SHGetKnownFolderPath (FOLDERID_Documents, 0, NULL, &docDir);
+    if (FAILED (hr))
     {
-        g_messageLog.LogError("FileDirectory", L"Unable to find Documents directory");
+        g_messageLog.LogError ("FileDirectory", L"Unable to find Documents directory");
         return false;
     }
 
-    directories_[DirectoryType::Documents] = Directory(std::wstring(docDir) + L"\\" + folders_[DirectoryType::Documents].dirW);
-    LogFileDirectory(directories_[DirectoryType::Documents].dirW, folders_[DirectoryType::Documents].dirW);
-    CoTaskMemFree(docDir);
+    directories_[DirectoryType::Documents] = Directory (std::wstring (docDir) + L"\\" + folders_[DirectoryType::Documents].dirW);
+    LogFileDirectory (directories_[DirectoryType::Documents].dirW, folders_[DirectoryType::Documents].dirW);
+    CoTaskMemFree (docDir);
     return true;
 }
 
-void FileDirectory::LogFileDirectory(const std::wstring& value, const std::wstring& message)
+void FileDirectory::LogFileDirectory (const std::wstring& value, const std::wstring& message)
 {
-    g_messageLog.LogInfo("FileDirectory", message + L"\t" + value);
+    g_messageLog.LogInfo ("FileDirectory", message + L"\t" + value);
 }
 
-bool FileDirectory::CreateDir(const std::wstring& dir, DirectoryType type)
+bool FileDirectory::CreateDir (const std::wstring& dir, DirectoryType type)
 {
-    const auto result = CreateDirectory(dir.c_str(), NULL);
+    const auto result = CreateDirectory (dir.c_str (), NULL);
     if (!result)
     {
-        const auto error = GetLastError();
+        const auto error = GetLastError ();
         if (error != ERROR_ALREADY_EXISTS)
         {
-            g_messageLog.LogVerbose("FileDirectory", L"Unable to create directory " + dir, error);
+            g_messageLog.LogVerbose ("FileDirectory", L"Unable to create directory " + dir, error);
             return false;
         }
     }
-    directories_[type] = Directory(dir);
+    directories_[type] = Directory (dir);
     return true;
 }

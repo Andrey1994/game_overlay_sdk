@@ -31,19 +31,19 @@
 using Clock = std::chrono::high_resolution_clock;
 using fSeconds = std::chrono::duration<float>;
 
-RecordingState& RecordingState::GetInstance()
+RecordingState& RecordingState::GetInstance ()
 {
     static RecordingState instance;
     return instance;
 }
 
-RecordingState::RecordingState()
+RecordingState::RecordingState ()
 {
-    strcpy((char *)this->overlayMessage_, "Welcome to GameOverlay, waiting for data");
-    currentStateStart_ = Clock::now();
+    strcpy ((char *)this->overlayMessage_, "Welcome to GameOverlay, waiting for data");
+    currentStateStart_ = Clock::now ();
 }
 
-bool RecordingState::Started()
+bool RecordingState::Started ()
 {
     if (stateChanged_ && recording_) {
         stateChanged_ = false;
@@ -52,7 +52,7 @@ bool RecordingState::Started()
     return false;
 }
 
-bool RecordingState::Stopped()
+bool RecordingState::Stopped ()
 {
     if (stateChanged_ && !recording_) {
         stateChanged_ = false;
@@ -61,37 +61,37 @@ bool RecordingState::Stopped()
     return false;
 }
 
-bool RecordingState::IsOverlayShowing()
+bool RecordingState::IsOverlayShowing ()
 {
     return showOverlay_;
 }
 
-bool RecordingState::IsGraphOverlayShowing()
+bool RecordingState::IsGraphOverlayShowing ()
 {
     return showGraphOverlay_;
 }
 
-bool RecordingState::IsBarOverlayShowing()
+bool RecordingState::IsBarOverlayShowing ()
 {
     return showBarOverlay_;
 }
 
-TextureState RecordingState::Update()
+TextureState RecordingState::Update ()
 {
-    const fSeconds duration = Clock::now() - currentStateStart_;
+    const fSeconds duration = Clock::now () - currentStateStart_;
     if (recording_) { // recording
-        if ((currentTextureState_ == TextureState::Start) && (duration.count() > startDisplayTime_))
+        if ((currentTextureState_ == TextureState::Start) && (duration.count () > startDisplayTime_))
         {
             currentTextureState_ = TextureState::Default;
         }
-        if (recordingTime_ > 0.0f && (duration.count() > recordingTime_)) {
-            Stop();
+        if (recordingTime_ > 0.0f && (duration.count () > recordingTime_)) {
+            Stop ();
         }
     }
     else // not recording
     {
         if ((currentTextureState_ == TextureState::Stop) &&
-            (duration.count() > endDisplayTime_))
+            (duration.count () > endDisplayTime_))
         {
             currentTextureState_ = TextureState::Default;
         }
@@ -99,69 +99,69 @@ TextureState RecordingState::Update()
     return currentTextureState_;
 }
 
-void RecordingState::SetDisplayTimes(float start, float end)
+void RecordingState::SetDisplayTimes (float start, float end)
 {
     startDisplayTime_ = start;
     endDisplayTime_ = end;
 }
 
-void RecordingState::SetRecordingTime(float time)
+void RecordingState::SetRecordingTime (float time)
 {
     recordingTime_ = time;
 }
 
-void RecordingState::ShowOverlay()
+void RecordingState::ShowOverlay ()
 {
     showOverlay_ = true;
 }
 
-void RecordingState::HideOverlay()
+void RecordingState::HideOverlay ()
 {
     showOverlay_ = false;
 }
 
-void RecordingState::ShowGraphOverlay()
+void RecordingState::ShowGraphOverlay ()
 {
     showGraphOverlay_ = true;
 }
 
-void RecordingState::HideGraphOverlay()
+void RecordingState::HideGraphOverlay ()
 {
     showGraphOverlay_ = false;
 }
 
-void RecordingState::ShowBarOverlay()
+void RecordingState::ShowBarOverlay ()
 {
     showBarOverlay_ = true;
 }
 
-void RecordingState::HideBarOverlay()
+void RecordingState::HideBarOverlay ()
 {
     showBarOverlay_ = false;
 }
 
-void RecordingState::Start()
+void RecordingState::Start ()
 {
     recording_ = true;
     currentTextureState_ = TextureState::Start;
-    currentStateStart_ = Clock::now();
+    currentStateStart_ = Clock::now ();
     stateChanged_ = true;
 }
 
-void RecordingState::Stop()
+void RecordingState::Stop ()
 {
     recording_ = false;
     currentTextureState_ = TextureState::Stop;
-    currentStateStart_ = Clock::now();
+    currentStateStart_ = Clock::now ();
     stateChanged_ = true;
 }
 
-void RecordingState::SetOverlayMessage(char *message)
+void RecordingState::SetOverlayMessage (char *message)
 {
-    strcpy((char *)this->overlayMessage_, message);
+    strcpy ((char *)this->overlayMessage_, message);
 }
 
-char* RecordingState::GetOverlayMessage()
+char* RecordingState::GetOverlayMessage ()
 {
     return (char *)this->overlayMessage_;
 }

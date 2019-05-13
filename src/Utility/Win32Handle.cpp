@@ -14,7 +14,7 @@ void Win32Handle::Close ()
 {
     if (handle_ != INVALID_HANDLE_VALUE)
     {
-        CloseHandle(handle_);
+        CloseHandle (handle_);
         handle_ = INVALID_HANDLE_VALUE;
     }
 }

@@ -8,94 +8,94 @@
 vr::IVRCompositor* g_Compositor;
 std::unique_ptr<CompositorOverlay::SteamVR_D3D> g_SteamVRD3D;
 
-void hook_openvr_compositor_object(vr::IVRCompositor* pCompositor)
+void hook_openvr_compositor_object (vr::IVRCompositor* pCompositor)
 {
     g_Compositor = pCompositor;
 
-    if (GameOverlay::install_hook(VTABLE(g_Compositor), 5,
+    if (GameOverlay::install_hook (VTABLE (g_Compositor), 5,
         reinterpret_cast<GameOverlay::hook::address>(&IVRCompositor_Submit))) {
-        g_messageLog.LogInfo("SteamVR", "Successfully installed hook for compositor submit.");
+        g_messageLog.LogInfo ("SteamVR", "Successfully installed hook for compositor submit.");
     }
 }
 
-void* VR_GetGenericInterface(const char* pchInterfaceVersion, vr::EVRInitError *peError)
+void* VR_GetGenericInterface (const char* pchInterfaceVersion, vr::EVRInitError *peError)
 {
-    void* voidPtr = GameOverlay::find_hook_trampoline(&VR_GetGenericInterface)(pchInterfaceVersion, peError);
+    void* voidPtr = GameOverlay::find_hook_trampoline (&VR_GetGenericInterface)(pchInterfaceVersion, peError);
 
     const char* comp = "IVRCompositor";
-    if (std::strncmp(comp, pchInterfaceVersion, 13) == 0) {
-        g_messageLog.LogInfo("SteamVR", "generic interface - Compositor");
-        hook_openvr_compositor_object(static_cast<vr::IVRCompositor *> (voidPtr));
+    if (std::strncmp (comp, pchInterfaceVersion, 13) == 0) {
+        g_messageLog.LogInfo ("SteamVR", "generic interface - Compositor");
+        hook_openvr_compositor_object (static_cast<vr::IVRCompositor *> (voidPtr));
     }
 
     return voidPtr;
 }
 
-vr::EVRCompositorError VR_CALLTYPE IVRCompositor_Submit(vr::IVRCompositor* pCompositor,
+vr::EVRCompositorError VR_CALLTYPE IVRCompositor_Submit (vr::IVRCompositor* pCompositor,
     vr::EVREye eEye, const vr::Texture_t *pTexture,
     const vr::VRTextureBounds_t* pBounds, vr::EVRSubmitFlags nSubmitFlags)
 {
     // only update overlay once a frame and not twice, so just consider one left eye submit call
-    if (eEye == vr::Eye_Left && g_SteamVRD3D->Init(pTexture->eType))
+    if (eEye == vr::Eye_Left && g_SteamVRD3D->Init (pTexture->eType))
     {
-        g_SteamVRD3D->Render(pTexture);
+        g_SteamVRD3D->Render (pTexture);
     }
 
-    return GameOverlay::find_hook_trampoline(&IVRCompositor_Submit)(
+    return GameOverlay::find_hook_trampoline (&IVRCompositor_Submit)(
         pCompositor, eEye, pTexture, pBounds, nSubmitFlags);
 }
 
-__declspec(dllexport) vr::IVRCompositor* GetVRCompositor()
+__declspec(dllexport) vr::IVRCompositor* GetVRCompositor ()
 {
     return g_Compositor;
 }
 
-__declspec(dllexport) vr::IVROverlay* CreateVROverlay()
+__declspec(dllexport) vr::IVROverlay* CreateVROverlay ()
 {
     const char *pchInterfaceVersion = "IVROverlay_017";
     vr::EVRInitError peError;
-    void* voidPtr = GameOverlay::find_hook_trampoline(&VR_GetGenericInterface)(pchInterfaceVersion, &peError);
+    void* voidPtr = GameOverlay::find_hook_trampoline (&VR_GetGenericInterface)(pchInterfaceVersion, &peError);
 
     return static_cast<vr::IVROverlay *> (voidPtr);
 }
 
 namespace CompositorOverlay
 {
-    void SteamVR_D3D::SetDevice(IUnknown* device)
+    void SteamVR_D3D::SetDevice (IUnknown* device)
     {
         ID3D11Device *d3d11Device = nullptr;
-        HRESULT hr = device->QueryInterface(&d3d11Device);
-        if (SUCCEEDED(hr)) {
+        HRESULT hr = device->QueryInterface (&d3d11Device);
+        if (SUCCEEDED (hr)) {
             d3d11Device_ = d3d11Device;
         }
 
         ID3D12CommandQueue *d3d12CommandQueue = nullptr;
-        hr = device->QueryInterface(&d3d12CommandQueue);
-        if (SUCCEEDED(hr)) {
+        hr = device->QueryInterface (&d3d12CommandQueue);
+        if (SUCCEEDED (hr)) {
             d3d12Commandqueue_ = d3d12CommandQueue;
-            d3d12Commandqueue_->GetDevice(IID_PPV_ARGS(&d3d12Device_));
+            d3d12Commandqueue_->GetDevice (IID_PPV_ARGS (&d3d12Device_));
         }
     }
 
-    bool SteamVR_D3D::Init(const vr::ETextureType eType)
+    bool SteamVR_D3D::Init (const vr::ETextureType eType)
     {
         if (initialized_)
             return true;
 
-        overlay_ = CreateVROverlay();
-        overlay_->CreateOverlay("test", "overlay", &overlayHandle_);
+        overlay_ = CreateVROverlay ();
+        overlay_->CreateOverlay ("test", "overlay", &overlayHandle_);
 
         vr::HmdMatrix34_t hmd;
         vr::TrackingUniverseOrigin trackingOrigin;
-        overlay_->GetOverlayTransformAbsolute(overlayHandle_, &trackingOrigin, &hmd);
+        overlay_->GetOverlayTransformAbsolute (overlayHandle_, &trackingOrigin, &hmd);
 
         hmd.m[0][3] = 0;
         hmd.m[1][3] = 1.0f;
         hmd.m[2][3] = -1;
 
-        overlay_->SetOverlayTransformAbsolute(overlayHandle_, trackingOrigin, &hmd);
+        overlay_->SetOverlayTransformAbsolute (overlayHandle_, trackingOrigin, &hmd);
 
-        g_messageLog.LogInfo("SteamVR", "overlay ivr.");
+        g_messageLog.LogInfo ("SteamVR", "overlay ivr.");
 
         switch (eType)
         {
@@ -112,11 +112,11 @@ namespace CompositorOverlay
             displayDesc.Usage = D3D11_USAGE_DEFAULT;
             displayDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
             displayDesc.CPUAccessFlags = 0;
-            HRESULT hr = d3d11Device_->CreateTexture2D(&displayDesc, nullptr, &d3d11OverlayTexture_);
+            HRESULT hr = d3d11Device_->CreateTexture2D (&displayDesc, nullptr, &d3d11OverlayTexture_);
 
-            d3d11RenderTargets_.resize(1);
+            d3d11RenderTargets_.resize (1);
             D3D11_TEXTURE2D_DESC backBufferDesc;
-            d3d11OverlayTexture_->GetDesc(&backBufferDesc);
+            d3d11OverlayTexture_->GetDesc (&backBufferDesc);
 
             D3D11_RENDER_TARGET_VIEW_DESC rtvDesc{};
             rtvDesc.Format = backBufferDesc.Format;
@@ -124,15 +124,15 @@ namespace CompositorOverlay
                 : D3D11_RTV_DIMENSION_TEXTURE2D;
             rtvDesc.Texture2D.MipSlice = 0;
 
-            hr = d3d11Device_->CreateRenderTargetView(d3d11OverlayTexture_.Get(), &rtvDesc,
+            hr = d3d11Device_->CreateRenderTargetView (d3d11OverlayTexture_.Get (), &rtvDesc,
                 &d3d11RenderTargets_[0]);
 
-            if (FAILED(hr))
+            if (FAILED (hr))
             {
                 return false;
             }
 
-            d3d11Renderer_.reset(new GameOverlay::d3d11_renderer(d3d11Device_.Get(),
+            d3d11Renderer_.reset (new GameOverlay::d3d11_renderer (d3d11Device_.Get (),
                 d3d11RenderTargets_, screenWidth_, screenHeight_));
 
             initialized_ = true;
@@ -140,7 +140,7 @@ namespace CompositorOverlay
         }
         case vr::TextureType_DirectX12:
         {
-            d3d12RenderTargets_.resize(1);
+            d3d12RenderTargets_.resize (1);
 
             D3D12_RESOURCE_DESC textureDesc = {};
             textureDesc.MipLevels = 1;
@@ -153,12 +153,12 @@ namespace CompositorOverlay
             textureDesc.SampleDesc.Quality = 0;
             textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 
-            const auto textureHeapType = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
-            HRESULT hr = d3d12Device_->CreateCommittedResource(
+            const auto textureHeapType = CD3DX12_HEAP_PROPERTIES (D3D12_HEAP_TYPE_DEFAULT);
+            HRESULT hr = d3d12Device_->CreateCommittedResource (
                 &textureHeapType, D3D12_HEAP_FLAG_NONE, &textureDesc,
                 D3D12_RESOURCE_STATE_RENDER_TARGET, nullptr,
-                IID_PPV_ARGS(&d3d12RenderTargets_[0]));
-            if (FAILED(hr))
+                IID_PPV_ARGS (&d3d12RenderTargets_[0]));
+            if (FAILED (hr))
             {
                 return false;
             }
@@ -167,22 +167,22 @@ namespace CompositorOverlay
             rtvHeapDesc.NumDescriptors = 1;
             rtvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
             rtvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-            hr = d3d12Device_->CreateDescriptorHeap(&rtvHeapDesc,
-                IID_PPV_ARGS(&d3d12RenderTargetHeap_));
-            if (FAILED(hr))
+            hr = d3d12Device_->CreateDescriptorHeap (&rtvHeapDesc,
+                IID_PPV_ARGS (&d3d12RenderTargetHeap_));
+            if (FAILED (hr))
             {
                 return false;
             }
 
             d3d12RtvHeapDescriptorSize_ =
-                d3d12Device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-            CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(d3d12RenderTargetHeap_->GetCPUDescriptorHandleForHeapStart());
+                d3d12Device_->GetDescriptorHandleIncrementSize (D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+            CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle (d3d12RenderTargetHeap_->GetCPUDescriptorHandleForHeapStart ());
 
-            d3d12Device_->CreateRenderTargetView(d3d12RenderTargets_[0].Get(), nullptr, rtvHandle);
-            rtvHandle.Offset(1, d3d12RtvHeapDescriptorSize_);
+            d3d12Device_->CreateRenderTargetView (d3d12RenderTargets_[0].Get (), nullptr, rtvHandle);
+            rtvHandle.Offset (1, d3d12RtvHeapDescriptorSize_);
 
-            d3d12Renderer_.reset(
-                new GameOverlay::d3d12_renderer(d3d12Commandqueue_.Get(),
+            d3d12Renderer_.reset (
+                new GameOverlay::d3d12_renderer (d3d12Commandqueue_.Get (),
                     d3d12RenderTargetHeap_,
                     d3d12RenderTargets_,
                     d3d12RtvHeapDescriptorSize_,
@@ -196,25 +196,25 @@ namespace CompositorOverlay
         return false;
     }
 
-    void SteamVR_D3D::Render(const vr::Texture_t *pTexture)
+    void SteamVR_D3D::Render (const vr::Texture_t *pTexture)
     {
         switch (pTexture->eType)
         {
         case vr::TextureType_DirectX:
         {
-            d3d11Renderer_->on_present();
+            d3d11Renderer_->on_present ();
             vr::Texture_t texture = *pTexture;
-            ID3D11Texture2D* tex = static_cast<ID3D11Texture2D*> (d3d11OverlayTexture_.Get());
+            ID3D11Texture2D* tex = static_cast<ID3D11Texture2D*> (d3d11OverlayTexture_.Get ());
             texture.handle = static_cast<void*> (tex);
 
-            overlay_->ClearOverlayTexture(overlayHandle_);
-            overlay_->SetOverlayTexture(overlayHandle_, &texture);
-            overlay_->ShowOverlay(overlayHandle_);
+            overlay_->ClearOverlayTexture (overlayHandle_);
+            overlay_->SetOverlayTexture (overlayHandle_, &texture);
+            overlay_->ShowOverlay (overlayHandle_);
             return;
         }
         case vr::TextureType_DirectX12:
         {
-            d3d12Renderer_->on_present();
+            d3d12Renderer_->on_present ();
 
             void* handle = pTexture->handle;
             vr::D3D12TextureData_t* d3d12TextureData = static_cast<vr::D3D12TextureData_t*>(handle);
@@ -224,13 +224,13 @@ namespace CompositorOverlay
             vr::D3D12TextureData_t texData;
             texData.m_nNodeMask = d3d12TextureData->m_nNodeMask;
             texData.m_pCommandQueue = d3d12TextureData->m_pCommandQueue;
-            texData.m_pResource = d3d12RenderTargets_[0].Get();
+            texData.m_pResource = d3d12RenderTargets_[0].Get ();
 
             texture.handle = static_cast<void*> (&texData);
 
-            overlay_->ClearOverlayTexture(overlayHandle_);
-            overlay_->SetOverlayTexture(overlayHandle_, &texture);
-            overlay_->ShowOverlay(overlayHandle_);
+            overlay_->ClearOverlayTexture (overlayHandle_);
+            overlay_->SetOverlayTexture (overlayHandle_, &texture);
+            overlay_->ShowOverlay (overlayHandle_);
             return;
         }
         }

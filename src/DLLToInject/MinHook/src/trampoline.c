@@ -29,17 +29,17 @@
 #include <windows.h>
 
 #ifndef ARRAYSIZE
-    #define ARRAYSIZE(A) (sizeof(A)/sizeof((A)[0]))
+#define ARRAYSIZE(A) (sizeof(A)/sizeof((A)[0]))
 #endif
 
 #if defined(_M_X64) || defined(__x86_64__)
-    #include "./hde/hde64.h"
-    typedef hde64s HDE;
-    #define HDE_DISASM(code, hs) hde64_disasm(code, hs)
+#include "./hde/hde64.h"
+typedef hde64s HDE;
+#define HDE_DISASM(code, hs) hde64_disasm(code, hs)
 #else
-    #include "./hde/hde32.h"
-    typedef hde32s HDE;
-    #define HDE_DISASM(code, hs) hde32_disasm(code, hs)
+#include "./hde/hde32.h"
+typedef hde32s HDE;
+#define HDE_DISASM(code, hs) hde32_disasm(code, hs)
 #endif
 
 #include "trampoline.h"
@@ -47,13 +47,13 @@
 
 // Maximum size of a trampoline function.
 #if defined(_M_X64) || defined(__x86_64__)
-    #define TRAMPOLINE_MAX_SIZE (MEMORY_SLOT_SIZE - sizeof(JMP_ABS))
+#define TRAMPOLINE_MAX_SIZE (MEMORY_SLOT_SIZE - sizeof(JMP_ABS))
 #else
-    #define TRAMPOLINE_MAX_SIZE MEMORY_SLOT_SIZE
+#define TRAMPOLINE_MAX_SIZE MEMORY_SLOT_SIZE
 #endif
 
 //-------------------------------------------------------------------------
-static BOOL IsCodePadding(LPBYTE pInst, UINT size)
+static BOOL IsCodePadding (LPBYTE pInst, UINT size)
 {
     UINT i;
 
@@ -69,7 +69,7 @@ static BOOL IsCodePadding(LPBYTE pInst, UINT size)
 }
 
 //-------------------------------------------------------------------------
-BOOL CreateTrampolineFunction(PTRAMPOLINE ct)
+BOOL CreateTrampolineFunction (PTRAMPOLINE ct)
 {
 #if defined(_M_X64) || defined(__x86_64__)
     CALL_ABS call = {
@@ -101,41 +101,41 @@ BOOL CreateTrampolineFunction(PTRAMPOLINE ct)
     };
 #endif
 
-    UINT8     oldPos   = 0;
-    UINT8     newPos   = 0;
-    ULONG_PTR jmpDest  = 0;     // Destination address of an internal jump.
+    UINT8     oldPos = 0;
+    UINT8     newPos = 0;
+    ULONG_PTR jmpDest = 0;     // Destination address of an internal jump.
     BOOL      finished = FALSE; // Is the function completed?
 #if defined(_M_X64) || defined(__x86_64__)
     UINT8     instBuf[16];
 #endif
 
     ct->patchAbove = FALSE;
-    ct->nIP        = 0;
+    ct->nIP = 0;
 
     do
     {
         HDE       hs;
         UINT      copySize;
         LPVOID    pCopySrc;
-        ULONG_PTR pOldInst = (ULONG_PTR)ct->pTarget     + oldPos;
+        ULONG_PTR pOldInst = (ULONG_PTR)ct->pTarget + oldPos;
         ULONG_PTR pNewInst = (ULONG_PTR)ct->pTrampoline + newPos;
 
-        copySize = HDE_DISASM((LPVOID)pOldInst, &hs);
+        copySize = HDE_DISASM ((LPVOID)pOldInst, &hs);
         if (hs.flags & F_ERROR)
             return FALSE;
 
         pCopySrc = (LPVOID)pOldInst;
-        if (oldPos >= sizeof(JMP_REL))
+        if (oldPos >= sizeof (JMP_REL))
         {
             // The trampoline function is long enough.
             // Complete the function with the jump to the target function.
 #if defined(_M_X64) || defined(__x86_64__)
             jmp.address = pOldInst;
 #else
-            jmp.operand = (UINT32)(pOldInst - (pNewInst + sizeof(jmp)));
+            jmp.operand = (UINT32)(pOldInst - (pNewInst + sizeof (jmp)));
 #endif
             pCopySrc = &jmp;
-            copySize = sizeof(jmp);
+            copySize = sizeof (jmp);
 
             finished = TRUE;
         }
@@ -149,9 +149,9 @@ BOOL CreateTrampolineFunction(PTRAMPOLINE ct)
 
             // Avoid using memcpy to reduce the footprint.
 #ifndef _MSC_VER
-            memcpy(instBuf, (LPBYTE)pOldInst, copySize);
+            memcpy (instBuf, (LPBYTE)pOldInst, copySize);
 #else
-            __movsb(instBuf, (LPBYTE)pOldInst, copySize);
+            __movsb (instBuf, (LPBYTE)pOldInst, copySize);
 #endif
             pCopySrc = instBuf;
 
@@ -172,10 +172,10 @@ BOOL CreateTrampolineFunction(PTRAMPOLINE ct)
 #if defined(_M_X64) || defined(__x86_64__)
             call.address = dest;
 #else
-            call.operand = (UINT32)(dest - (pNewInst + sizeof(call)));
+            call.operand = (UINT32)(dest - (pNewInst + sizeof (call)));
 #endif
             pCopySrc = &call;
-            copySize = sizeof(call);
+            copySize = sizeof (call);
         }
         else if ((hs.opcode & 0xFD) == 0xE9)
         {
@@ -189,7 +189,7 @@ BOOL CreateTrampolineFunction(PTRAMPOLINE ct)
 
             // Simply copy an internal jump.
             if ((ULONG_PTR)ct->pTarget <= dest
-                && dest < ((ULONG_PTR)ct->pTarget + sizeof(JMP_REL)))
+                && dest < ((ULONG_PTR)ct->pTarget + sizeof (JMP_REL)))
             {
                 if (jmpDest < dest)
                     jmpDest = dest;
@@ -199,10 +199,10 @@ BOOL CreateTrampolineFunction(PTRAMPOLINE ct)
 #if defined(_M_X64) || defined(__x86_64__)
                 jmp.address = dest;
 #else
-                jmp.operand = (UINT32)(dest - (pNewInst + sizeof(jmp)));
+                jmp.operand = (UINT32)(dest - (pNewInst + sizeof (jmp)));
 #endif
                 pCopySrc = &jmp;
-                copySize = sizeof(jmp);
+                copySize = sizeof (jmp);
 
                 // Exit the function If it is not in the branch
                 finished = (pOldInst >= jmpDest);
@@ -223,7 +223,7 @@ BOOL CreateTrampolineFunction(PTRAMPOLINE ct)
 
             // Simply copy an internal jump.
             if ((ULONG_PTR)ct->pTarget <= dest
-                && dest < ((ULONG_PTR)ct->pTarget + sizeof(JMP_REL)))
+                && dest < ((ULONG_PTR)ct->pTarget + sizeof (JMP_REL)))
             {
                 if (jmpDest < dest)
                     jmpDest = dest;
@@ -238,14 +238,14 @@ BOOL CreateTrampolineFunction(PTRAMPOLINE ct)
                 UINT8 cond = ((hs.opcode != 0x0F ? hs.opcode : hs.opcode2) & 0x0F);
 #if defined(_M_X64) || defined(__x86_64__)
                 // Invert the condition in x64 mode to simplify the conditional jump logic.
-                jcc.opcode  = 0x71 ^ cond;
+                jcc.opcode = 0x71 ^ cond;
                 jcc.address = dest;
 #else
                 jcc.opcode1 = 0x80 | cond;
-                jcc.operand = (UINT32)(dest - (pNewInst + sizeof(jcc)));
+                jcc.operand = (UINT32)(dest - (pNewInst + sizeof (jcc)));
 #endif
                 pCopySrc = &jcc;
-                copySize = sizeof(jcc);
+                copySize = sizeof (jcc);
             }
         }
         else if ((hs.opcode & 0xFE) == 0xC2)
@@ -265,7 +265,7 @@ BOOL CreateTrampolineFunction(PTRAMPOLINE ct)
             return FALSE;
 
         // Trampoline function has too many instructions.
-        if (ct->nIP >= ARRAYSIZE(ct->oldIPs))
+        if (ct->nIP >= ARRAYSIZE (ct->oldIPs))
             return FALSE;
 
         ct->oldIPs[ct->nIP] = oldPos;
@@ -274,31 +274,30 @@ BOOL CreateTrampolineFunction(PTRAMPOLINE ct)
 
         // Avoid using memcpy to reduce the footprint.
 #ifndef _MSC_VER
-        memcpy((LPBYTE)ct->pTrampoline + newPos, pCopySrc, copySize);
+        memcpy ((LPBYTE)ct->pTrampoline + newPos, pCopySrc, copySize);
 #else
-        __movsb((LPBYTE)ct->pTrampoline + newPos, pCopySrc, copySize);
+        __movsb ((LPBYTE)ct->pTrampoline + newPos, pCopySrc, copySize);
 #endif
         newPos += copySize;
         oldPos += hs.len;
-    }
-    while (!finished);
+    } while (!finished);
 
     // Is there enough place for a long jump?
-    if (oldPos < sizeof(JMP_REL)
-        && !IsCodePadding((LPBYTE)ct->pTarget + oldPos, sizeof(JMP_REL) - oldPos))
+    if (oldPos < sizeof (JMP_REL)
+        && !IsCodePadding ((LPBYTE)ct->pTarget + oldPos, sizeof (JMP_REL) - oldPos))
     {
         // Is there enough place for a short jump?
-        if (oldPos < sizeof(JMP_REL_SHORT)
-            && !IsCodePadding((LPBYTE)ct->pTarget + oldPos, sizeof(JMP_REL_SHORT) - oldPos))
+        if (oldPos < sizeof (JMP_REL_SHORT)
+            && !IsCodePadding ((LPBYTE)ct->pTarget + oldPos, sizeof (JMP_REL_SHORT) - oldPos))
         {
             return FALSE;
         }
 
         // Can we place the long jump above the function?
-        if (!IsExecutableAddress((LPBYTE)ct->pTarget - sizeof(JMP_REL)))
+        if (!IsExecutableAddress ((LPBYTE)ct->pTarget - sizeof (JMP_REL)))
             return FALSE;
 
-        if (!IsCodePadding((LPBYTE)ct->pTarget - sizeof(JMP_REL), sizeof(JMP_REL)))
+        if (!IsCodePadding ((LPBYTE)ct->pTarget - sizeof (JMP_REL), sizeof (JMP_REL)))
             return FALSE;
 
         ct->patchAbove = TRUE;
@@ -309,7 +308,7 @@ BOOL CreateTrampolineFunction(PTRAMPOLINE ct)
     jmp.address = (ULONG_PTR)ct->pDetour;
 
     ct->pRelay = (LPBYTE)ct->pTrampoline + newPos;
-    memcpy(ct->pRelay, &jmp, sizeof(jmp));
+    memcpy (ct->pRelay, &jmp, sizeof (jmp));
 #endif
 
     return TRUE;

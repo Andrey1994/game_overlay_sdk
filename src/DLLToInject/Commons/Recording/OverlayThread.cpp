@@ -33,50 +33,50 @@ namespace GameOverlay {
 
     HWND g_windowHandle = NULL;
 
-    OverlayThread::~OverlayThread()
+    OverlayThread::~OverlayThread ()
     {
-        Stop();
+        Stop ();
     }
 
-    void OverlayThread::Stop()
+    void OverlayThread::Stop ()
     {
-        HANDLE thread = reinterpret_cast<HANDLE>(overlayThread_.native_handle());
+        HANDLE thread = reinterpret_cast<HANDLE>(overlayThread_.native_handle ());
         if (thread)
         {
-            const auto threadID = GetThreadId(thread);
-            if (overlayThread_.joinable())
+            const auto threadID = GetThreadId (thread);
+            if (overlayThread_.joinable ())
             {
                 this->quit_ = true;
-                overlayThread_.join();
+                overlayThread_.join ();
             }
         }
     }
 
-    void OverlayThread::Start()
+    void OverlayThread::Start ()
     {
-        g_messageLog.LogInfo("OverlayThread", "Start overlay thread ");
+        g_messageLog.LogInfo ("OverlayThread", "Start overlay thread ");
         quit_ = false;
-        overlayThread_ = std::thread([this] {this->ThreadProc();});
+        overlayThread_ = std::thread ([this] {this->ThreadProc (); });
     }
 
-    void OverlayThread::ThreadProc()
+    void OverlayThread::ThreadProc ()
     {
-        RecordingState::GetInstance().Start();
-        HANDLE mapFile = OpenFileMapping(
+        RecordingState::GetInstance ().Start ();
+        HANDLE mapFile = OpenFileMapping (
             FILE_MAP_ALL_ACCESS,
             FALSE,
-            TEXT("Global\\GameOverlayMap")
+            TEXT ("Global\\GameOverlayMap")
         );
         if (mapFile == NULL)
         {
-            g_messageLog.LogError("OverlayThread", "Failed to open file mapping", GetLastError());
+            g_messageLog.LogError ("OverlayThread", "Failed to open file mapping", GetLastError ());
         }
-        g_messageLog.LogInfo("OverlayThread", "Opened mapped file");
+        g_messageLog.LogInfo ("OverlayThread", "Opened mapped file");
         while (!this->quit_)
         {
             if (mapFile)
             {
-                char *buf = (char *)MapViewOfFile(
+                char *buf = (char *)MapViewOfFile (
                     mapFile,
                     FILE_MAP_ALL_ACCESS,
                     0,
@@ -85,16 +85,16 @@ namespace GameOverlay {
                 );
                 if (buf)
                 {
-                    g_messageLog.LogInfo("OverlayThread", "Read from mapped file");
-                    RecordingState::GetInstance().SetOverlayMessage(buf);
-                    UnmapViewOfFile(buf);
+                    g_messageLog.LogInfo ("OverlayThread", "Read from mapped file");
+                    RecordingState::GetInstance ().SetOverlayMessage (buf);
+                    UnmapViewOfFile (buf);
                 }
                 else
                 {
-                    g_messageLog.LogError("OverlayThread", "Failed to read from mapped file");
+                    g_messageLog.LogError ("OverlayThread", "Failed to read from mapped file");
                 }
             }
-            Sleep(500);
+            Sleep (500);
         }
     }
 

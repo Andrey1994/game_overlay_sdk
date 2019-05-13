@@ -56,16 +56,16 @@ namespace GameOverlay {
             unsigned short ordinal;
         };
 
-        HMODULE get_current_module()
+        HMODULE get_current_module ()
         {
             HMODULE handle = nullptr;
-            GetModuleHandleExW(
+            GetModuleHandleExW (
                 GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
                 reinterpret_cast<LPCWSTR>(&get_current_module), &handle);
 
             return handle;
         }
-        std::vector<module_export> get_module_exports(HMODULE handle)
+        std::vector<module_export> get_module_exports (HMODULE handle)
         {
             std::vector<module_export> exports;
             const auto imagebase = reinterpret_cast<const BYTE *>(handle);
@@ -87,7 +87,7 @@ namespace GameOverlay {
             }
 
             const auto count = static_cast<size_t>(exportdir->NumberOfNames);
-            exports.reserve(count);
+            exports.reserve (count);
 
             for (size_t i = 0; i < count; ++i) {
                 module_export symbol;
@@ -100,7 +100,7 @@ namespace GameOverlay {
                     imagebase + reinterpret_cast<const DWORD *>(
                         imagebase + exportdir->AddressOfFunctions)[symbol.ordinal - exportbase]));
 
-                exports.push_back(std::move(symbol));
+                exports.push_back (std::move (symbol));
             }
 
             return exports;
@@ -112,26 +112,26 @@ namespace GameOverlay {
         std::vector<std::pair<hook, hook_method>> s_hooks;
         std::unordered_map<hook::address, hook::address *> s_vtable_addresses;
 
-        bool install_hook(hook::address target, hook::address replacement, hook_method method)
+        bool install_hook (hook::address target, hook::address replacement, hook_method method)
         {
-            hook hook(target, replacement);
+            hook hook (target, replacement);
             hook.trampoline = target;
 
             hook::status status = hook::status::unknown;
 
             switch (method) {
             case hook_method::function_hook: {
-                status = hook.install();
+                status = hook.install ();
                 break;
             }
             case hook_method::vtable_hook: {
                 DWORD protection = PAGE_READWRITE;
-                const auto target_address = s_vtable_addresses.at(target);
+                const auto target_address = s_vtable_addresses.at (target);
 
-                if (VirtualProtect(target_address, sizeof(*target_address), protection, &protection)) {
+                if (VirtualProtect (target_address, sizeof (*target_address), protection, &protection)) {
                     *target_address = replacement;
 
-                    VirtualProtect(target_address, sizeof(*target_address), protection, &protection);
+                    VirtualProtect (target_address, sizeof (*target_address), protection, &protection);
 
                     status = hook::status::success;
                 }
@@ -143,34 +143,34 @@ namespace GameOverlay {
             }
 
             if (status != hook::status::success) {
-                g_messageLog.LogVerbose("install_hook", "Hook installation failed");
+                g_messageLog.LogVerbose ("install_hook", "Hook installation failed");
                 return false;
             }
 
-            const critical_section::lock lock(s_cs);
+            const critical_section::lock lock (s_cs);
 
-            s_hooks.emplace_back(std::move(hook), method);
+            s_hooks.emplace_back (std::move (hook), method);
 
-            g_messageLog.LogVerbose("install_hook", "Successfully installed hook");
+            g_messageLog.LogVerbose ("install_hook", "Successfully installed hook");
             return true;
         }
-        bool install_hook(const HMODULE target_module, const HMODULE replacement_module, hook_method method)
+        bool install_hook (const HMODULE target_module, const HMODULE replacement_module, hook_method method)
         {
-            assert(target_module != nullptr);
-            assert(replacement_module != nullptr);
+            assert (target_module != nullptr);
+            assert (replacement_module != nullptr);
 
             // Load export tables
-            const auto target_exports = get_module_exports(target_module);
-            const auto replacement_exports = get_module_exports(replacement_module);
+            const auto target_exports = get_module_exports (target_module);
+            const auto replacement_exports = get_module_exports (replacement_module);
 
-            if (target_exports.empty()) {
-                g_messageLog.LogVerbose("install_hook", "No exports found");
+            if (target_exports.empty ()) {
+                g_messageLog.LogVerbose ("install_hook", "No exports found");
                 return false;
             }
 
             size_t install_count = 0;
             std::vector<std::pair<hook::address, hook::address>> matches;
-            matches.reserve(replacement_exports.size());
+            matches.reserve (replacement_exports.size ());
 
             // Analyze export table
             for (const auto &symbol : target_exports) {
@@ -179,30 +179,30 @@ namespace GameOverlay {
                 }
 
                 // Find appropriate replacement
-                const auto it = std::find_if(replacement_exports.cbegin(), replacement_exports.cend(),
-                    [&symbol](const module_export &moduleexport) {
-                    return std::strcmp(moduleexport.name, symbol.name) == 0;
+                const auto it = std::find_if (replacement_exports.cbegin (), replacement_exports.cend (),
+                    [&symbol] (const module_export &moduleexport) {
+                    return std::strcmp (moduleexport.name, symbol.name) == 0;
                 });
 
-                if (it == replacement_exports.cend()) {
+                if (it == replacement_exports.cend ()) {
                     continue;
                 }
-                g_messageLog.LogVerbose("install_hook", "Found matching function: " + std::string(symbol.name));
-                matches.push_back(std::make_pair(symbol.address, it->address));
+                g_messageLog.LogVerbose ("install_hook", "Found matching function: " + std::string (symbol.name));
+                matches.push_back (std::make_pair (symbol.address, it->address));
             }
 
             // Hook matching exports
             for (const auto &match : matches) {
-                if (install_hook(match.first, match.second, method)) {
+                if (install_hook (match.first, match.second, method)) {
                     install_count++;
                 }
             }
-            g_messageLog.LogVerbose("install_hook", "Install count: " + std::to_string(install_count));
+            g_messageLog.LogVerbose ("install_hook", "Install count: " + std::to_string (install_count));
             return install_count != 0;
         }
-        bool uninstall_hook(hook &hook, hook_method method)
+        bool uninstall_hook (hook &hook, hook_method method)
         {
-            if (hook.uninstalled()) {
+            if (hook.uninstalled ()) {
                 return true;
             }
 
@@ -210,18 +210,18 @@ namespace GameOverlay {
 
             switch (method) {
             case hook_method::function_hook: {
-                status = hook.uninstall();
+                status = hook.uninstall ();
                 break;
             }
             case hook_method::vtable_hook: {
                 DWORD protection = PAGE_READWRITE;
-                const auto target_address = s_vtable_addresses.at(hook.target);
+                const auto target_address = s_vtable_addresses.at (hook.target);
 
-                if (VirtualProtect(target_address, sizeof(*target_address), protection, &protection)) {
+                if (VirtualProtect (target_address, sizeof (*target_address), protection, &protection)) {
                     *target_address = hook.target;
-                    s_vtable_addresses.erase(hook.target);
+                    s_vtable_addresses.erase (hook.target);
 
-                    VirtualProtect(target_address, sizeof(*target_address), protection, &protection);
+                    VirtualProtect (target_address, sizeof (*target_address), protection, &protection);
 
                     status = hook::status::success;
                 }
@@ -240,23 +240,23 @@ namespace GameOverlay {
 
             return true;
         }
-        bool replace_hook(const HMODULE target_module, const HMODULE replacement_module, hook_method method)
+        bool replace_hook (const HMODULE target_module, const HMODULE replacement_module, hook_method method)
         {
-            assert(target_module != nullptr);
-            assert(replacement_module != nullptr);
+            assert (target_module != nullptr);
+            assert (replacement_module != nullptr);
 
             // Load export tables
-            const auto target_exports = get_module_exports(target_module);
-            const auto replacement_exports = get_module_exports(replacement_module);
+            const auto target_exports = get_module_exports (target_module);
+            const auto replacement_exports = get_module_exports (replacement_module);
 
-            if (target_exports.empty()) {
-                g_messageLog.LogVerbose("install_hook", "No exports found");
+            if (target_exports.empty ()) {
+                g_messageLog.LogVerbose ("install_hook", "No exports found");
                 return false;
             }
 
             size_t install_count = 0;
             std::vector<std::pair<hook::address, hook::address>> matches;
-            matches.reserve(replacement_exports.size());
+            matches.reserve (replacement_exports.size ());
 
             // Analyze export table
             for (const auto &symbol : target_exports) {
@@ -265,194 +265,194 @@ namespace GameOverlay {
                 }
 
                 // Find appropriate replacement
-                const auto it = std::find_if(replacement_exports.cbegin(), replacement_exports.cend(),
-                    [&symbol](const module_export &moduleexport) {
-                    return std::strcmp(moduleexport.name, symbol.name) == 0;
+                const auto it = std::find_if (replacement_exports.cbegin (), replacement_exports.cend (),
+                    [&symbol] (const module_export &moduleexport) {
+                    return std::strcmp (moduleexport.name, symbol.name) == 0;
                 });
 
-                if (it == replacement_exports.cend()) {
+                if (it == replacement_exports.cend ()) {
                     continue;
                 }
-                g_messageLog.LogVerbose("install_hook", "Found matching function: " + std::string(symbol.name));
-                matches.push_back(std::make_pair(symbol.address, it->address));
+                g_messageLog.LogVerbose ("install_hook", "Found matching function: " + std::string (symbol.name));
+                matches.push_back (std::make_pair (symbol.address, it->address));
             }
 
             // uninstall in case there exist already a hook
             for (const auto &match : matches) {
-                hook hook(match.first, match.second);
+                hook hook (match.first, match.second);
                 hook.trampoline = match.first;
-                uninstall_hook(hook, method);
+                uninstall_hook (hook, method);
                 // install new hook
-                if (install_hook(match.first, match.second, method)) {
+                if (install_hook (match.first, match.second, method)) {
                     install_count++;
                 }
             }
-            g_messageLog.LogVerbose("install_hook", "Install count: " + std::to_string(install_count));
+            g_messageLog.LogVerbose ("install_hook", "Install count: " + std::to_string (install_count));
             return install_count != 0;
         }
-        hook find_hook(hook::address replacement)
+        hook find_hook (hook::address replacement)
         {
-            const critical_section::lock lock(s_cs);
+            const critical_section::lock lock (s_cs);
 
-            const auto it = std::find_if(s_hooks.cbegin(), s_hooks.cend(),
-                [replacement](const std::pair<hook, hook_method> &hook) {
+            const auto it = std::find_if (s_hooks.cbegin (), s_hooks.cend (),
+                [replacement] (const std::pair<hook, hook_method> &hook) {
                 return hook.first.replacement == replacement;
             });
 
-            if (it == s_hooks.cend()) {
-                return hook();
+            if (it == s_hooks.cend ()) {
+                return hook ();
             }
 
             return it->first;
         }
         template <typename T>
-        inline T find_hook_trampoline_unchecked(T replacement)
+        inline T find_hook_trampoline_unchecked (T replacement)
         {
-            return reinterpret_cast<T>(find_hook(reinterpret_cast<hook::address>(replacement)).call());
+            return reinterpret_cast<T>(find_hook (reinterpret_cast<hook::address>(replacement)).call ());
         }
 
-        HMODULE WINAPI HookLoadLibraryA(LPCSTR lpFileName)
+        HMODULE WINAPI HookLoadLibraryA (LPCSTR lpFileName)
         {
             if (lpFileName == nullptr) {
-                g_messageLog.LogError("HookLoadLibraryA", "Called with nullptr -> Abort");
+                g_messageLog.LogError ("HookLoadLibraryA", "Called with nullptr -> Abort");
                 return nullptr;
             }
 
-            g_messageLog.LogVerbose("HookLoadLibraryA", "Load library " + std::string(lpFileName));
+            g_messageLog.LogVerbose ("HookLoadLibraryA", "Load library " + std::string (lpFileName));
 
-            static const auto trampoline = find_hook_trampoline_unchecked(&HookLoadLibraryA);
+            static const auto trampoline = find_hook_trampoline_unchecked (&HookLoadLibraryA);
 
-            const HMODULE handle = trampoline(lpFileName);
+            const HMODULE handle = trampoline (lpFileName);
 
-            if (handle == nullptr || handle == get_current_module()) {
+            if (handle == nullptr || handle == get_current_module ()) {
                 return handle;
             }
 
-            const critical_section::lock lock(s_cs);
+            const critical_section::lock lock (s_cs);
 
-            HookAllModules();
+            HookAllModules ();
 
-            const auto remove = std::remove_if(s_delayed_hook_paths.begin(), s_delayed_hook_paths.end(),
-                [lpFileName](const std::wstring &path) {
+            const auto remove = std::remove_if (s_delayed_hook_paths.begin (), s_delayed_hook_paths.end (),
+                [lpFileName] (const std::wstring &path) {
                 HMODULE delayed_handle = nullptr;
-                GetModuleHandleExW(0, path.c_str(), &delayed_handle);
+                GetModuleHandleExW (0, path.c_str (), &delayed_handle);
 
                 if (delayed_handle == nullptr) {
                     return false;
                 }
 
-                s_delayed_hook_modules.push_back(delayed_handle);
+                s_delayed_hook_modules.push_back (delayed_handle);
 
-                return install_hook(delayed_handle, get_current_module(),
+                return install_hook (delayed_handle, get_current_module (),
                     hook_method::function_hook);
             });
 
-            s_delayed_hook_paths.erase(remove, s_delayed_hook_paths.end());
+            s_delayed_hook_paths.erase (remove, s_delayed_hook_paths.end ());
 
             return handle;
         }
-        HMODULE WINAPI HookLoadLibraryExA(LPCSTR lpFileName, HANDLE hFile, DWORD dwFlags)
+        HMODULE WINAPI HookLoadLibraryExA (LPCSTR lpFileName, HANDLE hFile, DWORD dwFlags)
         {
             if (lpFileName == nullptr) {
-                g_messageLog.LogError("HookLoadLibraryExA", "Called with nullptr -> Abort");
+                g_messageLog.LogError ("HookLoadLibraryExA", "Called with nullptr -> Abort");
                 return nullptr;
             }
 
-            g_messageLog.LogVerbose("HookLoadLibraryExA", "Load library " + std::string(lpFileName));
+            g_messageLog.LogVerbose ("HookLoadLibraryExA", "Load library " + std::string (lpFileName));
 
             if (dwFlags == 0) {
-                return HookLoadLibraryA(lpFileName);
+                return HookLoadLibraryA (lpFileName);
             }
 
-            static const auto trampoline = find_hook_trampoline_unchecked(&HookLoadLibraryExA);
+            static const auto trampoline = find_hook_trampoline_unchecked (&HookLoadLibraryExA);
 
-            return trampoline(lpFileName, hFile, dwFlags);
+            return trampoline (lpFileName, hFile, dwFlags);
         }
-        HMODULE WINAPI HookLoadLibraryW(LPCWSTR lpFileName)
+        HMODULE WINAPI HookLoadLibraryW (LPCWSTR lpFileName)
         {
             if (lpFileName == nullptr) {
-                g_messageLog.LogError("HookLoadLibraryW", "Called with nullptr -> Abort");
+                g_messageLog.LogError ("HookLoadLibraryW", "Called with nullptr -> Abort");
                 return nullptr;
             }
 
-            g_messageLog.LogVerbose("HookLoadLibraryW", L"Load library " + std::wstring(lpFileName));
+            g_messageLog.LogVerbose ("HookLoadLibraryW", L"Load library " + std::wstring (lpFileName));
 
-            static const auto trampoline = find_hook_trampoline_unchecked(&HookLoadLibraryW);
+            static const auto trampoline = find_hook_trampoline_unchecked (&HookLoadLibraryW);
 
-            const HMODULE handle = trampoline(lpFileName);
+            const HMODULE handle = trampoline (lpFileName);
 
-            if (handle == nullptr || handle == get_current_module()) {
+            if (handle == nullptr || handle == get_current_module ()) {
                 return handle;
             }
 
-            const critical_section::lock lock(s_cs);
+            const critical_section::lock lock (s_cs);
 
-            HookAllModules();
+            HookAllModules ();
 
-            const auto remove = std::remove_if(s_delayed_hook_paths.begin(), s_delayed_hook_paths.end(),
-                [lpFileName](const std::wstring &path) {
+            const auto remove = std::remove_if (s_delayed_hook_paths.begin (), s_delayed_hook_paths.end (),
+                [lpFileName] (const std::wstring &path) {
                 HMODULE delayed_handle = nullptr;
-                GetModuleHandleExW(0, path.c_str(), &delayed_handle);
+                GetModuleHandleExW (0, path.c_str (), &delayed_handle);
 
                 if (delayed_handle == nullptr) {
                     return false;
                 }
 
-                s_delayed_hook_modules.push_back(delayed_handle);
+                s_delayed_hook_modules.push_back (delayed_handle);
 
-                return install_hook(delayed_handle, get_current_module(),
+                return install_hook (delayed_handle, get_current_module (),
                     hook_method::function_hook);
             });
 
-            s_delayed_hook_paths.erase(remove, s_delayed_hook_paths.end());
+            s_delayed_hook_paths.erase (remove, s_delayed_hook_paths.end ());
 
             return handle;
         }
-        HMODULE WINAPI HookLoadLibraryExW(LPCWSTR lpFileName, HANDLE hFile, DWORD dwFlags)
+        HMODULE WINAPI HookLoadLibraryExW (LPCWSTR lpFileName, HANDLE hFile, DWORD dwFlags)
         {
             if (lpFileName == nullptr) {
-                g_messageLog.LogError("HookLoadLibraryExW", "Called with nullptr -> Abort");
+                g_messageLog.LogError ("HookLoadLibraryExW", "Called with nullptr -> Abort");
                 return nullptr;
             }
 
-            g_messageLog.LogVerbose("HookLoadLibraryExW", L"Load library " + std::wstring(lpFileName));
+            g_messageLog.LogVerbose ("HookLoadLibraryExW", L"Load library " + std::wstring (lpFileName));
 
             if (dwFlags == 0) {
-                return HookLoadLibraryW(lpFileName);
+                return HookLoadLibraryW (lpFileName);
             }
 
-            static const auto trampoline = find_hook_trampoline_unchecked(&HookLoadLibraryExW);
+            static const auto trampoline = find_hook_trampoline_unchecked (&HookLoadLibraryExW);
 
-            return trampoline(lpFileName, hFile, dwFlags);
+            return trampoline (lpFileName, hFile, dwFlags);
         }
 
-        std::wstring GetProcessName(LPCTSTR lpApplicationName, LPTSTR lpCommandLine)
+        std::wstring GetProcessName (LPCTSTR lpApplicationName, LPTSTR lpCommandLine)
         {
             std::wstring path;
             size_t processStart = 0;
             size_t processSize = 0;
             if (lpApplicationName) {
-                path = std::wstring(lpApplicationName);
-                processStart = path.find_last_of('\\') + 1;
-                processSize = path.size() - processStart;
+                path = std::wstring (lpApplicationName);
+                processStart = path.find_last_of ('\\') + 1;
+                processSize = path.size () - processStart;
             }
             else if (lpCommandLine) {
-                path = std::wstring(lpCommandLine);
-                const auto exePathEnd = path.find_first_of(L'"', 1);
-                processStart = path.find_last_of('\\', exePathEnd) + 1;
+                path = std::wstring (lpCommandLine);
+                const auto exePathEnd = path.find_first_of (L'"', 1);
+                processStart = path.find_last_of ('\\', exePathEnd) + 1;
                 processSize = exePathEnd - processStart;
             }
 
-            return path.substr(processStart, processSize);
+            return path.substr (processStart, processSize);
         }
 
-        bool IsDLLInjectionProcess(const std::wstring &processName)
+        bool IsDLLInjectionProcess (const std::wstring &processName)
         {
-            return (processName.compare(0, 11, L"DLLInjector") == 0);
+            return (processName.compare (0, 11, L"DLLInjector") == 0);
         }
     }
 
-    void HookAllModulesInSnapshot(const Win32Handle& hModuleSnapshot)
+    void HookAllModulesInSnapshot (const Win32Handle& hModuleSnapshot)
     {
 #ifdef UNICODE
 #undef MODULEENTRY32
@@ -461,12 +461,12 @@ namespace GameOverlay {
 #endif
 
         MODULEENTRY32W me32 = {};
-        me32.dwSize = sizeof(MODULEENTRY32W);
+        me32.dwSize = sizeof (MODULEENTRY32W);
 
-        BOOL success = Module32FirstW(hModuleSnapshot.Get(), &me32);
+        BOOL success = Module32FirstW (hModuleSnapshot.Get (), &me32);
         if (success == FALSE)
         {
-            g_messageLog.LogVerbose("HookAllModulesInSnapshot", "Could not load first module", GetLastError());
+            g_messageLog.LogVerbose ("HookAllModulesInSnapshot", "Could not load first module", GetLastError ());
             return;
         }
 
@@ -485,18 +485,18 @@ namespace GameOverlay {
 
         for (auto& entry : filter)
         {
-            std::transform(entry.begin(), entry.end(), entry.begin(), ::tolower);
+            std::transform (entry.begin (), entry.end (), entry.begin (), ::tolower);
         }
 
         do
         {
-            auto szExePathString = std::wstring(me32.szExePath);
-            std::transform(szExePathString.begin(), szExePathString.end(), szExePathString.begin(), ::tolower);
+            auto szExePathString = std::wstring (me32.szExePath);
+            std::transform (szExePathString.begin (), szExePathString.end (), szExePathString.begin (), ::tolower);
 
             bool skip = false;
             for (auto& entry : filter)
             {
-                if (szExePathString.find(entry) != std::wstring::npos)
+                if (szExePathString.find (entry) != std::wstring::npos)
                 {
                     // If szExePathString contains entry we skip it
                     skip = true;
@@ -506,13 +506,13 @@ namespace GameOverlay {
 
             if (skip)
             {
-                g_messageLog.LogVerbose("HookAllModulesInSnapshot", L"Skip module: " + szExePathString);
+                g_messageLog.LogVerbose ("HookAllModulesInSnapshot", L"Skip module: " + szExePathString);
                 continue;
             }
 
             for (auto& entry : g_filter)
             {
-                if (szExePathString.find(entry) != std::wstring::npos)
+                if (szExePathString.find (entry) != std::wstring::npos)
                 {
                     // If szExePathString contains entry we skip it
                     skip = true;
@@ -522,37 +522,37 @@ namespace GameOverlay {
 
             if (skip)
             {
-                g_messageLog.LogVerbose("HookAllModulesInSnapshot", L"Module already checked: " + szExePathString);
+                g_messageLog.LogVerbose ("HookAllModulesInSnapshot", L"Module already checked: " + szExePathString);
                 continue;
             }
 
-            g_messageLog.LogVerbose("HookAllModulesInSnapshot", L"Found module: " + szExePathString);
-            s_delayed_hook_modules.push_back(me32.hModule);
-            HMODULE handle = GetModuleHandle((LPCWSTR)me32.szExePath);
+            g_messageLog.LogVerbose ("HookAllModulesInSnapshot", L"Found module: " + szExePathString);
+            s_delayed_hook_modules.push_back (me32.hModule);
+            HMODULE handle = GetModuleHandle ((LPCWSTR)me32.szExePath);
             if (handle != nullptr)
             {
-                install_hook(handle, get_current_module(), hook_method::function_hook);
-                g_filter.push_back(szExePathString);
+                install_hook (handle, get_current_module (), hook_method::function_hook);
+                g_filter.push_back (szExePathString);
             }
-        } while (ret == 0 && Module32NextW(hModuleSnapshot.Get(), &me32));
+        } while (ret == 0 && Module32NextW (hModuleSnapshot.Get (), &me32));
     }
 
-    void HookAllModules()
+    void HookAllModules ()
     {
         // https://github.com/baldurk/renderdoc/blob/master/renderdoc/os/win32/win32_hook.cpp
         // Retrieve all modules in IAT
         // Install function hook for all of them and replace them with our module handle
-        g_messageLog.LogVerbose("HookAllModules", "Entered function");
+        g_messageLog.LogVerbose ("HookAllModules", "Entered function");
 
         // Restrict the number of retries
         for (int i = 0; i < 10; i++)
         {
-            Win32Handle hModuleSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, GetCurrentProcessId());
+            Win32Handle hModuleSnapshot = CreateToolhelp32Snapshot (TH32CS_SNAPMODULE, GetCurrentProcessId ());
 
-            if (hModuleSnapshot.Get() == INVALID_HANDLE_VALUE)
+            if (hModuleSnapshot.Get () == INVALID_HANDLE_VALUE)
             {
-                DWORD err = GetLastError();
-                g_messageLog.LogVerbose("HookAllModules", "Create snapshot " + std::to_string(i) + " exited with error", err);
+                DWORD err = GetLastError ();
+                g_messageLog.LogVerbose ("HookAllModules", "Create snapshot " + std::to_string (i) + " exited with error", err);
 
                 if (err == ERROR_BAD_LENGTH)
                 {
@@ -562,65 +562,65 @@ namespace GameOverlay {
                 if (err != ERROR_SUCCESS)
                 {
                     // an error other than ERROR_BAD_LENGTH occured.
-                    g_messageLog.LogVerbose("HookAllModules", "Could not create snapshot.");
+                    g_messageLog.LogVerbose ("HookAllModules", "Could not create snapshot.");
                     return;
                 }
             }
 
             // Found a valid handle.
-            HookAllModulesInSnapshot(hModuleSnapshot);
+            HookAllModulesInSnapshot (hModuleSnapshot);
             return;
         }
     }
 
-    bool install_hook(hook::address target, hook::address replacement)
+    bool install_hook (hook::address target, hook::address replacement)
     {
-        assert(target != nullptr);
-        assert(replacement != nullptr);
+        assert (target != nullptr);
+        assert (replacement != nullptr);
 
         if (target == replacement) {
-            g_messageLog.LogVerbose("install_hook", "Target module equals replacement.");
+            g_messageLog.LogVerbose ("install_hook", "Target module equals replacement.");
             return false;
         }
 
-        const hook hook = find_hook(replacement);
+        const hook hook = find_hook (replacement);
 
-        if (hook.installed()) {
+        if (hook.installed ()) {
             bool success = target == hook.target;
             if (success) {
-                g_messageLog.LogVerbose("install_hook", "Hook already installed");
+                g_messageLog.LogVerbose ("install_hook", "Hook already installed");
             }
             else {
-                g_messageLog.LogVerbose("install_hook", "There exists another module with the same name but a different address");
+                g_messageLog.LogVerbose ("install_hook", "There exists another module with the same name but a different address");
             }
             return success;
         }
 
-        g_messageLog.LogVerbose("install_hook", "Try install");
-        return install_hook(target, replacement, hook_method::function_hook);
+        g_messageLog.LogVerbose ("install_hook", "Try install");
+        return install_hook (target, replacement, hook_method::function_hook);
     }
 
-    bool install_hook(hook::address vtable[], unsigned int offset, hook::address replacement)
+    bool install_hook (hook::address vtable[], unsigned int offset, hook::address replacement)
     {
-        assert(vtable != nullptr);
-        assert(replacement != nullptr);
+        assert (vtable != nullptr);
+        assert (replacement != nullptr);
 
         DWORD protection = PAGE_READONLY;
         hook::address &target = vtable[offset];
 
-        if (VirtualProtect(&target, sizeof(hook::address), protection, &protection)) {
-            const critical_section::lock lock(s_cs);
+        if (VirtualProtect (&target, sizeof (hook::address), protection, &protection)) {
+            const critical_section::lock lock (s_cs);
 
-            const auto insert = s_vtable_addresses.emplace(target, &target);
+            const auto insert = s_vtable_addresses.emplace (target, &target);
 
-            VirtualProtect(&target, sizeof(hook::address), protection, &protection);
+            VirtualProtect (&target, sizeof (hook::address), protection, &protection);
 
             if (insert.second) {
-                if (target != replacement && install_hook(target, replacement, hook_method::vtable_hook)) {
+                if (target != replacement && install_hook (target, replacement, hook_method::vtable_hook)) {
                     return true;
                 }
 
-                s_vtable_addresses.erase(insert.first);
+                s_vtable_addresses.erase (insert.first);
             }
             else {
                 return insert.first->first == target;
@@ -629,53 +629,53 @@ namespace GameOverlay {
 
         return false;
     }
-    void uninstall_hook()
+    void uninstall_hook ()
     {
-        const critical_section::lock lock(s_cs);
+        const critical_section::lock lock (s_cs);
 
         // Uninstall hooks
         for (auto &hook : s_hooks) {
-            uninstall_hook(hook.first, hook.second);
+            uninstall_hook (hook.first, hook.second);
         }
 
-        s_hooks.clear();
+        s_hooks.clear ();
 
         // Free loaded modules
         for (HMODULE module : s_delayed_hook_modules) {
-            FreeLibrary(module);
+            FreeLibrary (module);
         }
 
-        s_delayed_hook_modules.clear();
+        s_delayed_hook_modules.clear ();
     }
 
-    __declspec(dllexport) bool replace_vtable_hook(hook::address vtable[], unsigned int offset, hook::address replacement)
+    __declspec(dllexport) bool replace_vtable_hook (hook::address vtable[], unsigned int offset, hook::address replacement)
     {
-        assert(vtable != nullptr);
-        assert(replacement != nullptr);
+        assert (vtable != nullptr);
+        assert (replacement != nullptr);
 
         DWORD protection = PAGE_READONLY;
         hook::address &target = vtable[offset];
-        auto hook = find_hook(target);
+        auto hook = find_hook (target);
         if (hook.target) {
-            uninstall_hook(hook, hook_method::vtable_hook);
+            uninstall_hook (hook, hook_method::vtable_hook);
         }
 
-        if (VirtualProtect(&target, sizeof(hook::address), protection, &protection)) {
-            const critical_section::lock lock(s_cs);
+        if (VirtualProtect (&target, sizeof (hook::address), protection, &protection)) {
+            const critical_section::lock lock (s_cs);
 
-            const auto insert = s_vtable_addresses.emplace(target, &target);
+            const auto insert = s_vtable_addresses.emplace (target, &target);
 
-            VirtualProtect(&target, sizeof(hook::address), protection, &protection);
+            VirtualProtect (&target, sizeof (hook::address), protection, &protection);
 
             if (insert.second) {
                 if (target != replacement) {
 
-                    if (install_hook(target, replacement, hook_method::vtable_hook)) {
+                    if (install_hook (target, replacement, hook_method::vtable_hook)) {
                         return true;
                     }
                 }
 
-                s_vtable_addresses.erase(insert.first);
+                s_vtable_addresses.erase (insert.first);
             }
             else {
                 return insert.first->first == target;
@@ -685,125 +685,125 @@ namespace GameOverlay {
         return false;
     }
 
-    bool register_module(const std::wstring &target_path)  // Not thread-safe
+    bool register_module (const std::wstring &target_path)  // Not thread-safe
     {
         int numModulesRegistered = 0;
-        g_messageLog.LogInfo("register_module", L"Register module for " + target_path);
-        if (!install_hook(reinterpret_cast<hook::address>(&::LoadLibraryA),
+        g_messageLog.LogInfo ("register_module", L"Register module for " + target_path);
+        if (!install_hook (reinterpret_cast<hook::address>(&::LoadLibraryA),
             reinterpret_cast<hook::address>(&HookLoadLibraryA))) {
-            g_messageLog.LogError("register_module",
+            g_messageLog.LogError ("register_module",
                 "Failed to install hook for LoadLibraryA");
         }
         else {
-            g_messageLog.LogInfo("register_module",
+            g_messageLog.LogInfo ("register_module",
                 "Successfully installed hook for LoadLibraryA");
             numModulesRegistered++;
         }
-        if (!install_hook(reinterpret_cast<hook::address>(&::LoadLibraryExA),
+        if (!install_hook (reinterpret_cast<hook::address>(&::LoadLibraryExA),
             reinterpret_cast<hook::address>(&HookLoadLibraryExA))) {
-            g_messageLog.LogError("register_module",
+            g_messageLog.LogError ("register_module",
                 "Failed to install hook for LoadLibraryExA");
         }
         else {
-            g_messageLog.LogInfo("register_module",
+            g_messageLog.LogInfo ("register_module",
                 "Successfully installed hook for LoadLibraryExA");
             numModulesRegistered++;
         }
-        if (!install_hook(reinterpret_cast<hook::address>(&::LoadLibraryW),
+        if (!install_hook (reinterpret_cast<hook::address>(&::LoadLibraryW),
             reinterpret_cast<hook::address>(&HookLoadLibraryW))) {
-            g_messageLog.LogError("register_module",
+            g_messageLog.LogError ("register_module",
                 "Failed to install hook for LoadLibraryW");
         }
         else {
-            g_messageLog.LogInfo("register_module",
+            g_messageLog.LogInfo ("register_module",
                 "Successfully installed hook for LoadLibraryW");
             numModulesRegistered++;
         }
-        if (!install_hook(reinterpret_cast<hook::address>(&::LoadLibraryExW),
+        if (!install_hook (reinterpret_cast<hook::address>(&::LoadLibraryExW),
             reinterpret_cast<hook::address>(&HookLoadLibraryExW))) {
-            g_messageLog.LogError("register_module",
+            g_messageLog.LogError ("register_module",
                 "Failed to install hook for LoadLibraryExW");
         }
         else {
-            g_messageLog.LogInfo("register_module",
+            g_messageLog.LogInfo ("register_module",
                 "Successfully installed hook for LoadLibraryExW");
             numModulesRegistered++;
         }
 
         HMODULE handle = nullptr;
-        GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_PIN, target_path.c_str(), &handle);
+        GetModuleHandleExW (GET_MODULE_HANDLE_EX_FLAG_PIN, target_path.c_str (), &handle);
 
         if (handle != nullptr) {
-            s_delayed_hook_modules.push_back(handle);
+            s_delayed_hook_modules.push_back (handle);
 
-            if (!install_hook(handle, get_current_module(), hook_method::function_hook)) {
-                g_messageLog.LogError("register_module",
+            if (!install_hook (handle, get_current_module (), hook_method::function_hook)) {
+                g_messageLog.LogError ("register_module",
                     L"Failed to install function hook for " + target_path, GetLastError ());
             }
             else {
-                g_messageLog.LogInfo("register_module",
+                g_messageLog.LogInfo ("register_module",
                     L"Successfully installed function hook for " + target_path);
             }
         }
         else {
-            g_messageLog.LogInfo("register_module",
-                    L"handle is nullptr for" + target_path);
-            s_delayed_hook_paths.push_back(target_path);
+            g_messageLog.LogInfo ("register_module",
+                L"handle is nullptr for" + target_path);
+            s_delayed_hook_paths.push_back (target_path);
         }
 
         return numModulesRegistered > 0;
     }
 
-    void register_additional_module(const std::wstring &module_name)
+    void register_additional_module (const std::wstring &module_name)
     {
         HMODULE handle = nullptr;
-        GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_PIN, module_name.c_str(), &handle);
+        GetModuleHandleExW (GET_MODULE_HANDLE_EX_FLAG_PIN, module_name.c_str (), &handle);
 
         if (handle != nullptr) {
-            s_delayed_hook_modules.push_back(handle);
+            s_delayed_hook_modules.push_back (handle);
 
-            if (!install_hook(handle, get_current_module(), hook_method::function_hook)) {
-                g_messageLog.LogError("register_additional_module",
+            if (!install_hook (handle, get_current_module (), hook_method::function_hook)) {
+                g_messageLog.LogError ("register_additional_module",
                     L"Failed to install function hook for " + module_name, GetLastError ());
             }
             else {
-                g_messageLog.LogInfo("register_additional_module",
+                g_messageLog.LogInfo ("register_additional_module",
                     L"Successfully installed function hook for " + module_name);
             }
         }
         else {
-            g_messageLog.LogInfo("register_additional_module",
-                    L"handle is nullptr for" + module_name);
-            s_delayed_hook_paths.push_back(module_name);
+            g_messageLog.LogInfo ("register_additional_module",
+                L"handle is nullptr for" + module_name);
+            s_delayed_hook_paths.push_back (module_name);
         }
     }
 
-    __declspec(dllexport) void add_function_hooks(const std::wstring &module_name,
+    __declspec(dllexport) void add_function_hooks (const std::wstring &module_name,
         const HMODULE replacement_module)
     {
         HMODULE handle = nullptr;
-        GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_PIN, module_name.c_str(), &handle);
+        GetModuleHandleExW (GET_MODULE_HANDLE_EX_FLAG_PIN, module_name.c_str (), &handle);
 
         if (handle != nullptr) {
-            if (!replace_hook(handle, replacement_module, hook_method::function_hook)) {
-                g_messageLog.LogError("add_function_hooks",
+            if (!replace_hook (handle, replacement_module, hook_method::function_hook)) {
+                g_messageLog.LogError ("add_function_hooks",
                     L"Failed to update function hook for " + module_name);
             }
             else {
-                g_messageLog.LogInfo("add_function_hooks",
+                g_messageLog.LogInfo ("add_function_hooks",
                     L"Successfully updated function hook for " + module_name);
             }
         }
     }
 
-    __declspec(dllexport) hook::address find_hook_trampoline(hook::address replacement)
+    __declspec(dllexport) hook::address find_hook_trampoline (hook::address replacement)
     {
-        const hook hook = find_hook(replacement);
+        const hook hook = find_hook (replacement);
 
-        if (!hook.valid()) {
+        if (!hook.valid ()) {
             return nullptr;
         }
 
-        return hook.call();
+        return hook.call ();
     }
 }

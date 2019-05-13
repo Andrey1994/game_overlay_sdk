@@ -24,82 +24,82 @@
 
 #include <iomanip>
 
-TextMessage::~TextMessage()
+TextMessage::~TextMessage ()
 {
-    textLayout_.Reset();
-    numberBrush_.Reset();
-    textBrush_.Reset();
+    textLayout_.Reset ();
+    numberBrush_.Reset ();
+    textBrush_.Reset ();
 }
 
-TextMessage::TextMessage(ID2D1RenderTarget* renderTarget, const D2D1_COLOR_F& textColor,
+TextMessage::TextMessage (ID2D1RenderTarget* renderTarget, const D2D1_COLOR_F& textColor,
     const D2D1_COLOR_F& numberColor)
 {
-    HRESULT hr = renderTarget->CreateSolidColorBrush(textColor, &textBrush_);
-    if (FAILED(hr))
+    HRESULT hr = renderTarget->CreateSolidColorBrush (textColor, &textBrush_);
+    if (FAILED (hr))
     {
-        g_messageLog.LogError("TextMessage", "CreateTextFormat failed, HRESULT", hr);
+        g_messageLog.LogError ("TextMessage", "CreateTextFormat failed, HRESULT", hr);
     }
 
-    hr = renderTarget->CreateSolidColorBrush(numberColor, &numberBrush_);
-    if (FAILED(hr))
+    hr = renderTarget->CreateSolidColorBrush (numberColor, &numberBrush_);
+    if (FAILED (hr))
     {
-        g_messageLog.LogError("TextMessage", "CreateTextFormat failed, HRESULT", hr);
+        g_messageLog.LogError ("TextMessage", "CreateTextFormat failed, HRESULT", hr);
     }
 }
 
-void TextMessage::WriteMessage(const std::wstring& msg)
+void TextMessage::WriteMessage (const std::wstring& msg)
 {
     message_ << msg;
 }
 
-void TextMessage::WriteMessage(float value, const std::wstring& msg, int precision)
+void TextMessage::WriteMessage (float value, const std::wstring& msg, int precision)
 {
-    message_ << std::fixed << std::setprecision(precision);
-    const auto start = static_cast<UINT32>(message_.tellp());
+    message_ << std::fixed << std::setprecision (precision);
+    const auto start = static_cast<UINT32>(message_.tellp ());
     message_ << value;
-    numberRanges_.push_back({ start, static_cast<UINT32>(message_.tellp()) - start });
+    numberRanges_.push_back ({ start, static_cast<UINT32>(message_.tellp ()) - start });
     message_ << msg;
 }
 
-void TextMessage::WriteMessage(int value, const std::wstring& msg)
+void TextMessage::WriteMessage (int value, const std::wstring& msg)
 {
-    const auto start = static_cast<UINT32>(message_.tellp());
+    const auto start = static_cast<UINT32>(message_.tellp ());
     message_ << value;
-    numberRanges_.push_back({ start, static_cast<UINT32>(message_.tellp()) - start });
+    numberRanges_.push_back ({ start, static_cast<UINT32>(message_.tellp ()) - start });
     message_ << msg;
 }
 
-void TextMessage::WriteMessage(const std::wstring& msgA, const std::wstring& msgB)
+void TextMessage::WriteMessage (const std::wstring& msgA, const std::wstring& msgB)
 {
-    const auto start = static_cast<UINT32>(message_.tellp());
+    const auto start = static_cast<UINT32>(message_.tellp ());
     message_ << msgA;
-    numberRanges_.push_back({ start, static_cast<UINT32> (message_.tellp()) - start });
+    numberRanges_.push_back ({ start, static_cast<UINT32> (message_.tellp ()) - start });
     message_ << msgB;
 }
 
-void TextMessage::SetText(IDWriteFactory* writeFactory, IDWriteTextFormat* textFormat)
+void TextMessage::SetText (IDWriteFactory* writeFactory, IDWriteTextFormat* textFormat)
 {
     textLayout_ = nullptr;
-    const auto message = message_.str();
+    const auto message = message_.str ();
 
-    HRESULT hr = writeFactory->CreateTextLayout(message.c_str(), static_cast<UINT32>(message.size()),
+    HRESULT hr = writeFactory->CreateTextLayout (message.c_str (), static_cast<UINT32>(message.size ()),
         textFormat, maxWidth_, maxHeight_, &textLayout_);
-    if (FAILED(hr))
+    if (FAILED (hr))
     {
-        g_messageLog.LogError("TextMessage", "CreateTextLayout failed, HRESULT", hr);
+        g_messageLog.LogError ("TextMessage", "CreateTextLayout failed, HRESULT", hr);
         textLayout_ = nullptr;
     }
 
     if (textLayout_)
     {
-        textLayout_->SetIncrementalTabStop(50.0f);
+        textLayout_->SetIncrementalTabStop (50.0f);
     }
 
-    message_.clear();
-    message_.str(std::wstring());
+    message_.clear ();
+    message_.str (std::wstring ());
 }
 
-void TextMessage::SetArea(float x, float y, float width, float height)
+void TextMessage::SetArea (float x, float y, float width, float height)
 {
     screenPos_.x = x;
     screenPos_.y = y;
@@ -107,23 +107,23 @@ void TextMessage::SetArea(float x, float y, float width, float height)
     maxHeight_ = height;
 }
 
-void TextMessage::Draw(ID2D1RenderTarget* renderTarget)
+void TextMessage::Draw (ID2D1RenderTarget* renderTarget)
 {
     if (textLayout_)
     {
         for (const auto& range : numberRanges_)
         {
-            HRESULT hr = textLayout_->SetDrawingEffect(numberBrush_.Get(), range);
-            if (FAILED(hr))
+            HRESULT hr = textLayout_->SetDrawingEffect (numberBrush_.Get (), range);
+            if (FAILED (hr))
             {
-                g_messageLog.LogError("TextMessage",
+                g_messageLog.LogError ("TextMessage",
                     "SetDrawingEffect failed HRESULT", hr);
             }
-            hr = textLayout_->SetFontWeight(DWRITE_FONT_WEIGHT_BOLD, range);
+            hr = textLayout_->SetFontWeight (DWRITE_FONT_WEIGHT_BOLD, range);
         }
-        renderTarget->DrawTextLayout(screenPos_, textLayout_.Get(), textBrush_.Get(),
+        renderTarget->DrawTextLayout (screenPos_, textLayout_.Get (), textBrush_.Get (),
             D2D1_DRAW_TEXT_OPTIONS_CLIP);
 
-        numberRanges_.clear();
+        numberRanges_.clear ();
     }
 }

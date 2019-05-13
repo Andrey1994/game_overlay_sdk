@@ -134,7 +134,7 @@ int Monitor::SendMessageToOverlay (char *message)
         return TARGET_PROCESS_IS_NOT_CREATED_ERROR;
     }
     monitorLogger->info ("sending message '{}' to {}", message, this->pid);
-    char *buf = (char *) MapViewOfFile (
+    char *buf = (char *)MapViewOfFile (
         this->mapFile,
         FILE_MAP_WRITE,
         0,
@@ -146,7 +146,7 @@ int Monitor::SendMessageToOverlay (char *message)
         monitorLogger->error ("failed to create MapViewOfFile {}", GetLastError ());
         return GENERAL_ERROR;
     }
-    CopyMemory ((PVOID)buf, message, (strlen (message) + 1) * sizeof(char));
+    CopyMemory ((PVOID)buf, message, (strlen (message) + 1) * sizeof (char));
     UnmapViewOfFile (buf);
     return STATUS_OK;
 }
@@ -172,7 +172,7 @@ void Monitor::Callback (int pid, char *pName)
 
 DWORD WINAPI Monitor::ThreadProc (LPVOID pMonitor)
 {
-    ((Monitor *) pMonitor)->WorkerThread ();
+    ((Monitor *)pMonitor)->WorkerThread ();
     return 0;
 }
 
