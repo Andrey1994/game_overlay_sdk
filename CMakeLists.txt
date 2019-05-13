@@ -1,6 +1,8 @@
 cmake_minimum_required (VERSION 3.12)
 project (game_overlay_sdk)
 
+set(CMAKE_CXX_STANDARD 17)
+
 macro(configure_msvc_runtime)
   if(MSVC)
     # Default to statically-linked runtime.
@@ -49,6 +51,7 @@ if (CMAKE_SIZEOF_VOID_P EQUAL 8)
 
   SET(GAME_OVERLAY_NAME "GameOverlay64")
   SET(INJECTOR_NAME "DLLInjection64")
+  SET(VULKAN_OVERLAY "VK_LAYER_OCAT_overlay64")
 
   find_library(Vulkan_LIBRARY
     NAMES vulkan-1
@@ -63,6 +66,7 @@ else(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
   SET(GAME_OVERLAY_NAME "GameOverlay32")
   SET(INJECTOR_NAME "DLLInjection32")
+  SET(VULKAN_OVERLAY "VK_LAYER_OCAT_overlay32")
 
   find_library(Vulkan_LIBRARY
     NAMES vulkan-1
@@ -160,7 +164,7 @@ target_include_directories (Commons PUBLIC
   ${Vulkan_INCLUDE_DIR}
 )
 
-target_compile_definitions(Commons PUBLIC
+target_compile_definitions(Commons PRIVATE
   VK_USE_PLATFORM_WIN32_KHR
   _UNICODE
   UNICODE
@@ -200,7 +204,7 @@ target_include_directories ( ${GAME_OVERLAY_NAME} PUBLIC
   src/DLLToInject/GameOverlay/d3d/deps/d3dx12
 )
 
-target_compile_definitions(${GAME_OVERLAY_NAME} PUBLIC
+target_compile_definitions(${GAME_OVERLAY_NAME} PRIVATE
   VK_USE_PLATFORM_WIN32_KHR
   _UNICODE
   UNICODE
@@ -211,3 +215,37 @@ set_source_files_properties(src/DLLToInject/GameOverlay/d3d/exports.def PROPERTI
 set_target_properties(${GAME_OVERLAY_NAME} PROPERTIES LINK_FLAGS "/DELAYLOAD:d3d12.dll /DEF:\"${CMAKE_SOURCE_DIR}/src/DLLToInject/GameOverlay/d3d/exports.def\"" )
 
 #----------------- GameOverlay END ------------------#
+
+#----------------- VULKAN LAYER START ------------------#
+file(GLOB_RECURSE VulkanOverlaySrc "src/DLLToInject/GameOverlay/vulkan/*.cpp")
+
+add_library (
+  ${VULKAN_OVERLAY} SHARED
+  ${VulkanOverlaySrc}
+  src/DLLToInject/GameOverlay/vulkan/VK_LAYER_OCAT_overlay.def
+  src/DLLToInject/GameOverlay/vulkan/VK_LAYER_OCAT_overlay.rc
+)
+
+target_link_libraries (${VULKAN_OVERLAY} Commons ${GAME_OVERLAY_NAME} d2d1 dwrite comdlg32 advapi32 odbc32 odbccp32)
+
+target_include_directories (${VULKAN_OVERLAY} PUBLIC
+  src
+  src/DLLToInject/Commons
+  ${Vulkan_INCLUDE_DIR}
+  "$ENV{VULKAN_SDK}/Source/layers"
+  src/DLLToInject/openvr/headers
+  src/DLLToInject/GameOverlay/d3d/source
+  src/DLLToInject/LibOVR/include
+)
+
+target_compile_definitions(${VULKAN_OVERLAY} PRIVATE
+  VK_USE_PLATFORM_WIN32_KHR
+  _CRT_SECURE_NO_WARNINGS
+  API_NAME="Vulkan"
+)
+
+set_source_files_properties(src/DLLToInject/GameOverlay/vulkan/VK_LAYER_OCAT_overlay.def PROPERTIES HEADER_FILE_ONLY TRUE)
+
+set_target_properties(${VULKAN_OVERLAY} PROPERTIES LINK_FLAGS "/DEF:\"${CMAKE_SOURCE_DIR}/src/DLLToInject/GameOverlay/vulkan/VK_LAYER_OCAT_overlay.def\"" )
+
+#----------------- VULKAN LAYER END ------------------#

@@ -147,7 +147,7 @@ namespace CompositorOverlay
                 (session, swapchain_, i, &images_[i]);
         }
 
-        renderer_.reset(new Rendering(g_fileDirectory.GetDirectory(DirectoryType::Bin)));
+        renderer_.reset(new Rendering(Rendering::GetCurrentPath ()));
         initialized_ = renderer_->OnInitCompositor(device_, pTable, physicalDeviceMemoryProperties,
             VK_FORMAT_R8G8B8A8_UNORM, extent, 0, textureCount, images_.data());
 

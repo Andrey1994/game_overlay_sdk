@@ -39,6 +39,7 @@
 
 class Rendering final {
 public:
+    static std::wstring GetCurrentPath ();
     Rendering(const std::wstring& shaderDirectory);
     Rendering(const Rendering&) = delete;
     Rendering& operator=(const Rendering&) = delete;
@@ -115,4 +116,5 @@ protected:
     int remainingRecordRenderPassUpdates_ = 0;
     bool overlayBitmapInitialized = false;
     bool pipelineInitialized = false;
+
 };

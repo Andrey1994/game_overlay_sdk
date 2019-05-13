@@ -173,7 +173,7 @@ vkCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCall
 
     g_AppResources.CreateInstance(*pInstance, pCreateInfo);
 
-    g_Rendering.reset(new Rendering(g_fileDirectory.GetDirectory(DirectoryType::Bin)));
+    g_Rendering.reset(new Rendering(Rendering::GetCurrentPath ()));
     return result;
 }
 

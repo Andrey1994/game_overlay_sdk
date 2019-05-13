@@ -24,7 +24,7 @@ namespace CompositorOverlay
         if (initialized_)
             return;
 
-        renderer_.reset(new Rendering(g_fileDirectory.GetDirectory(DirectoryType::Bin)));
+        renderer_.reset(new Rendering(Rendering::GetCurrentPath ()));
         pTable->GetSwapchainImagesKHR(device_, swapchain_, &imageCount_, nullptr);
         images_.resize(imageCount_);
         pTable->GetSwapchainImagesKHR(device_, swapchain_, &imageCount_, images_.data());

@@ -24,8 +24,19 @@
 #include <algorithm>
 #include <fstream>
 #include <array>
+#include <windows.h>
 
+#include "Utility/StringUtils.h"
 #include "Recording/Capturing.h"
+
+std::wstring Rendering::GetCurrentPath ()
+{
+    // no unicode!!
+    char buffer[4096];
+    GetModuleFileName (NULL, buffer, 4096);
+    std::string::size_type pos = std::string (buffer).find_last_of ("\\/");
+    return ConvertUTF8StringToUTF16String (std::string (buffer).substr (0, pos));
+}
 
 void Rendering::OnDestroyCompositor(VkLayerDispatchTable* pTable)
 {
