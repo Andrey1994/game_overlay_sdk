@@ -1,8 +1,6 @@
 cmake_minimum_required (VERSION 3.12)
 project (game_overlay_sdk)
 
-set(CMAKE_CXX_STANDARD 17)
-
 macro(configure_msvc_runtime)
   if(MSVC)
     # Default to statically-linked runtime.
@@ -80,19 +78,19 @@ endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 IF(EX_PLATFORM EQUAL 64)
 MESSAGE("Outputting to lib64 and bin64")
 
-SET (CMAKE_LIBRARY_OUTPUT_DIRECTORY
+SET (CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE
   ${CMAKE_SOURCE_DIR}/python/game_overlay_sdk/lib
   CACHE PATH
   "Single Directory for all Libraries"
 )
 
-SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY
+SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE
   ${CMAKE_SOURCE_DIR}/python/game_overlay_sdk/lib
   CACHE PATH
   "Single Directory for all Executables."
 )
 
-SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY
+SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE
   ${CMAKE_SOURCE_DIR}/lib/64
   CACHE PATH
   "Single Directory for all static libraries."
@@ -100,19 +98,19 @@ SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY
 
 ELSE( EX_PLATFORM EQUAL 64 )
 
-SET (CMAKE_LIBRARY_OUTPUT_DIRECTORY
+SET (CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE
   ${CMAKE_SOURCE_DIR}/python/game_overlay_sdk/lib
   CACHE PATH
   "Single Directory for all Libraries"
 )
 
-SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY
+SET (CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE
   ${CMAKE_SOURCE_DIR}/python/game_overlay_sdk/lib
   CACHE PATH
   "Single Directory for all Executables."
 )
 
-SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY
+SET (CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE
    ${CMAKE_SOURCE_DIR}/lib/32
    CACHE PATH
    "Single Directory for all static libraries."

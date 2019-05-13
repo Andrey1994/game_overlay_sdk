@@ -23,7 +23,17 @@ setup (
     package_data = {
         'game_overlay_sdk': [
             os.path.join ('lib', 'DLLInjection64.dll'),
-            os.path.join ('lib', 'GameOverlay64.dll')
+            os.path.join ('lib', 'GameOverlay64.dll'),
+            os.path.join ('lib', 'VK_LAYER_OCAT_overlay64.dll'),
+            os.path.join ('lib', 'DLLInjection32.dll'),
+            os.path.join ('lib', 'GameOverlay32.dll'),
+            os.path.join ('lib', 'VK_LAYER_OCAT_overlay32.dll'),
+            os.path.join ('lib', 'shader.comp'),
+            os.path.join ('lib', 'shader.frag'),
+            os.path.join ('lib', 'shader.vert'),
+            os.path.join ('lib', 'comp.spv'),
+            os.path.join ('lib', 'frag.spv'),
+            os.path.join ('lib', 'vert.spv')
         ]
     },
     zip_safe = True,
