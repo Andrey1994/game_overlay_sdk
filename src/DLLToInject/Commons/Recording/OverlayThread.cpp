@@ -85,7 +85,6 @@ namespace GameOverlay {
                 );
                 if (buf)
                 {
-                    g_messageLog.LogInfo ("OverlayThread", "Read from mapped file");
                     RecordingState::GetInstance ().SetOverlayMessage (buf);
                     UnmapViewOfFile (buf);
                 }
