@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\game_overlay_sdk\src\DLLToInject\MinHook\src\buffer.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\game_overlay_sdk\src\DLLToInject\MinHook\src\hde\hde32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\game_overlay_sdk\src\DLLToInject\MinHook\src\hde\hde64.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\game_overlay_sdk\src\DLLToInject\MinHook\src\hook.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\game_overlay_sdk\src\DLLToInject\MinHook\src\trampoline.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\game_overlay_sdk\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{7BB496F4-71AE-3910-96C7-3387074D0BBD}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

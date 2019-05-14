@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="D:\game_overlay_sdk\src\DLLToInject\GameOverlay\vulkan\src\AppResMapping.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\game_overlay_sdk\src\DLLToInject\GameOverlay\vulkan\src\Compositor\vk_oculus.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\game_overlay_sdk\src\DLLToInject\GameOverlay\vulkan\src\Compositor\vk_steamvr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\game_overlay_sdk\src\DLLToInject\GameOverlay\vulkan\src\OverlayImageData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\game_overlay_sdk\src\DLLToInject\GameOverlay\vulkan\src\Rendering.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\game_overlay_sdk\src\DLLToInject\GameOverlay\vulkan\src\SwapchainMapping.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="D:\game_overlay_sdk\src\DLLToInject\GameOverlay\vulkan\src\VK_LAYER_OCAT_overlay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="D:\game_overlay_sdk\src\DLLToInject\GameOverlay\vulkan\VK_LAYER_OCAT_overlay.def">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="D:\game_overlay_sdk\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="D:\game_overlay_sdk\src\DLLToInject\GameOverlay\vulkan\VK_LAYER_OCAT_overlay.rc">
+      <Filter>Source Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{7BB496F4-71AE-3910-96C7-3387074D0BBD}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,13 @@
+README.md
+setup.py
+game_overlay_sdk/__init__.py
+game_overlay_sdk/injector.py
+game_overlay_sdk.egg-info/PKG-INFO
+game_overlay_sdk.egg-info/SOURCES.txt
+game_overlay_sdk.egg-info/dependency_links.txt
+game_overlay_sdk.egg-info/requires.txt
+game_overlay_sdk.egg-info/top_level.txt
+game_overlay_sdk.egg-info/zip-safe
+game_overlay_sdk/lib/DLLInjector.dll
+game_overlay_sdk/lib/GameOverlay32.dll
+game_overlay_sdk/lib/GameOverlay64.dll

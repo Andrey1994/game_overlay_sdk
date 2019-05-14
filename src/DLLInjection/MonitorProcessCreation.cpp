@@ -49,6 +49,7 @@ int GetPid (int *pid)
     *pid = monitor->GetPid ();
     if (pid == 0)
         return TARGET_PROCESS_IS_NOT_CREATED_ERROR;
+    return STATUS_OK;
 }
 
 int SendMessageToOverlay (char *message)
@@ -65,18 +66,18 @@ BOOL WINAPI DllMain (HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 {
     switch (fdwReason)
     {
-        case DLL_PROCESS_DETACH:
+    case DLL_PROCESS_DETACH:
+    {
+        if (monitor)
         {
-            if (monitor)
-            {
-                monitor->StopMonitor ();
-                delete monitor;
-                monitor = NULL;
-            }
-            break;
+            monitor->StopMonitor ();
+            delete monitor;
+            monitor = NULL;
         }
-        default:
-            break;
+        break;
+    }
+    default:
+        break;
     }
     return TRUE;
 }

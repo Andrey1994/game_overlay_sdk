@@ -160,7 +160,7 @@ bool DLLInjection::GetRemoteDLLAddress ()
 bool DLLInjection::ExecuteLoadLibrary ()
 {
     if (!WriteProcessMemory (this->processHandle, this->remoteDLLAddress,
-                          this->dllPath.data (), this->dllPathSize, NULL))
+        this->dllPath.data (), this->dllPathSize, NULL))
     {
         DLLInjection::injectLogger->error ("failed to write process memory {}, error {}", this->pid, GetLastError ());
         return false;
@@ -190,7 +190,7 @@ void* DLLInjection::GetRemoteDLLModule ()
                 result = true;
                 break;
             }
-            newModule = Module32Next(snapShot.Get(), &moduleEntry);
+            newModule = Module32Next (snapShot.Get (), &moduleEntry);
         }
         if (!newModule)
         {
@@ -236,7 +236,7 @@ bool DLLInjection::ExecuteRemoteThread (const std::string& functionName, void* f
     {
         DLLInjection::injectLogger->error ("GetExitCodeThread failed for  {}, error {}", this->pid, GetLastError ());
     }
-    if(!exitCode)
+    if (!exitCode)
     {
         DLLInjection::injectLogger->error ("Remote thread failed, exit code is {} error is{}", exitCode, GetLastError ());
     }

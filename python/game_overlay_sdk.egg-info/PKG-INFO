@@ -1,0 +1,14 @@
+Metadata-Version: 2.1
+Name: game-overlay-sdk
+Version: 1.0.0
+Summary: Library to draw overlay on top of game
+Home-page: https://github.com/Andrey1994/game_overlay_sdk
+Author: Andrey Parfenov
+Author-email: a1994ndrey@gmail.com
+License: UNKNOWN
+Description: Library to draw overlay
+Platform: UNKNOWN
+Classifier: Development Status :: 2 - Pre-Alpha
+Classifier: Topic :: Utilities
+Requires-Python: >=3
+Description-Content-Type: text/markdown

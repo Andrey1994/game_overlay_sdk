@@ -33,14 +33,14 @@ class InjectorDLL (object):
         if cls.__instance is None:
             if platform.system () != 'Windows':
                 raise Exception ("For now only Windows is supported, detected platform is %s" % platform.system ())
-            if struct.calcsize ("P") * 8 != 64:
-                raise Exception ("You need 64-bit python to use this library")
             cls.__instance = cls ()
         return cls.__instance
 
     def __init__ (self):
-
-        self.lib = ctypes.cdll.LoadLibrary (pkg_resources.resource_filename (__name__, os.path.join ('lib', 'DLLInjector.dll')))
+        if struct.calcsize ("P") * 8 == 64:
+            self.lib = ctypes.cdll.LoadLibrary (pkg_resources.resource_filename (__name__, os.path.join ('lib', 'DLLInjection64.dll')))
+        else:
+            self.lib = ctypes.cdll.LoadLibrary (pkg_resources.resource_filename (__name__, os.path.join ('lib', 'DLLInjection32.dll')))
 
         # start monitoring
         self.StartMonitor = self.lib.StartMonitor

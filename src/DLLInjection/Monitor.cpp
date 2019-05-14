@@ -10,10 +10,9 @@
 
 #include "Win32Handle.h"
 #include "DLLInjection.h"
-#include "ProcessHelpers.h"
 #include "EventSink.h"
 #include "Monitor.h"
-#include "suspend_threads.h"
+#include "SuspendThreads.h"
 
 #pragma comment (lib, "wbemuuid.lib")
 
@@ -135,7 +134,7 @@ int Monitor::SendMessageToOverlay (char *message)
         return TARGET_PROCESS_IS_NOT_CREATED_ERROR;
     }
     monitorLogger->info ("sending message '{}' to {}", message, this->pid);
-    char *buf = (char *) MapViewOfFile (
+    char *buf = (char *)MapViewOfFile (
         this->mapFile,
         FILE_MAP_WRITE,
         0,
@@ -147,7 +146,7 @@ int Monitor::SendMessageToOverlay (char *message)
         monitorLogger->error ("failed to create MapViewOfFile {}", GetLastError ());
         return GENERAL_ERROR;
     }
-    CopyMemory ((PVOID)buf, message, (strlen (message) + 1) * sizeof(char));
+    CopyMemory ((PVOID)buf, message, (strlen (message) + 1) * sizeof (char));
     UnmapViewOfFile (buf);
     return STATUS_OK;
 }
@@ -173,7 +172,7 @@ void Monitor::Callback (int pid, char *pName)
 
 DWORD WINAPI Monitor::ThreadProc (LPVOID pMonitor)
 {
-    ((Monitor *) pMonitor)->WorkerThread ();
+    ((Monitor *)pMonitor)->WorkerThread ();
     return 0;
 }
 
@@ -260,4 +259,14 @@ int Monitor::GetArchitecture (int pid)
         return 86;
     else
         return 64;
+}
+
+HANDLE Monitor::GetProcessHandleFromID (DWORD id, DWORD access)
+{
+    HANDLE handle = OpenProcess (access, FALSE, id);
+    if (!handle)
+    {
+        return NULL;
+    }
+    return handle;
 }
