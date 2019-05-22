@@ -1,29 +1,29 @@
-#include <comdef.h>
 #include <Wbemidl.h>
-#include <atlcomcli.h>
-#include <atlstr.h>
-#include <string.h>
 #include <accctrl.h>
 #include <aclapi.h>
+#include <atlcomcli.h>
+#include <atlstr.h>
+#include <comdef.h>
+#include <string.h>
 
 #include "MonitorProcessCreation.h"
 
-#include "Win32Handle.h"
 #include "DLLInjection.h"
 #include "EventSink.h"
+#include "FileUtils.h"
 #include "Monitor.h"
+#include "StringUtils.h"
 #include "SuspendThreads.h"
+#include "Win32Handle.h"
 
-#pragma comment (lib, "wbemuuid.lib")
+#pragma comment(lib, "wbemuuid.lib")
 
 #define MMAPSIZE 4096
 
 std::shared_ptr<spdlog::logger> Monitor::monitorLogger = spdlog::stderr_logger_mt ("monitorLogger");
 
-Monitor::Monitor (char *processName, char *dllLoc)
+Monitor::Monitor ()
 {
-    strcpy ((char *)this->processName, processName);
-    strcpy ((char *)this->dllLoc, dllLoc);
     this->thread = NULL;
     this->createEvent = NULL;
     this->stopEvent = NULL;
@@ -48,27 +48,35 @@ void Monitor::SetLogLevel (int level)
     DLLInjection::SetLogLevel (level);
 }
 
-int Monitor::StartMonitor ()
+int Monitor::RunProcess (char *exePath, char *args, char *dllLoc)
 {
-    Monitor::monitorLogger->trace ("start monitorring");
-    this->mapFile = CreateFileMapping (
-        INVALID_HANDLE_VALUE,
-        NULL,
-        PAGE_READWRITE,
-        0,
-        MMAPSIZE,
-        TEXT ("Global\\GameOverlayMap")
-    );
-    if (this->mapFile == NULL)
+    int res = CreateDesktopProcess (exePath, args);
+    if (res != STATUS_OK)
     {
-        Monitor::monitorLogger->error ("failed to create maped file Error {}", GetLastError ());
-        return GENERAL_ERROR;
+        return res;
     }
-    SetSecurityInfo (this->mapFile, SE_KERNEL_OBJECT,
-        DACL_SECURITY_INFORMATION | PROTECTED_DACL_SECURITY_INFORMATION,
-        NULL, NULL, NULL, NULL
-    );
+    res = CreateFileMap ();
+    if (res != STATUS_OK)
+    {
+        return res;
+    }
+    int architecture = GetArchitecture (pid);
+    DLLInjection dllInjection (this->pid, architecture, (char *)this->dllLoc);
+    dllInjection.InjectDLL ();
+    ResumeThread (this->thread);
+    return STATUS_OK;
+}
 
+int Monitor::StartMonitor (char *processName, char *dllLoc)
+{
+    strcpy ((char *)this->processName, processName);
+    strcpy ((char *)this->dllLoc, dllLoc);
+    Monitor::monitorLogger->trace ("start monitorring");
+    int res = CreateFileMap ();
+    if (res != STATUS_OK)
+    {
+        return res;
+    }
     this->createEvent = CreateEvent (NULL, TRUE, FALSE, TEXT ("createEvent"));
     this->stopEvent = CreateEvent (NULL, TRUE, FALSE, TEXT ("stopEvent"));
     if ((!this->createEvent) && (!this->stopEvent))
@@ -83,6 +91,20 @@ int Monitor::StartMonitor ()
         Monitor::monitorLogger->error ("Failed to create monitorring thread");
         return GENERAL_ERROR;
     }
+    return STATUS_OK;
+}
+
+int Monitor::CreateFileMap ()
+{
+    this->mapFile = CreateFileMapping (
+        INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, MMAPSIZE, TEXT ("Global\\GameOverlayMap"));
+    if (this->mapFile == NULL)
+    {
+        Monitor::monitorLogger->error ("failed to create maped file Error {}", GetLastError ());
+        return GENERAL_ERROR;
+    }
+    SetSecurityInfo (this->mapFile, SE_KERNEL_OBJECT,
+        DACL_SECURITY_INFORMATION | PROTECTED_DACL_SECURITY_INFORMATION, NULL, NULL, NULL, NULL);
     return STATUS_OK;
 }
 
@@ -134,13 +156,7 @@ int Monitor::SendMessageToOverlay (char *message)
         return TARGET_PROCESS_IS_NOT_CREATED_ERROR;
     }
     monitorLogger->info ("sending message '{}' to {}", message, this->pid);
-    char *buf = (char *)MapViewOfFile (
-        this->mapFile,
-        FILE_MAP_WRITE,
-        0,
-        0,
-        MMAPSIZE
-    );
+    char *buf = (char *)MapViewOfFile (this->mapFile, FILE_MAP_WRITE, 0, 0, MMAPSIZE);
     if (buf == NULL)
     {
         monitorLogger->error ("failed to create MapViewOfFile {}", GetLastError ());
@@ -156,9 +172,9 @@ void Monitor::Callback (int pid, char *pName)
     if (strcmp (pName, (char *)this->processName) == 0)
     {
         int architecture = GetArchitecture (pid);
-        Monitor::monitorLogger->info ("Target Process created, name {}, pid {}, architecture {}",
-            pName, pid, architecture);
-        DLLInjection dllInjection (pid, (char *)this->processName, architecture, (char *)this->dllLoc);
+        Monitor::monitorLogger->info (
+            "Target Process created, name {}, pid {}, architecture {}", pName, pid, architecture);
+        DLLInjection dllInjection (pid, architecture, (char *)this->dllLoc);
         SuspendAllThreads (pid);
         dllInjection.InjectDLL ();
         ResumeAllThreads (pid);
@@ -192,7 +208,8 @@ bool Monitor::RegisterCreationCallback ()
 {
     CComPtr<IWbemLocator> pLoc;
     CoInitializeEx (0, COINIT_MULTITHREADED);
-    HRESULT hres = CoCreateInstance (CLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID*)&pLoc);
+    HRESULT hres = CoCreateInstance (
+        CLSID_WbemLocator, 0, CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID *)&pLoc);
 
     if (FAILED (hres))
     {
@@ -206,7 +223,8 @@ bool Monitor::RegisterCreationCallback ()
         Monitor::monitorLogger->error ("Failed to ConnectServer error code {}", hres);
         return false;
     }
-    hres = CoSetProxyBlanket (pSink->pSvc, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, NULL, RPC_C_AUTHN_LEVEL_CALL, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE);
+    hres = CoSetProxyBlanket (pSink->pSvc, RPC_C_AUTHN_WINNT, RPC_C_AUTHZ_NONE, NULL,
+        RPC_C_AUTHN_LEVEL_CALL, RPC_C_IMP_LEVEL_IMPERSONATE, NULL, EOAC_NONE);
     if (FAILED (hres))
     {
         Monitor::monitorLogger->error ("Failed to CoSetProxyBlanket error code {}", hres);
@@ -214,15 +232,19 @@ bool Monitor::RegisterCreationCallback ()
     }
 
     CComPtr<IUnsecuredApartment> pUnsecApp;
-    hres = CoCreateInstance (CLSID_UnsecuredApartment, NULL, CLSCTX_LOCAL_SERVER, IID_IUnsecuredApartment, (void**)&pUnsecApp);
+    hres = CoCreateInstance (CLSID_UnsecuredApartment, NULL, CLSCTX_LOCAL_SERVER,
+        IID_IUnsecuredApartment, (void **)&pUnsecApp);
     CComPtr<IUnknown> pStubUnk;
     pUnsecApp->CreateObjectStub (pSink, &pStubUnk);
-    pStubUnk->QueryInterface (IID_IWbemObjectSink, (void**)&pSink->pStubSink);
+    pStubUnk->QueryInterface (IID_IWbemObjectSink, (void **)&pSink->pStubSink);
 
     char buffer[512];
-    sprintf_s (buffer, "SELECT * FROM __InstanceCreationEvent WITHIN 0.001 WHERE TargetInstance ISA 'Win32_Process'");
+    sprintf_s (buffer,
+        "SELECT * FROM __InstanceCreationEvent WITHIN 0.001 WHERE TargetInstance ISA "
+        "'Win32_Process'");
 
-    hres = pSink->pSvc->ExecNotificationQueryAsync (_bstr_t ("WQL"), _bstr_t (buffer), WBEM_FLAG_SEND_STATUS, NULL, pSink->pStubSink);
+    hres = pSink->pSvc->ExecNotificationQueryAsync (
+        _bstr_t ("WQL"), _bstr_t (buffer), WBEM_FLAG_SEND_STATUS, NULL, pSink->pStubSink);
 
     if (FAILED (hres))
     {
@@ -235,7 +257,8 @@ bool Monitor::RegisterCreationCallback ()
 // if failed 64bit is assumed!
 int Monitor::GetArchitecture (int pid)
 {
-    const auto wow64FunctionAdress = GetProcAddress (GetModuleHandle ("kernel32"), "IsWow64Process");
+    const auto wow64FunctionAdress =
+        GetProcAddress (GetModuleHandle ("kernel32"), "IsWow64Process");
     if (!wow64FunctionAdress)
     {
         Monitor::monitorLogger->error ("IsWow64Process function not found in kernel32");
@@ -269,4 +292,36 @@ HANDLE Monitor::GetProcessHandleFromID (DWORD id, DWORD access)
         return NULL;
     }
     return handle;
+}
+
+int Monitor::CreateDesktopProcess (char *path, char *cmdArgs)
+{
+    Monitor::monitorLogger->info ("Trying to start executable {} with args: {}", path, cmdArgs);
+    std::wstring wargs = ConvertUTF8StringToUTF16String (std::string (cmdArgs));
+    std::wstring wpath = ConvertUTF8StringToUTF16String (std::string (path));
+    const auto directory = GetDirFromPathSlashes (wpath);
+    if (directory.empty ())
+    {
+        return PATH_NOT_FOUND_ERROR;
+    }
+
+    std::wstring wcommandLine = L"\"" + wpath + L"\" " + wargs;
+    std::string commandLine = ConvertUTF16StringToUTF8String (wcommandLine);
+    STARTUPINFO startupInfo {};
+    PROCESS_INFORMATION processInfo_ {};
+    startupInfo.cb = sizeof (startupInfo);
+
+    if (!CreateProcess (NULL, &commandLine[0], NULL, NULL, FALSE, CREATE_SUSPENDED, NULL,
+            ConvertUTF16StringToUTF8String (directory).c_str (), &startupInfo, &processInfo_))
+    {
+        Monitor::monitorLogger->error (
+            "Failed to create process, error code is {}", GetLastError ());
+        return GENERAL_ERROR;
+    }
+
+    // runprocess and monitor mode should not be used together, so it's okay to use this->thread for
+    // both modes
+    this->pid = processInfo_.dwProcessId;
+    this->thread = processInfo_.hThread;
+    return STATUS_OK;
 }

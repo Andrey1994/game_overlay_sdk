@@ -20,14 +20,14 @@
 // SOFTWARE.
 //
 
-#include <windows.h>
 #include <string>
+#include <windows.h>
 #include <tlhelp32.h>
 #include <psapi.h>
 
-#include "Win32Handle.h"
 #include "DLLInjection.h"
 #include "StringUtils.h"
+#include "Win32Handle.h"
 
 std::shared_ptr<spdlog::logger> DLLInjection::injectLogger = spdlog::stderr_logger_mt ("recordLogger");
 const std::string DLLInjection::dllNameX64 = "GameOverlay64.dll";
@@ -44,13 +44,12 @@ void DLLInjection::SetLogLevel (int level)
     DLLInjection::injectLogger->flush_on (spdlog::level::level_enum (log_level));
 }
 
-DLLInjection::DLLInjection (int pid, char *processName, int arch, char *dllPath)
+DLLInjection::DLLInjection (int pid, int arch, char *dllPath)
 {
     this->processHandle = NULL;
     this->remoteDLLAddress = NULL;
     this->pid = pid;
     this->dllPathSize = 0;
-    this->processName = processName;
     std::string tmpPath (dllPath);
     this->arch = arch;
     tmpPath += "\\";
@@ -62,7 +61,9 @@ DLLInjection::DLLInjection (int pid, char *processName, int arch, char *dllPath)
     this->dllPath = ConvertUTF8StringToUTF16String (tmpPath);
 }
 
-DLLInjection::~DLLInjection () {}
+DLLInjection::~DLLInjection ()
+{
+}
 
 bool DLLInjection::InjectDLL ()
 {
@@ -96,13 +97,14 @@ bool DLLInjection::FreeDLL ()
         return false;
     }
 
-    void* dllModule = GetRemoteDLLModule ();
+    void *dllModule = GetRemoteDLLModule ();
     if (!dllModule)
     {
         return false;
     }
 
-    if (!ExecuteFreeLibrary (dllModule)) {
+    if (!ExecuteFreeLibrary (dllModule))
+    {
         return false;
     }
 
@@ -127,9 +129,8 @@ bool DLLInjection::GetProcessHandle ()
     if (this->processHandle)
         return true;
 
-    this->processHandle = OpenProcess (
-        PROCESS_QUERY_INFORMATION | PROCESS_CREATE_THREAD | PROCESS_VM_OPERATION
-        | PROCESS_VM_WRITE | PROCESS_VM_READ,
+    this->processHandle = OpenProcess (PROCESS_QUERY_INFORMATION | PROCESS_CREATE_THREAD |
+            PROCESS_VM_OPERATION | PROCESS_VM_WRITE | PROCESS_VM_READ,
         FALSE, this->pid);
     if (!this->processHandle)
     {
@@ -149,7 +150,9 @@ bool DLLInjection::GetRemoteDLLAddress ()
         VirtualAllocEx (this->processHandle, NULL, this->dllPathSize, MEM_COMMIT, PAGE_READWRITE);
     if (!this->remoteDLLAddress)
     {
-        DLLInjection::injectLogger->error ("failed to allocate memory for dll in process {}, error {}", this->pid, GetLastError ());
+        DLLInjection::injectLogger->error (
+            "failed to allocate memory for dll in process {}, error {}", this->pid,
+            GetLastError ());
         return false;
     }
 
@@ -159,34 +162,38 @@ bool DLLInjection::GetRemoteDLLAddress ()
 
 bool DLLInjection::ExecuteLoadLibrary ()
 {
-    if (!WriteProcessMemory (this->processHandle, this->remoteDLLAddress,
-        this->dllPath.data (), this->dllPathSize, NULL))
+    if (!WriteProcessMemory (this->processHandle, this->remoteDLLAddress, this->dllPath.data (),
+            this->dllPathSize, NULL))
     {
-        DLLInjection::injectLogger->error ("failed to write process memory {}, error {}", this->pid, GetLastError ());
+        DLLInjection::injectLogger->error (
+            "failed to write process memory {}, error {}", this->pid, GetLastError ());
         return false;
     }
     DLLInjection::injectLogger->trace ("wrote process memory {}", this->pid);
     return ExecuteRemoteThread ("LoadLibraryW", this->remoteDLLAddress);
 }
 
-void* DLLInjection::GetRemoteDLLModule ()
+void *DLLInjection::GetRemoteDLLModule ()
 {
     bool result = false;
-    void* dllModule = nullptr;
+    void *dllModule = nullptr;
     Win32Handle snapShot = CreateToolhelp32Snapshot (TH32CS_SNAPMODULE, this->pid);
     if (snapShot.Get ())
     {
-        MODULEENTRY32 moduleEntry{};
+        MODULEENTRY32 moduleEntry {};
         moduleEntry.dwSize = sizeof (moduleEntry);
         auto newModule = Module32First (snapShot.Get (), &moduleEntry);
         while (newModule)
         {
             DLLInjection::injectLogger->trace ("found {}", moduleEntry.szModule);
-            if ((this->arch == X86) && (DLLInjection::dllNameX32.compare (moduleEntry.szModule) == 0) ||
-                (this->arch == X64) && (DLLInjection::dllNameX64.compare (moduleEntry.szModule) == 0))
+            if ((this->arch == X86) &&
+                    (DLLInjection::dllNameX32.compare (moduleEntry.szModule) == 0) ||
+                (this->arch == X64) &&
+                    (DLLInjection::dllNameX64.compare (moduleEntry.szModule) == 0))
             {
                 dllModule = moduleEntry.modBaseAddr;
-                DLLInjection::injectLogger->info ("found remote dll module for process {}", this->pid);
+                DLLInjection::injectLogger->info (
+                    "found remote dll module for process {}", this->pid);
                 result = true;
                 break;
             }
@@ -200,32 +207,36 @@ void* DLLInjection::GetRemoteDLLModule ()
     }
     else
     {
-        DLLInjection::injectLogger->error ("createsnapshot failed for  {}, error {}", this->pid, GetLastError ());
+        DLLInjection::injectLogger->error (
+            "createsnapshot failed for  {}, error {}", this->pid, GetLastError ());
         result = false;
     }
     return dllModule;
 }
 
-bool DLLInjection::ExecuteFreeLibrary (void* dllModule)
+bool DLLInjection::ExecuteFreeLibrary (void *dllModule)
 {
     return ExecuteRemoteThread ("FreeLibrary", dllModule);
 }
 
-bool DLLInjection::ExecuteRemoteThread (const std::string& functionName, void* functionArguments)
+bool DLLInjection::ExecuteRemoteThread (const std::string &functionName, void *functionArguments)
 {
-    const auto threadRoutine = reinterpret_cast<PTHREAD_START_ROUTINE>(
+    const auto threadRoutine = reinterpret_cast<PTHREAD_START_ROUTINE> (
         GetProcAddress (GetModuleHandle (TEXT ("Kernel32")), functionName.c_str ()));
     DLLInjection::injectLogger->trace ("got threadRoutine for {}", this->pid);
     if (!threadRoutine)
     {
-        DLLInjection::injectLogger->error ("GetProcAddress failed for  {}, error {}", this->pid, GetLastError ());
+        DLLInjection::injectLogger->error (
+            "GetProcAddress failed for  {}, error {}", this->pid, GetLastError ());
         return false;
     }
 
-    Win32Handle remoteThread = CreateRemoteThread (this->processHandle, NULL, 0, threadRoutine, functionArguments, 0, NULL);
+    Win32Handle remoteThread = CreateRemoteThread (
+        this->processHandle, NULL, 0, threadRoutine, functionArguments, 0, NULL);
     if (!remoteThread.Get ())
     {
-        DLLInjection::injectLogger->error ("CreateRemoteThread failed for  {}, error {}", this->pid, GetLastError ());
+        DLLInjection::injectLogger->error (
+            "CreateRemoteThread failed for  {}, error {}", this->pid, GetLastError ());
         return false;
     }
     DLLInjection::injectLogger->trace ("Creating remote thread for {}", this->pid);
@@ -234,11 +245,13 @@ bool DLLInjection::ExecuteRemoteThread (const std::string& functionName, void* f
     DWORD exitCode = 0;
     if (!GetExitCodeThread (remoteThread.Get (), &exitCode))
     {
-        DLLInjection::injectLogger->error ("GetExitCodeThread failed for  {}, error {}", this->pid, GetLastError ());
+        DLLInjection::injectLogger->error (
+            "GetExitCodeThread failed for  {}, error {}", this->pid, GetLastError ());
     }
     if (!exitCode)
     {
-        DLLInjection::injectLogger->error ("Remote thread failed, exit code is {} error is{}", exitCode, GetLastError ());
+        DLLInjection::injectLogger->error (
+            "Remote thread failed, exit code is {} error is{}", exitCode, GetLastError ());
     }
     return true;
 }

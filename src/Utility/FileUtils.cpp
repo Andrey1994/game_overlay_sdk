@@ -53,8 +53,5 @@ std::wstring GetDirFomPathSlashesRemoved (const std::wstring& path)
     if (std::string::npos != directoryEnd) {
         directory = path.substr (0, directoryEnd);
     }
-    else {
-        MessageBox (NULL, L"Invalid file path ", NULL, MB_OK);
-    }
     return directory;
 }

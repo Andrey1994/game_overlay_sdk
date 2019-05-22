@@ -12,10 +12,11 @@ class Monitor
         static std::shared_ptr<spdlog::logger> monitorLogger;
         static void SetLogLevel (int level);
 
-        Monitor (char *processName, char *dllLoc);
+        Monitor ();
         ~Monitor ();
 
-        int StartMonitor ();
+        int StartMonitor (char *processName, char *dllLoc);
+        int RunProcess (char *exePath, char *args, char *dllLoc);
         int StopMonitor ();
         void Callback (int pid, char *pName);
         int GetPid ();
@@ -35,7 +36,8 @@ class Monitor
         void WorkerThread ();
         int GetArchitecture (int pid);
         HANDLE GetProcessHandleFromID (DWORD id, DWORD access);
-
+        int CreateDesktopProcess (char *path, char *cmdArgs);
+        int CreateFileMap ();
 };
 
 #endif

@@ -15,6 +15,7 @@ class CustomExitCodes (enum.Enum):
     PROCESS_MONITOR_ALREADY_RUNNING_ERROR = 2
     PROCESS_MONITOR_IS_NOT_RUNNING_ERROR = 3
     GENERAL_ERROR = 4
+    PATH_NOT_FOUND_ERROR = 5
 
 
 class InjectionError (Exception):

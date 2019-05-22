@@ -23,8 +23,8 @@
 #ifndef DLLINJECTION
 #define DLLINJECTION
 
-#include <windows.h>
 #include <string>
+#include <windows.h>
 
 #include <logger\spdlog.h>
 
@@ -38,11 +38,10 @@ typedef enum
 class DLLInjection
 {
     public:
-
         static std::shared_ptr<spdlog::logger> injectLogger;
         static void SetLogLevel (int level);
 
-        DLLInjection (int pid, char *processName, int arch, char *dllPath);
+        DLLInjection (int pid, int arch, char *dllPath);
         ~DLLInjection ();
 
         bool InjectDLL ();
@@ -53,9 +52,8 @@ class DLLInjection
 
     private:
         int pid;
-        std::string processName;
         int arch;
-        std::wstring dllPath; // wstring is important here!
+        std::wstring dllPath;
 
         size_t dllPathSize;
         HANDLE processHandle;
@@ -64,9 +62,9 @@ class DLLInjection
         bool GetProcessHandle ();
         bool GetRemoteDLLAddress ();
         bool ExecuteLoadLibrary ();
-        void* GetRemoteDLLModule ();
-        bool ExecuteFreeLibrary (void* dllModule);
-        bool ExecuteRemoteThread (const std::string& functionName, void* functionArguments);
+        void *GetRemoteDLLModule ();
+        bool ExecuteFreeLibrary (void *dllModule);
+        bool ExecuteRemoteThread (const std::string &functionName, void *functionArguments);
 };
 
 #endif

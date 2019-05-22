@@ -133,6 +133,7 @@ add_library (
   src/Utility/Win32Handle.cpp
   src/Utility/StringUtils.cpp
   src/Utility/SuspendThreads.cpp
+  src/Utility/FileUtils.cpp
   src/DLLInjection/DLLInjection.cpp
   src/DLLInjection/Monitor.cpp
   src/DLLInjection/MonitorProcessCreation.cpp

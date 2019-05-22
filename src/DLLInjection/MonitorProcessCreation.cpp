@@ -1,4 +1,5 @@
 #include <string.h>
+
 #include "MonitorProcessCreation.h"
 #include "Monitor.h"
 
@@ -17,13 +18,29 @@ int StartMonitor (char *processName, char *dllLoc)
         Monitor::monitorLogger->error ("process monitor already running");
         return PROCESS_MONITOR_ALREADY_RUNNING_ERROR;
     }
-    monitor = new Monitor (processName, dllLoc);
+    monitor = new Monitor ();
     if (!monitor)
     {
         Monitor::monitorLogger->error ("failed to create monitor");
         return GENERAL_ERROR;
     }
-    return monitor->StartMonitor ();
+    return monitor->StartMonitor (processName, dllLoc);
+}
+
+int RunProcess (char *exePath, char *args, char *dllLoc)
+{
+    if (monitor)
+    {
+        Monitor::monitorLogger->error ("process monitor already running");
+        return PROCESS_MONITOR_ALREADY_RUNNING_ERROR;
+    }
+    monitor = new Monitor ();
+    if (!monitor)
+    {
+        Monitor::monitorLogger->error ("failed to create monitor");
+        return GENERAL_ERROR;
+    }
+    return monitor->RunProcess (exePath, args, dllLoc);
 }
 
 int StopMonitor ()
@@ -66,18 +83,18 @@ BOOL WINAPI DllMain (HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
 {
     switch (fdwReason)
     {
-    case DLL_PROCESS_DETACH:
-    {
-        if (monitor)
+        case DLL_PROCESS_DETACH:
         {
-            monitor->StopMonitor ();
-            delete monitor;
-            monitor = NULL;
+            if (monitor)
+            {
+                monitor->StopMonitor ();
+                delete monitor;
+                monitor = NULL;
+            }
+            break;
         }
-        break;
-    }
-    default:
-        break;
+        default:
+            break;
     }
     return TRUE;
 }
