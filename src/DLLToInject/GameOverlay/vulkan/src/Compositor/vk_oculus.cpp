@@ -7,83 +7,83 @@ std::unique_ptr<CompositorOverlay::Oculus_Vk> g_OculusVk;
 
 // just forward call to the hooked function
 
-OVR_PUBLIC_FUNCTION(ovrResult) ovr_GetTextureSwapChainLength(ovrSession session,
+OVR_PUBLIC_FUNCTION (ovrResult) ovr_GetTextureSwapChainLength (ovrSession session,
     ovrTextureSwapChain chain, int* out_Length)
 {
-    ovrResult result = GameOverlay::find_hook_trampoline(&ovr_GetTextureSwapChainLength)(
+    ovrResult result = GameOverlay::find_hook_trampoline (&ovr_GetTextureSwapChainLength)(
         session, chain, out_Length);
 
     return result;
 }
 
-OVR_PUBLIC_FUNCTION(ovrResult) ovr_GetTextureSwapChainCurrentIndex(ovrSession session,
+OVR_PUBLIC_FUNCTION (ovrResult) ovr_GetTextureSwapChainCurrentIndex (ovrSession session,
     ovrTextureSwapChain chain, int* out_Index)
 {
-    ovrResult result = GameOverlay::find_hook_trampoline(&ovr_GetTextureSwapChainCurrentIndex)(
+    ovrResult result = GameOverlay::find_hook_trampoline (&ovr_GetTextureSwapChainCurrentIndex)(
         session, chain, out_Index);
 
-    if (OVR_FAILURE(result)) {
-        g_messageLog.LogError("Oculus", "Failed to get swap chain current index");
+    if (OVR_FAILURE (result)) {
+        g_messageLog.LogError ("Oculus", "Failed to get swap chain current index");
     }
 
     return result;
 }
 
-OVR_PUBLIC_FUNCTION(ovrResult) ovr_CommitTextureSwapChain(ovrSession session,
+OVR_PUBLIC_FUNCTION (ovrResult) ovr_CommitTextureSwapChain (ovrSession session,
     ovrTextureSwapChain chain)
 {
-    ovrResult result = GameOverlay::find_hook_trampoline(&ovr_CommitTextureSwapChain)(
+    ovrResult result = GameOverlay::find_hook_trampoline (&ovr_CommitTextureSwapChain)(
         session, chain);
 
-    if (!OVR_SUCCESS(result)) {
-        g_messageLog.LogError("OVRError", "Failed to commit swap chain");
+    if (!OVR_SUCCESS (result)) {
+        g_messageLog.LogError ("OVRError", "Failed to commit swap chain");
     }
 
     return result;
 }
 
-OVR_PUBLIC_FUNCTION(void) ovr_DestroyTextureSwapChain(ovrSession session, ovrTextureSwapChain chain)
+OVR_PUBLIC_FUNCTION (void) ovr_DestroyTextureSwapChain (ovrSession session, ovrTextureSwapChain chain)
 {
     if (g_OculusVk) {
-        GameOverlay::find_hook_trampoline(&ovr_DestroyTextureSwapChain)(
-            session, g_OculusVk->GetSwapChain());
+        GameOverlay::find_hook_trampoline (&ovr_DestroyTextureSwapChain)(
+            session, g_OculusVk->GetSwapChain ());
     }
 
-    GameOverlay::find_hook_trampoline(&ovr_DestroyTextureSwapChain)(session, chain);
+    GameOverlay::find_hook_trampoline (&ovr_DestroyTextureSwapChain)(session, chain);
 }
 
 // Vulkan specific
 
-OVR_PUBLIC_FUNCTION(void) ovr_Destroy(ovrSession session)
+OVR_PUBLIC_FUNCTION (void) ovr_Destroy (ovrSession session)
 {
-    GameOverlay::find_hook_trampoline(&ovr_Destroy)(session);
+    GameOverlay::find_hook_trampoline (&ovr_Destroy)(session);
 }
 
-OVR_PUBLIC_FUNCTION(ovrResult) ovr_CreateTextureSwapChainVk(ovrSession session, VkDevice device,
+OVR_PUBLIC_FUNCTION (ovrResult) ovr_CreateTextureSwapChainVk (ovrSession session, VkDevice device,
     const ovrTextureSwapChainDesc* desc, ovrTextureSwapChain* out_TextureSwapChain)
 {
-    ovrResult result = GameOverlay::find_hook_trampoline(&ovr_CreateTextureSwapChainVk)(
+    ovrResult result = GameOverlay::find_hook_trampoline (&ovr_CreateTextureSwapChainVk)(
         session, device, desc, out_TextureSwapChain);
 
     return result;
 }
 
-OVR_PUBLIC_FUNCTION(ovrResult) ovr_GetTextureSwapChainBufferVk(ovrSession session,
+OVR_PUBLIC_FUNCTION (ovrResult) ovr_GetTextureSwapChainBufferVk (ovrSession session,
     ovrTextureSwapChain chain, int index, VkImage* out_Image)
 {
-    ovrResult result = GameOverlay::find_hook_trampoline(&ovr_GetTextureSwapChainBufferVk)(
+    ovrResult result = GameOverlay::find_hook_trampoline (&ovr_GetTextureSwapChainBufferVk)(
         session, chain, index, out_Image);
 
     return result;
 }
 
-OVR_PUBLIC_FUNCTION(ovrResult) ovr_SetSynchonizationQueueVk(ovrSession session, VkQueue queue)
+OVR_PUBLIC_FUNCTION (ovrResult) ovr_SetSynchonizationQueueVk (ovrSession session, VkQueue queue)
 {
-    ovrResult result = GameOverlay::find_hook_trampoline(&ovr_SetSynchonizationQueueVk)(
+    ovrResult result = GameOverlay::find_hook_trampoline (&ovr_SetSynchonizationQueueVk)(
         session, queue);
 
-    if (OVR_SUCCESS(result)) {
-        g_messageLog.LogError("Vulkan Oculus", "synchronization queue error");
+    if (OVR_SUCCESS (result)) {
+        g_messageLog.LogError ("Vulkan Oculus", "synchronization queue error");
     }
 
     return result;
@@ -91,19 +91,19 @@ OVR_PUBLIC_FUNCTION(ovrResult) ovr_SetSynchonizationQueueVk(ovrSession session, 
 
 namespace CompositorOverlay
 {
-    void Oculus_Vk::SetDevice(VkDevice device)
+    void Oculus_Vk::SetDevice (VkDevice device)
     {
         device_ = device;
     }
 
-    void Oculus_Vk::SetQueue(VkQueue queue)
+    void Oculus_Vk::SetQueue (VkQueue queue)
     {
         queue_ = queue;
     }
 
-    ovrRecti Oculus_Vk::GetViewport()
+    ovrRecti Oculus_Vk::GetViewport ()
     {
-        VkRect2D rect2D = renderer_->GetViewportCompositor();
+        VkRect2D rect2D = renderer_->GetViewportCompositor ();
         ovrRecti viewport;
 
         viewport.Pos.x = rect2D.offset.x;
@@ -114,7 +114,7 @@ namespace CompositorOverlay
         return viewport;
     }
 
-    bool Oculus_Vk::Init(VkLayerDispatchTable* pTable,
+    bool Oculus_Vk::Init (VkLayerDispatchTable* pTable,
         const VkPhysicalDeviceMemoryProperties& physicalDeviceMemoryProperties, ovrSession& session)
     {
         if (initialized_)
@@ -132,56 +132,56 @@ namespace CompositorOverlay
         overlayDesc.BindFlags = ovrTextureBind_DX_RenderTarget;
         overlayDesc.StaticImage = ovrFalse;
 
-        GameOverlay::find_hook_trampoline(&ovr_CreateTextureSwapChainVk)(session, device_,
+        GameOverlay::find_hook_trampoline (&ovr_CreateTextureSwapChainVk)(session, device_,
             &overlayDesc, &swapchain_);
 
         VkExtent2D extent = { screenWidth_, screenHeight_ };
 
         int textureCount = 0;
-        GameOverlay::find_hook_trampoline(&ovr_GetTextureSwapChainLength)(session, swapchain_,
+        GameOverlay::find_hook_trampoline (&ovr_GetTextureSwapChainLength)(session, swapchain_,
             &textureCount);
-        images_.resize(textureCount);
+        images_.resize (textureCount);
         for (int i = 0; i < textureCount; i++)
         {
-            ovrResult result = GameOverlay::find_hook_trampoline(&ovr_GetTextureSwapChainBufferVk)
+            ovrResult result = GameOverlay::find_hook_trampoline (&ovr_GetTextureSwapChainBufferVk)
                 (session, swapchain_, i, &images_[i]);
         }
 
-        renderer_.reset(new Rendering(Rendering::GetCurrentPath ()));
-        initialized_ = renderer_->OnInitCompositor(device_, pTable, physicalDeviceMemoryProperties,
-            VK_FORMAT_R8G8B8A8_UNORM, extent, 0, textureCount, images_.data());
+        renderer_.reset (new Rendering (Rendering::GetCurrentPath ()));
+        initialized_ = renderer_->OnInitCompositor (device_, pTable, physicalDeviceMemoryProperties,
+            VK_FORMAT_R8G8B8A8_UNORM, extent, 0, textureCount, images_.data ());
 
         return initialized_;
     }
 
-    bool Oculus_Vk::Render(VkLayerDispatchTable* pTable,
+    bool Oculus_Vk::Render (VkLayerDispatchTable* pTable,
         PFN_vkSetDeviceLoaderData setDeviceLoaderDataFuncPtr,
         uint32_t queueFamilyIndex, VkQueueFlags queueFlags, ovrSession& session)
     {
-        ovrResult result = GameOverlay::find_hook_trampoline(&ovr_SetSynchonizationQueueVk)(
+        ovrResult result = GameOverlay::find_hook_trampoline (&ovr_SetSynchonizationQueueVk)(
             session, queue_);
 
-        if (!OVR_SUCCESS(result)) {
-            g_messageLog.LogInfo("Compositor Oculus Vk", "Failed to set synchronization queue");
+        if (!OVR_SUCCESS (result)) {
+            g_messageLog.LogInfo ("Compositor Oculus Vk", "Failed to set synchronization queue");
             return false;
         }
 
         int imageIndex = 0;
-        GameOverlay::find_hook_trampoline(&ovr_GetTextureSwapChainCurrentIndex)(
+        GameOverlay::find_hook_trampoline (&ovr_GetTextureSwapChainCurrentIndex)(
             session, swapchain_, &imageIndex);
 
-        VkSemaphore semaphore = renderer_->OnSubmitFrameCompositor(pTable, setDeviceLoaderDataFuncPtr, queue_,
+        VkSemaphore semaphore = renderer_->OnSubmitFrameCompositor (pTable, setDeviceLoaderDataFuncPtr, queue_,
             queueFamilyIndex, queueFlags, imageIndex);
 
-        GameOverlay::find_hook_trampoline(&ovr_CommitTextureSwapChain)(session,
+        GameOverlay::find_hook_trampoline (&ovr_CommitTextureSwapChain)(session,
             swapchain_);
 
         return (semaphore != VK_NULL_HANDLE);
     }
 
-    void Oculus_Vk::DestroyRenderer(VkDevice device, VkLayerDispatchTable* pTable)
+    void Oculus_Vk::DestroyRenderer (VkDevice device, VkLayerDispatchTable* pTable)
     {
         if (device == device_ && renderer_)
-            renderer_->OnDestroyCompositor(pTable);
+            renderer_->OnDestroyCompositor (pTable);
     }
 }

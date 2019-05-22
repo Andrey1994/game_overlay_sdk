@@ -22,29 +22,29 @@
 
 #include "SwapchainMapping.h"
 
-void SwapchainMapping::ClearImageData(VkLayerDispatchTable * pTable)
+void SwapchainMapping::ClearImageData (VkLayerDispatchTable * pTable)
 {
     for (auto& id : imageData)
     {
         if (id.view != VK_NULL_HANDLE)
         {
-            pTable->DestroyImageView(device, id.view, nullptr);
+            pTable->DestroyImageView (device, id.view, nullptr);
         }
 
         if (id.framebuffer != VK_NULL_HANDLE)
         {
-            pTable->DestroyFramebuffer(device, id.framebuffer, nullptr);
+            pTable->DestroyFramebuffer (device, id.framebuffer, nullptr);
         }
     }
-    imageData.clear();
+    imageData.clear ();
 
     if (descriptorPool != VK_NULL_HANDLE)
     {
-        pTable->DestroyDescriptorPool(device, descriptorPool, nullptr);
+        pTable->DestroyDescriptorPool (device, descriptorPool, nullptr);
     }
 
     if (computePipelineLayout != VK_NULL_HANDLE)
     {
-        pTable->DestroyPipelineLayout(device, computePipelineLayout, nullptr);
+        pTable->DestroyPipelineLayout (device, computePipelineLayout, nullptr);
     }
 }

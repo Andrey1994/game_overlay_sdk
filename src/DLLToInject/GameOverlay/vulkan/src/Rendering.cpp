@@ -38,115 +38,115 @@ std::wstring Rendering::GetCurrentPath ()
     return ConvertUTF8StringToUTF16String (std::string (buffer).substr (0, pos));
 }
 
-void Rendering::OnDestroyCompositor(VkLayerDispatchTable* pTable)
+void Rendering::OnDestroyCompositor (VkLayerDispatchTable* pTable)
 {
     // check if we actually created a compositor swapchain mapping before
     if (overlayBitmapInitialized)
-        DestroySwapchain(pTable, &compositorSwapchainMapping_);
+        DestroySwapchain (pTable, &compositorSwapchainMapping_);
 }
 
-void Rendering::OnDestroySwapchain(VkDevice device, VkLayerDispatchTable* pTable,
+void Rendering::OnDestroySwapchain (VkDevice device, VkLayerDispatchTable* pTable,
     VkSwapchainKHR swapchain)
 {
-    SwapchainMapping* sm = swapchainMappings_.Get(swapchain);
+    SwapchainMapping* sm = swapchainMappings_.Get (swapchain);
     if (sm == nullptr)
     {
         return;
     }
-    DestroySwapchain(pTable, sm);
-    swapchainMappings_.Remove(swapchain);
+    DestroySwapchain (pTable, sm);
+    swapchainMappings_.Remove (swapchain);
     delete sm;
 }
 
-void Rendering::DestroySwapchain(VkLayerDispatchTable* pTable, SwapchainMapping* sm)
+void Rendering::DestroySwapchain (VkLayerDispatchTable* pTable, SwapchainMapping* sm)
 {
     for (int i = 0; i < 2; ++i)
     {
         if (sm->overlayImages[i].bufferView != VK_NULL_HANDLE)
         {
-            pTable->DestroyBufferView(sm->device, sm->overlayImages[i].bufferView, nullptr);
+            pTable->DestroyBufferView (sm->device, sm->overlayImages[i].bufferView, nullptr);
         }
 
         if (sm->overlayImages[i].overlayHostBuffer != VK_NULL_HANDLE)
         {
-            pTable->DestroyBuffer(sm->device, sm->overlayImages[i].overlayHostBuffer, nullptr);
+            pTable->DestroyBuffer (sm->device, sm->overlayImages[i].overlayHostBuffer, nullptr);
         }
 
         if (sm->overlayImages[i].overlayHostMemory != VK_NULL_HANDLE)
         {
-            pTable->FreeMemory(sm->device, sm->overlayImages[i].overlayHostMemory, nullptr);
+            pTable->FreeMemory (sm->device, sm->overlayImages[i].overlayHostMemory, nullptr);
         }
 
         if (sm->overlayImages[i].overlayBuffer != VK_NULL_HANDLE)
         {
-            pTable->DestroyBuffer(sm->device, sm->overlayImages[i].overlayBuffer, nullptr);
+            pTable->DestroyBuffer (sm->device, sm->overlayImages[i].overlayBuffer, nullptr);
         }
 
         if (sm->overlayImages[i].overlayMemory != VK_NULL_HANDLE)
         {
-            pTable->FreeMemory(sm->device, sm->overlayImages[i].overlayMemory, nullptr);
+            pTable->FreeMemory (sm->device, sm->overlayImages[i].overlayMemory, nullptr);
         }
 
         if (sm->overlayImages[i].overlayCopySemaphore != VK_NULL_HANDLE)
         {
-            pTable->DestroySemaphore(sm->device, sm->overlayImages[i].overlayCopySemaphore, nullptr);
+            pTable->DestroySemaphore (sm->device, sm->overlayImages[i].overlayCopySemaphore, nullptr);
         }
 
         if (sm->overlayImages[i].commandBufferFence[0] != VK_NULL_HANDLE)
         {
-            pTable->DestroyFence(sm->device, sm->overlayImages[i].commandBufferFence[0], nullptr);
+            pTable->DestroyFence (sm->device, sm->overlayImages[i].commandBufferFence[0], nullptr);
         }
 
         if (sm->overlayImages[i].commandBufferFence[1] != VK_NULL_HANDLE)
         {
-            pTable->DestroyFence(sm->device, sm->overlayImages[i].commandBufferFence[1], nullptr);
+            pTable->DestroyFence (sm->device, sm->overlayImages[i].commandBufferFence[1], nullptr);
         }
     }
 
     if (sm->uniformBuffer != VK_NULL_HANDLE)
     {
-        pTable->DestroyBuffer(sm->device, sm->uniformBuffer, nullptr);
+        pTable->DestroyBuffer (sm->device, sm->uniformBuffer, nullptr);
     }
 
     if (sm->uniformMemory != VK_NULL_HANDLE)
     {
-        pTable->FreeMemory(sm->device, sm->uniformMemory, nullptr);
+        pTable->FreeMemory (sm->device, sm->uniformMemory, nullptr);
     }
 
     if (sm->renderPass != VK_NULL_HANDLE)
     {
-        pTable->DestroyRenderPass(sm->device, sm->renderPass, nullptr);
+        pTable->DestroyRenderPass (sm->device, sm->renderPass, nullptr);
     }
 
     if (sm->gfxPipelineLayout != VK_NULL_HANDLE)
     {
-        pTable->DestroyPipelineLayout(sm->device, sm->gfxPipelineLayout, nullptr);
+        pTable->DestroyPipelineLayout (sm->device, sm->gfxPipelineLayout, nullptr);
     }
 
     if (sm->gfxPipeline != VK_NULL_HANDLE)
     {
-        pTable->DestroyPipeline(sm->device, sm->gfxPipeline, nullptr);
+        pTable->DestroyPipeline (sm->device, sm->gfxPipeline, nullptr);
     }
 
     if (sm->computePipeline != VK_NULL_HANDLE)
     {
-        pTable->DestroyPipeline(sm->device, sm->computePipeline, nullptr);
+        pTable->DestroyPipeline (sm->device, sm->computePipeline, nullptr);
     }
 
     for (auto& qm : sm->queueMappings)
     {
         for (auto& im : qm.second.imageMappings)
         {
-            pTable->DestroySemaphore(sm->device, im.semaphore, nullptr);
+            pTable->DestroySemaphore (sm->device, im.semaphore, nullptr);
         }
 
-        pTable->DestroyCommandPool(sm->device, qm.second.commandPool, nullptr);
+        pTable->DestroyCommandPool (sm->device, qm.second.commandPool, nullptr);
     }
 
-    sm->ClearImageData(pTable);
+    sm->ClearImageData (pTable);
 }
 
-uint32_t GetMemoryTypeIndex(const VkPhysicalDeviceMemoryProperties& physicalDeviceMemoryProperties,
+uint32_t GetMemoryTypeIndex (const VkPhysicalDeviceMemoryProperties& physicalDeviceMemoryProperties,
     uint32_t memoryTypeBits, VkMemoryPropertyFlags flags)
 {
     for (uint32_t i = 0; i < physicalDeviceMemoryProperties.memoryTypeCount; ++i)
@@ -162,12 +162,12 @@ uint32_t GetMemoryTypeIndex(const VkPhysicalDeviceMemoryProperties& physicalDevi
     return UINT32_MAX;
 }
 
-Rendering::Rendering(const std::wstring& shaderDirectory) : shaderDirectory_(shaderDirectory)
+Rendering::Rendering (const std::wstring& shaderDirectory) : shaderDirectory_ (shaderDirectory)
 {
     // Empty
 }
 
-VkResult Rendering::CreateOverlayImageBuffer(VkDevice device,
+VkResult Rendering::CreateOverlayImageBuffer (VkDevice device,
     VkLayerDispatchTable* pTable, SwapchainMapping* sm,
     OverlayImageData& overlayImage, VkBuffer & uniformBuffer, VkPhysicalDeviceMemoryProperties physicalDeviceMemoryProperties)
 {
@@ -176,7 +176,7 @@ VkResult Rendering::CreateOverlayImageBuffer(VkDevice device,
     overlayHostBufferInfo.size = sm->overlayRect.extent.width * sm->overlayRect.extent.height * 4;
     overlayHostBufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT;
 
-    VkResult result = pTable->CreateBuffer(device, &overlayHostBufferInfo, nullptr,
+    VkResult result = pTable->CreateBuffer (device, &overlayHostBufferInfo, nullptr,
         &overlayImage.overlayHostBuffer);
     if (result != VK_SUCCESS)
     {
@@ -184,35 +184,35 @@ VkResult Rendering::CreateOverlayImageBuffer(VkDevice device,
     }
 
     VkMemoryRequirements memoryRequirements;
-    pTable->GetBufferMemoryRequirements(device, overlayImage.overlayHostBuffer,
+    pTable->GetBufferMemoryRequirements (device, overlayImage.overlayHostBuffer,
         &memoryRequirements);
 
     VkMemoryAllocateInfo memoryAllocateInfo = { VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO };
     memoryAllocateInfo.allocationSize = memoryRequirements.size;
-    memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex(
+    memoryAllocateInfo.memoryTypeIndex = GetMemoryTypeIndex (
         physicalDeviceMemoryProperties, memoryRequirements.memoryTypeBits,
         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
     if (memoryAllocateInfo.memoryTypeIndex == UINT32_MAX)
     {
-        pTable->DestroyBuffer(device, overlayImage.overlayHostBuffer, nullptr);
+        pTable->DestroyBuffer (device, overlayImage.overlayHostBuffer, nullptr);
         return result;
     }
 
-    result = pTable->AllocateMemory(device, &memoryAllocateInfo, nullptr,
+    result = pTable->AllocateMemory (device, &memoryAllocateInfo, nullptr,
         &overlayImage.overlayHostMemory);
     if (result != VK_SUCCESS)
     {
-        pTable->DestroyBuffer(device, overlayImage.overlayHostBuffer, nullptr);
+        pTable->DestroyBuffer (device, overlayImage.overlayHostBuffer, nullptr);
         return result;
     }
 
-    result = pTable->BindBufferMemory(device, overlayImage.overlayHostBuffer,
+    result = pTable->BindBufferMemory (device, overlayImage.overlayHostBuffer,
         overlayImage.overlayHostMemory, 0);
     if (result != VK_SUCCESS)
     {
-        pTable->FreeMemory(device, overlayImage.overlayHostMemory, nullptr);
-        pTable->DestroyBuffer(device, overlayImage.overlayHostBuffer, nullptr);
+        pTable->FreeMemory (device, overlayImage.overlayHostMemory, nullptr);
+        pTable->DestroyBuffer (device, overlayImage.overlayHostBuffer, nullptr);
         return result;
     }
 
@@ -221,46 +221,46 @@ VkResult Rendering::CreateOverlayImageBuffer(VkDevice device,
     overlayBufferInfo.size = sm->overlayRect.extent.width * sm->overlayRect.extent.height * 4;
     overlayBufferInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_TEXEL_BUFFER_BIT;
 
-    result = pTable->CreateBuffer(device, &overlayBufferInfo, nullptr, &overlayImage.overlayBuffer);
+    result = pTable->CreateBuffer (device, &overlayBufferInfo, nullptr, &overlayImage.overlayBuffer);
     if (result != VK_SUCCESS)
     {
-        pTable->FreeMemory(device, overlayImage.overlayHostMemory, nullptr);
-        pTable->DestroyBuffer(device, overlayImage.overlayHostBuffer, nullptr);
+        pTable->FreeMemory (device, overlayImage.overlayHostMemory, nullptr);
+        pTable->DestroyBuffer (device, overlayImage.overlayHostBuffer, nullptr);
         return result;
     }
 
-    pTable->GetBufferMemoryRequirements(device, overlayImage.overlayBuffer,
+    pTable->GetBufferMemoryRequirements (device, overlayImage.overlayBuffer,
         &memoryRequirements);
     memoryAllocateInfo.allocationSize = memoryRequirements.size;
     memoryAllocateInfo.memoryTypeIndex =
-        GetMemoryTypeIndex(physicalDeviceMemoryProperties, memoryRequirements.memoryTypeBits,
+        GetMemoryTypeIndex (physicalDeviceMemoryProperties, memoryRequirements.memoryTypeBits,
             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
     if (memoryAllocateInfo.memoryTypeIndex == UINT32_MAX)
     {
-        pTable->DestroyBuffer(device, overlayImage.overlayBuffer, nullptr);
-        pTable->FreeMemory(device, overlayImage.overlayHostMemory, nullptr);
-        pTable->DestroyBuffer(device, overlayImage.overlayHostBuffer, nullptr);
+        pTable->DestroyBuffer (device, overlayImage.overlayBuffer, nullptr);
+        pTable->FreeMemory (device, overlayImage.overlayHostMemory, nullptr);
+        pTable->DestroyBuffer (device, overlayImage.overlayHostBuffer, nullptr);
         return result;
     }
 
-    result = pTable->AllocateMemory(device, &memoryAllocateInfo, nullptr,
+    result = pTable->AllocateMemory (device, &memoryAllocateInfo, nullptr,
         &overlayImage.overlayMemory);
     if (result != VK_SUCCESS)
     {
-        pTable->DestroyBuffer(device, overlayImage.overlayBuffer, nullptr);
-        pTable->FreeMemory(device, overlayImage.overlayHostMemory, nullptr);
-        pTable->DestroyBuffer(device, overlayImage.overlayHostBuffer, nullptr);
+        pTable->DestroyBuffer (device, overlayImage.overlayBuffer, nullptr);
+        pTable->FreeMemory (device, overlayImage.overlayHostMemory, nullptr);
+        pTable->DestroyBuffer (device, overlayImage.overlayHostBuffer, nullptr);
         return result;
     }
 
-    result = pTable->BindBufferMemory(device, overlayImage.overlayBuffer,
+    result = pTable->BindBufferMemory (device, overlayImage.overlayBuffer,
         overlayImage.overlayMemory, 0);
     if (result != VK_SUCCESS)
     {
-        pTable->FreeMemory(device, overlayImage.overlayMemory, nullptr);
-        pTable->DestroyBuffer(device, overlayImage.overlayBuffer, nullptr);
-        pTable->FreeMemory(device, overlayImage.overlayHostMemory, nullptr);
-        pTable->DestroyBuffer(device, overlayImage.overlayHostBuffer, nullptr);
+        pTable->FreeMemory (device, overlayImage.overlayMemory, nullptr);
+        pTable->DestroyBuffer (device, overlayImage.overlayBuffer, nullptr);
+        pTable->FreeMemory (device, overlayImage.overlayHostMemory, nullptr);
+        pTable->DestroyBuffer (device, overlayImage.overlayHostBuffer, nullptr);
         return result;
     }
 
@@ -269,49 +269,49 @@ VkResult Rendering::CreateOverlayImageBuffer(VkDevice device,
     bvCreateInfo.format = VK_FORMAT_R8G8B8A8_UNORM;
     bvCreateInfo.range = VK_WHOLE_SIZE;
 
-    result = pTable->CreateBufferView(sm->device, &bvCreateInfo, nullptr,
+    result = pTable->CreateBufferView (sm->device, &bvCreateInfo, nullptr,
         &overlayImage.bufferView);
     if (result != VK_SUCCESS)
     {
-        pTable->FreeMemory(device, overlayImage.overlayMemory, nullptr);
-        pTable->DestroyBuffer(device, overlayImage.overlayBuffer, nullptr);
-        pTable->FreeMemory(device, overlayImage.overlayHostMemory, nullptr);
-        pTable->DestroyBuffer(device, overlayImage.overlayHostBuffer, nullptr);
+        pTable->FreeMemory (device, overlayImage.overlayMemory, nullptr);
+        pTable->DestroyBuffer (device, overlayImage.overlayBuffer, nullptr);
+        pTable->FreeMemory (device, overlayImage.overlayHostMemory, nullptr);
+        pTable->DestroyBuffer (device, overlayImage.overlayHostBuffer, nullptr);
         return result;
     }
 
     VkSemaphoreCreateInfo semaphoreCreateInfo = { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO, nullptr, 0 };
-    result = pTable->CreateSemaphore(device, &semaphoreCreateInfo, nullptr, &overlayImage.overlayCopySemaphore);
+    result = pTable->CreateSemaphore (device, &semaphoreCreateInfo, nullptr, &overlayImage.overlayCopySemaphore);
     if (result != VK_SUCCESS)
     {
-        pTable->FreeMemory(device, overlayImage.overlayMemory, nullptr);
-        pTable->DestroyBuffer(device, overlayImage.overlayBuffer, nullptr);
-        pTable->FreeMemory(device, overlayImage.overlayHostMemory, nullptr);
-        pTable->DestroyBuffer(device, overlayImage.overlayHostBuffer, nullptr);
-        pTable->DestroyBufferView(device, overlayImage.bufferView, nullptr);
+        pTable->FreeMemory (device, overlayImage.overlayMemory, nullptr);
+        pTable->DestroyBuffer (device, overlayImage.overlayBuffer, nullptr);
+        pTable->FreeMemory (device, overlayImage.overlayHostMemory, nullptr);
+        pTable->DestroyBuffer (device, overlayImage.overlayHostBuffer, nullptr);
+        pTable->DestroyBufferView (device, overlayImage.bufferView, nullptr);
         return result;
     }
 #if _DEBUG
     VkFenceCreateInfo createInfo = { VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, nullptr, 0 };
-    result = pTable->CreateFence(device, &createInfo, nullptr, &overlayImage.commandBufferFence[0]);
+    result = pTable->CreateFence (device, &createInfo, nullptr, &overlayImage.commandBufferFence[0]);
     if (result != VK_SUCCESS)
     {
-        pTable->FreeMemory(device, overlayImage.overlayMemory, nullptr);
-        pTable->DestroyBuffer(device, overlayImage.overlayBuffer, nullptr);
-        pTable->FreeMemory(device, overlayImage.overlayHostMemory, nullptr);
-        pTable->DestroyBuffer(device, overlayImage.overlayHostBuffer, nullptr);
-        pTable->DestroyBufferView(device, overlayImage.bufferView, nullptr);
+        pTable->FreeMemory (device, overlayImage.overlayMemory, nullptr);
+        pTable->DestroyBuffer (device, overlayImage.overlayBuffer, nullptr);
+        pTable->FreeMemory (device, overlayImage.overlayHostMemory, nullptr);
+        pTable->DestroyBuffer (device, overlayImage.overlayHostBuffer, nullptr);
+        pTable->DestroyBufferView (device, overlayImage.bufferView, nullptr);
         return result;
     }
 
-    result = pTable->CreateFence(device, &createInfo, nullptr, &overlayImage.commandBufferFence[1]);
+    result = pTable->CreateFence (device, &createInfo, nullptr, &overlayImage.commandBufferFence[1]);
     if (result != VK_SUCCESS)
     {
-        pTable->FreeMemory(device, overlayImage.overlayMemory, nullptr);
-        pTable->DestroyBuffer(device, overlayImage.overlayBuffer, nullptr);
-        pTable->FreeMemory(device, overlayImage.overlayHostMemory, nullptr);
-        pTable->DestroyBuffer(device, overlayImage.overlayHostBuffer, nullptr);
-        pTable->DestroyBufferView(device, overlayImage.bufferView, nullptr);
+        pTable->FreeMemory (device, overlayImage.overlayMemory, nullptr);
+        pTable->DestroyBuffer (device, overlayImage.overlayBuffer, nullptr);
+        pTable->FreeMemory (device, overlayImage.overlayHostMemory, nullptr);
+        pTable->DestroyBuffer (device, overlayImage.overlayHostBuffer, nullptr);
+        pTable->DestroyBufferView (device, overlayImage.bufferView, nullptr);
         return result;
     }
 #endif
@@ -320,60 +320,60 @@ VkResult Rendering::CreateOverlayImageBuffer(VkDevice device,
 }
 
 
-VkResult Rendering::CreateUniformBuffer(VkDevice device, VkLayerDispatchTable * pTable,
+VkResult Rendering::CreateUniformBuffer (VkDevice device, VkLayerDispatchTable * pTable,
     SwapchainMapping * sm, VkPhysicalDeviceMemoryProperties physicalDeviceMemoryProperties)
 {
     VkBufferCreateInfo bufferInfo = { VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO };
-    bufferInfo.size = 4 * sizeof(int);
+    bufferInfo.size = 4 * sizeof (int);
     bufferInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    VkResult result = pTable->CreateBuffer(device, &bufferInfo, nullptr, &sm->uniformBuffer);
+    VkResult result = pTable->CreateBuffer (device, &bufferInfo, nullptr, &sm->uniformBuffer);
     if (result != VK_SUCCESS)
     {
-        g_messageLog.LogError("CreateUniformBuffer", "Failed to create uniform buffer.");
+        g_messageLog.LogError ("CreateUniformBuffer", "Failed to create uniform buffer.");
         return result;
     }
 
     VkMemoryRequirements memoryRequirements;
-    pTable->GetBufferMemoryRequirements(device, sm->uniformBuffer, &memoryRequirements);
+    pTable->GetBufferMemoryRequirements (device, sm->uniformBuffer, &memoryRequirements);
     VkMemoryAllocateInfo allocateInfo = { VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO };
     allocateInfo.allocationSize = memoryRequirements.size;
-    allocateInfo.memoryTypeIndex = GetMemoryTypeIndex(
+    allocateInfo.memoryTypeIndex = GetMemoryTypeIndex (
         physicalDeviceMemoryProperties, memoryRequirements.memoryTypeBits,
         VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
-    result = pTable->AllocateMemory(device, &allocateInfo, nullptr, &sm->uniformMemory);
+    result = pTable->AllocateMemory (device, &allocateInfo, nullptr, &sm->uniformMemory);
     if (result != VK_SUCCESS)
     {
-        pTable->DestroyBuffer(device, sm->uniformBuffer, nullptr);
-        g_messageLog.LogError("CreateUniformBuffer", "Failed to allocate buffer memory.");
+        pTable->DestroyBuffer (device, sm->uniformBuffer, nullptr);
+        g_messageLog.LogError ("CreateUniformBuffer", "Failed to allocate buffer memory.");
         return result;
     }
 
-    result = pTable->BindBufferMemory(device, sm->uniformBuffer, sm->uniformMemory, 0);
+    result = pTable->BindBufferMemory (device, sm->uniformBuffer, sm->uniformMemory, 0);
     if (result != VK_SUCCESS)
     {
-        pTable->DestroyBuffer(device, sm->uniformBuffer, nullptr);
-        pTable->FreeMemory(device, sm->uniformMemory, nullptr);
-        g_messageLog.LogError("CreateUniformBuffer", "Failed to bind buffer memory.");
+        pTable->DestroyBuffer (device, sm->uniformBuffer, nullptr);
+        pTable->FreeMemory (device, sm->uniformMemory, nullptr);
+        g_messageLog.LogError ("CreateUniformBuffer", "Failed to bind buffer memory.");
         return result;
     }
 
     return VK_SUCCESS;
 }
 
-bool Rendering::InitRenderPass(VkLayerDispatchTable* pTable,
+bool Rendering::InitRenderPass (VkLayerDispatchTable* pTable,
     const VkPhysicalDeviceMemoryProperties& physicalDeviceMemoryProperties,
     SwapchainMapping* sm)
 {
     if (!overlayBitmapInitialized)
     {
-        GameOverlay::InitLogging("VulkanOverlay");
-        GameOverlay::InitCapturing();
+        GameOverlay::InitLogging ("VulkanOverlay");
+        GameOverlay::InitCapturing ();
 
-        overlayBitmap_.reset(new OverlayBitmap());
-        if (!overlayBitmap_->Init(
+        overlayBitmap_.reset (new OverlayBitmap ());
+        if (!overlayBitmap_->Init (
             static_cast<int>(sm->extent.width),
             static_cast<int>(sm->extent.height),
             OverlayBitmap::API::Vulkan))
@@ -382,26 +382,26 @@ bool Rendering::InitRenderPass(VkLayerDispatchTable* pTable,
         }
         overlayBitmapInitialized = true;
     }
-    overlayBitmap_->Resize(sm->extent.width, sm->extent.height);
+    overlayBitmap_->Resize (sm->extent.width, sm->extent.height);
 
-    sm->overlayFormat = overlayBitmap_->GetVKFormat();
+    sm->overlayFormat = overlayBitmap_->GetVKFormat ();
 
-    auto screenPos = overlayBitmap_->GetScreenPos();
+    auto screenPos = overlayBitmap_->GetScreenPos ();
     sm->overlayRect.offset.x = screenPos.x;
     sm->overlayRect.offset.y = screenPos.y;
-    sm->overlayRect.extent.width = overlayBitmap_->GetFullWidth();
-    sm->overlayRect.extent.height = overlayBitmap_->GetFullHeight();
+    sm->overlayRect.extent.width = overlayBitmap_->GetFullWidth ();
+    sm->overlayRect.extent.height = overlayBitmap_->GetFullHeight ();
 
     for (int i = 0; i < 2; ++i)
     {
-        VkResult result = CreateOverlayImageBuffer(sm->device, pTable, sm, sm->overlayImages[i], sm->uniformBuffer, physicalDeviceMemoryProperties);
+        VkResult result = CreateOverlayImageBuffer (sm->device, pTable, sm, sm->overlayImages[i], sm->uniformBuffer, physicalDeviceMemoryProperties);
         if (result != VK_SUCCESS)
         {
             return false;
         }
     }
 
-    VkResult result = CreateUniformBuffer(sm->device, pTable, sm, physicalDeviceMemoryProperties);
+    VkResult result = CreateUniformBuffer (sm->device, pTable, sm, physicalDeviceMemoryProperties);
     if (result != VK_SUCCESS)
     {
         return false;
@@ -443,7 +443,7 @@ bool Rendering::InitRenderPass(VkLayerDispatchTable* pTable,
       1,
       &dependency };
 
-    result = pTable->CreateRenderPass(sm->device, &rpCreateInfo, nullptr, &sm->renderPass);
+    result = pTable->CreateRenderPass (sm->device, &rpCreateInfo, nullptr, &sm->renderPass);
     if (result != VK_SUCCESS)
     {
         return false;
@@ -452,19 +452,19 @@ bool Rendering::InitRenderPass(VkLayerDispatchTable* pTable,
     return true;
 }
 
-void Rendering::OnCreateSwapchain(
+void Rendering::OnCreateSwapchain (
     VkDevice device, VkLayerDispatchTable* pTable,
     const VkPhysicalDeviceMemoryProperties& physicalDeviceMemoryProperties,
     VkSwapchainKHR swapchain, VkFormat format, const VkExtent2D& extent,
     const VkImageUsageFlags usage)
 {
     SwapchainMapping* sm = new SwapchainMapping{ device, format, VK_FORMAT_B8G8R8A8_UNORM, extent, usage };
-    swapchainMappings_.Add(swapchain, sm);
+    swapchainMappings_.Add (swapchain, sm);
 
-    InitRenderPass(pTable, physicalDeviceMemoryProperties, sm);
+    InitRenderPass (pTable, physicalDeviceMemoryProperties, sm);
 }
 
-VkResult Rendering::CreateFrameBuffer(VkLayerDispatchTable * pTable,
+VkResult Rendering::CreateFrameBuffer (VkLayerDispatchTable * pTable,
     SwapchainMapping * sm, SwapchainImageData & imageData, VkImage & image)
 {
     imageData.image = image;
@@ -480,11 +480,11 @@ VkResult Rendering::CreateFrameBuffer(VkLayerDispatchTable * pTable,
       VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY },
       { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 } };
 
-    VkResult result = pTable->CreateImageView(sm->device, &ivCreateInfo, nullptr, &imageData.view);
+    VkResult result = pTable->CreateImageView (sm->device, &ivCreateInfo, nullptr, &imageData.view);
     if (result != VK_SUCCESS)
     {
-        sm->ClearImageData(pTable);
-        g_messageLog.LogError("CreateFrameBuffer", "Failed to create image view.");
+        sm->ClearImageData (pTable);
+        g_messageLog.LogError ("CreateFrameBuffer", "Failed to create image view.");
         return result;
     }
 
@@ -498,17 +498,17 @@ VkResult Rendering::CreateFrameBuffer(VkLayerDispatchTable * pTable,
       sm->extent.height,
       1 };
 
-    result = pTable->CreateFramebuffer(sm->device, &fbCreateInfo, nullptr, &imageData.framebuffer);
+    result = pTable->CreateFramebuffer (sm->device, &fbCreateInfo, nullptr, &imageData.framebuffer);
     if (result != VK_SUCCESS)
     {
-        sm->ClearImageData(pTable);
-        g_messageLog.LogError("CreateFrameBuffer", "Failed to create frame buffer.");
+        sm->ClearImageData (pTable);
+        g_messageLog.LogError ("CreateFrameBuffer", "Failed to create frame buffer.");
         return result;
     }
     return VK_SUCCESS;
 }
 
-bool Rendering::InitPipeline(VkLayerDispatchTable* pTable, uint32_t imageCount,
+bool Rendering::InitPipeline (VkLayerDispatchTable* pTable, uint32_t imageCount,
     VkImage* images, SwapchainMapping* sm)
 {
     if (sm == nullptr || sm->renderPass == VK_NULL_HANDLE)
@@ -516,16 +516,16 @@ bool Rendering::InitPipeline(VkLayerDispatchTable* pTable, uint32_t imageCount,
         return false;
     }
 
-    if (sm->imageData.size() != 0)
+    if (sm->imageData.size () != 0)
     {
-        sm->ClearImageData(pTable);
+        sm->ClearImageData (pTable);
     }
 
-    sm->imageData.resize(imageCount);
+    sm->imageData.resize (imageCount);
 
     for (uint32_t i = 0; i < imageCount; ++i)
     {
-        VkResult result = CreateFrameBuffer(pTable, sm, sm->imageData[i], images[i]);
+        VkResult result = CreateFrameBuffer (pTable, sm, sm->imageData[i], images[i]);
         if (result != VK_SUCCESS)
         {
             return false;
@@ -546,11 +546,11 @@ bool Rendering::InitPipeline(VkLayerDispatchTable* pTable, uint32_t imageCount,
     descriptorPoolCreateInfo.pPoolSizes = descriptorPoolSizes;
     descriptorPoolCreateInfo.maxSets = 2 * imageCount + 2;
 
-    VkResult result = pTable->CreateDescriptorPool(sm->device, &descriptorPoolCreateInfo, nullptr,
+    VkResult result = pTable->CreateDescriptorPool (sm->device, &descriptorPoolCreateInfo, nullptr,
         &sm->descriptorPool);
     if (result != VK_SUCCESS)
     {
-        g_messageLog.LogError("OnGetSwapchainImages", "Failed to create descriptor pool.");
+        g_messageLog.LogError ("OnGetSwapchainImages", "Failed to create descriptor pool.");
         return false;
     }
 
@@ -577,11 +577,11 @@ bool Rendering::InitPipeline(VkLayerDispatchTable* pTable, uint32_t imageCount,
         descriptorSetLayoutCreateInfo.bindingCount = 3;
 
         VkDescriptorSetLayout computeDescriptorSetLayout;
-        result = pTable->CreateDescriptorSetLayout(sm->device, &descriptorSetLayoutCreateInfo, nullptr,
+        result = pTable->CreateDescriptorSetLayout (sm->device, &descriptorSetLayoutCreateInfo, nullptr,
             &computeDescriptorSetLayout);
         if (result != VK_SUCCESS)
         {
-            g_messageLog.LogError("OnGetSwapchainImages", "Failed to create compute descriptor set layout.");
+            g_messageLog.LogError ("OnGetSwapchainImages", "Failed to create compute descriptor set layout.");
             return false;
         }
 
@@ -590,12 +590,12 @@ bool Rendering::InitPipeline(VkLayerDispatchTable* pTable, uint32_t imageCount,
         pipelineLayoutCreateInfo.setLayoutCount = 1;
         pipelineLayoutCreateInfo.pSetLayouts = &computeDescriptorSetLayout;
 
-        result = pTable->CreatePipelineLayout(sm->device, &pipelineLayoutCreateInfo, nullptr,
+        result = pTable->CreatePipelineLayout (sm->device, &pipelineLayoutCreateInfo, nullptr,
             &sm->computePipelineLayout);
         if (result != VK_SUCCESS)
         {
-            pTable->DestroyDescriptorSetLayout(sm->device, computeDescriptorSetLayout, nullptr);
-            g_messageLog.LogError("OnGetSwapchainImages", "Fa�led to create compute pipeline layout.");
+            pTable->DestroyDescriptorSetLayout (sm->device, computeDescriptorSetLayout, nullptr);
+            g_messageLog.LogError ("OnGetSwapchainImages", "Fa�led to create compute pipeline layout.");
             return false;
         }
 
@@ -607,19 +607,19 @@ bool Rendering::InitPipeline(VkLayerDispatchTable* pTable, uint32_t imageCount,
             descriptorSetAllocateInfo.pSetLayouts = &computeDescriptorSetLayout;
             descriptorSetAllocateInfo.descriptorSetCount = 1;
 
-            result = pTable->AllocateDescriptorSets(sm->device, &descriptorSetAllocateInfo,
+            result = pTable->AllocateDescriptorSets (sm->device, &descriptorSetAllocateInfo,
                 &sid.computeDescriptorSet[0]);
             if (result != VK_SUCCESS)
             {
-                pTable->DestroyDescriptorSetLayout(sm->device, computeDescriptorSetLayout, nullptr);
+                pTable->DestroyDescriptorSetLayout (sm->device, computeDescriptorSetLayout, nullptr);
                 return false;
             }
 
-            result = pTable->AllocateDescriptorSets(sm->device, &descriptorSetAllocateInfo,
+            result = pTable->AllocateDescriptorSets (sm->device, &descriptorSetAllocateInfo,
                 &sid.computeDescriptorSet[1]);
             if (result != VK_SUCCESS)
             {
-                pTable->DestroyDescriptorSetLayout(sm->device, computeDescriptorSetLayout, nullptr);
+                pTable->DestroyDescriptorSetLayout (sm->device, computeDescriptorSetLayout, nullptr);
                 return false;
             }
 
@@ -628,7 +628,7 @@ bool Rendering::InitPipeline(VkLayerDispatchTable* pTable, uint32_t imageCount,
             descriptorImageInfo.imageView = sid.view;
 
             VkDescriptorBufferInfo descriptorBufferInfo = {};
-            descriptorBufferInfo.range = 4 * sizeof(int);
+            descriptorBufferInfo.range = 4 * sizeof (int);
             descriptorBufferInfo.offset = 0;
             descriptorBufferInfo.buffer = sm->uniformBuffer;
 
@@ -651,21 +651,21 @@ bool Rendering::InitPipeline(VkLayerDispatchTable* pTable, uint32_t imageCount,
             writeDescriptorSet[2].pBufferInfo = &descriptorBufferInfo;
             writeDescriptorSet[2].descriptorCount = 1;
 
-            pTable->UpdateDescriptorSets(sm->device, 3, writeDescriptorSet, 0, NULL);
+            pTable->UpdateDescriptorSets (sm->device, 3, writeDescriptorSet, 0, NULL);
 
             writeDescriptorSet[0].dstSet = sid.computeDescriptorSet[1];
             writeDescriptorSet[0].pTexelBufferView = &sm->overlayImages[1].bufferView;
             writeDescriptorSet[1].dstSet = sid.computeDescriptorSet[1];
             writeDescriptorSet[2].dstSet = sid.computeDescriptorSet[1];
 
-            pTable->UpdateDescriptorSets(sm->device, 3, writeDescriptorSet, 0, NULL);
+            pTable->UpdateDescriptorSets (sm->device, 3, writeDescriptorSet, 0, NULL);
         }
 
         VkPipelineShaderStageCreateInfo computeShaderStageCreateInfo = {
         VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO };
         computeShaderStageCreateInfo.stage = VK_SHADER_STAGE_COMPUTE_BIT;
         computeShaderStageCreateInfo.module =
-            CreateShaderModuleFromFile(sm->device, pTable, shaderDirectory_ + L"comp.spv");
+            CreateShaderModuleFromFile (sm->device, pTable, shaderDirectory_ + L"comp.spv");
         computeShaderStageCreateInfo.pName = "main";
 
         VkComputePipelineCreateInfo computePipelineCreateInfo = {
@@ -674,11 +674,11 @@ bool Rendering::InitPipeline(VkLayerDispatchTable* pTable, uint32_t imageCount,
         computePipelineCreateInfo.flags = 0;
         computePipelineCreateInfo.stage = computeShaderStageCreateInfo;
 
-        pTable->CreateComputePipelines(sm->device, VK_NULL_HANDLE, 1, &computePipelineCreateInfo, nullptr,
+        pTable->CreateComputePipelines (sm->device, VK_NULL_HANDLE, 1, &computePipelineCreateInfo, nullptr,
             &sm->computePipeline);
 
-        pTable->DestroyShaderModule(sm->device, computeShaderStageCreateInfo.module, nullptr);
-        pTable->DestroyDescriptorSetLayout(sm->device, computeDescriptorSetLayout, nullptr);
+        pTable->DestroyShaderModule (sm->device, computeShaderStageCreateInfo.module, nullptr);
+        pTable->DestroyDescriptorSetLayout (sm->device, computeDescriptorSetLayout, nullptr);
     }
 
     VkPipelineShaderStageCreateInfo shaderStages[2] = {
@@ -687,16 +687,16 @@ bool Rendering::InitPipeline(VkLayerDispatchTable* pTable, uint32_t imageCount,
 
     VkShaderModule shaderModules[2];
 
-    shaderModules[0] = CreateShaderModuleFromFile(sm->device, pTable, shaderDirectory_ + L"vert.spv");
+    shaderModules[0] = CreateShaderModuleFromFile (sm->device, pTable, shaderDirectory_ + L"vert.spv");
     if (shaderModules[0] == VK_NULL_HANDLE)
     {
         return false;
     }
 
-    shaderModules[1] = CreateShaderModuleFromFile(sm->device, pTable, shaderDirectory_ + L"frag.spv");
+    shaderModules[1] = CreateShaderModuleFromFile (sm->device, pTable, shaderDirectory_ + L"frag.spv");
     if (shaderModules[1] == VK_NULL_HANDLE)
     {
-        pTable->DestroyShaderModule(sm->device, shaderModules[0], nullptr);
+        pTable->DestroyShaderModule (sm->device, shaderModules[0], nullptr);
         return false;
     }
 
@@ -778,13 +778,13 @@ bool Rendering::InitPipeline(VkLayerDispatchTable* pTable, uint32_t imageCount,
     descriptorSetLayoutCreateInfo.bindingCount = 2;
 
     VkDescriptorSetLayout gfxDescriptorSetLayout;
-    result = pTable->CreateDescriptorSetLayout(sm->device, &descriptorSetLayoutCreateInfo, nullptr,
+    result = pTable->CreateDescriptorSetLayout (sm->device, &descriptorSetLayoutCreateInfo, nullptr,
         &gfxDescriptorSetLayout);
     if (result != VK_SUCCESS)
     {
-        pTable->DestroyShaderModule(sm->device, shaderModules[0], nullptr);
-        pTable->DestroyShaderModule(sm->device, shaderModules[1], nullptr);
-        g_messageLog.LogError("OnGetSwapchainImages", "Failed to create graphics descriptor set layout.");
+        pTable->DestroyShaderModule (sm->device, shaderModules[0], nullptr);
+        pTable->DestroyShaderModule (sm->device, shaderModules[1], nullptr);
+        g_messageLog.LogError ("OnGetSwapchainImages", "Failed to create graphics descriptor set layout.");
         return false;
     }
 
@@ -792,13 +792,13 @@ bool Rendering::InitPipeline(VkLayerDispatchTable* pTable, uint32_t imageCount,
     pipelineLayoutCreateInfo.setLayoutCount = 1;
     pipelineLayoutCreateInfo.pSetLayouts = &gfxDescriptorSetLayout;
 
-    result = pTable->CreatePipelineLayout(sm->device, &pipelineLayoutCreateInfo, nullptr,
+    result = pTable->CreatePipelineLayout (sm->device, &pipelineLayoutCreateInfo, nullptr,
         &sm->gfxPipelineLayout);
     if (result != VK_SUCCESS)
     {
-        pTable->DestroyShaderModule(sm->device, shaderModules[0], nullptr);
-        pTable->DestroyShaderModule(sm->device, shaderModules[1], nullptr);
-        pTable->DestroyDescriptorSetLayout(sm->device, gfxDescriptorSetLayout, nullptr);
+        pTable->DestroyShaderModule (sm->device, shaderModules[0], nullptr);
+        pTable->DestroyShaderModule (sm->device, shaderModules[1], nullptr);
+        pTable->DestroyDescriptorSetLayout (sm->device, gfxDescriptorSetLayout, nullptr);
         return false;
     }
 
@@ -810,21 +810,21 @@ bool Rendering::InitPipeline(VkLayerDispatchTable* pTable, uint32_t imageCount,
         descriptorSetAllocateInfo.pSetLayouts = &gfxDescriptorSetLayout;
         descriptorSetAllocateInfo.descriptorSetCount = 1;
 
-        result = pTable->AllocateDescriptorSets(sm->device, &descriptorSetAllocateInfo,
+        result = pTable->AllocateDescriptorSets (sm->device, &descriptorSetAllocateInfo,
             &sm->overlayImages[i].descriptorSet);
         if (result != VK_SUCCESS)
         {
-            pTable->DestroyShaderModule(sm->device, shaderModules[0], nullptr);
-            pTable->DestroyShaderModule(sm->device, shaderModules[1], nullptr);
-            pTable->DestroyDescriptorSetLayout(sm->device, gfxDescriptorSetLayout, nullptr);
-            g_messageLog.LogError("OnGetSwapchainImages", "Failed to allocate graphics descriptor sets.");
+            pTable->DestroyShaderModule (sm->device, shaderModules[0], nullptr);
+            pTable->DestroyShaderModule (sm->device, shaderModules[1], nullptr);
+            pTable->DestroyDescriptorSetLayout (sm->device, gfxDescriptorSetLayout, nullptr);
+            g_messageLog.LogError ("OnGetSwapchainImages", "Failed to allocate graphics descriptor sets.");
             return false;
         }
 
         VkDescriptorBufferInfo bufferInfo = {};
         bufferInfo.buffer = sm->uniformBuffer;
         bufferInfo.offset = 0;
-        bufferInfo.range = 4 * sizeof(int);
+        bufferInfo.range = 4 * sizeof (int);
 
         VkWriteDescriptorSet writeDescriptorSets[2] = { { VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET },
         { VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET } };
@@ -839,7 +839,7 @@ bool Rendering::InitPipeline(VkLayerDispatchTable* pTable, uint32_t imageCount,
         writeDescriptorSets[1].pBufferInfo = &bufferInfo;
         writeDescriptorSets[1].descriptorCount = 1;
 
-        pTable->UpdateDescriptorSets(sm->device, 2, writeDescriptorSets, 0, NULL);
+        pTable->UpdateDescriptorSets (sm->device, 2, writeDescriptorSets, 0, NULL);
     }
 
     VkDynamicState dynamicState = VK_DYNAMIC_STATE_VIEWPORT;
@@ -862,15 +862,15 @@ bool Rendering::InitPipeline(VkLayerDispatchTable* pTable, uint32_t imageCount,
     pipelineCreateInfo.renderPass = sm->renderPass;
     pipelineCreateInfo.pDynamicState = &pipelineDynamicState;
 
-    result = pTable->CreateGraphicsPipelines(sm->device, VK_NULL_HANDLE, 1, &pipelineCreateInfo,
+    result = pTable->CreateGraphicsPipelines (sm->device, VK_NULL_HANDLE, 1, &pipelineCreateInfo,
         nullptr, &sm->gfxPipeline);
 
-    pTable->DestroyShaderModule(sm->device, shaderModules[0], nullptr);
-    pTable->DestroyShaderModule(sm->device, shaderModules[1], nullptr);
-    pTable->DestroyDescriptorSetLayout(sm->device, gfxDescriptorSetLayout, nullptr);
+    pTable->DestroyShaderModule (sm->device, shaderModules[0], nullptr);
+    pTable->DestroyShaderModule (sm->device, shaderModules[1], nullptr);
+    pTable->DestroyDescriptorSetLayout (sm->device, gfxDescriptorSetLayout, nullptr);
     if (result != VK_SUCCESS)
     {
-        g_messageLog.LogError("OnGetSwapchainImages", "Failed to create graphics pipeline.");
+        g_messageLog.LogError ("OnGetSwapchainImages", "Failed to create graphics pipeline.");
         return false;
     }
 
@@ -879,14 +879,14 @@ bool Rendering::InitPipeline(VkLayerDispatchTable* pTable, uint32_t imageCount,
     return true;
 }
 
-void Rendering::OnGetSwapchainImages(VkLayerDispatchTable* pTable, VkSwapchainKHR swapchain,
+void Rendering::OnGetSwapchainImages (VkLayerDispatchTable* pTable, VkSwapchainKHR swapchain,
     uint32_t imageCount, VkImage* images)
 {
-    SwapchainMapping* sm = swapchainMappings_.Get(swapchain);
-    InitPipeline(pTable, imageCount, images, sm);
+    SwapchainMapping* sm = swapchainMappings_.Get (swapchain);
+    InitPipeline (pTable, imageCount, images, sm);
 }
 
-bool Rendering::OnInitCompositor(VkDevice device, VkLayerDispatchTable* pTable,
+bool Rendering::OnInitCompositor (VkDevice device, VkLayerDispatchTable* pTable,
     const VkPhysicalDeviceMemoryProperties& physicalDeviceMemoryProperties,
     VkFormat format, const VkExtent2D& extent, VkImageUsageFlags usage,
     uint32_t imageCount, VkImage* images)
@@ -894,19 +894,19 @@ bool Rendering::OnInitCompositor(VkDevice device, VkLayerDispatchTable* pTable,
     // compositor swapchain, use R8G8B8A8 ordering
     bool initialized = false;
     compositorSwapchainMapping_ = SwapchainMapping{ device, format, VK_FORMAT_B8G8R8A8_UNORM, extent, usage };
-    initialized = InitRenderPass(pTable, physicalDeviceMemoryProperties, &compositorSwapchainMapping_);
-    initialized = InitPipeline(pTable, imageCount, images, &compositorSwapchainMapping_);
+    initialized = InitRenderPass (pTable, physicalDeviceMemoryProperties, &compositorSwapchainMapping_);
+    initialized = InitPipeline (pTable, imageCount, images, &compositorSwapchainMapping_);
 
     return initialized;
 }
 
-VkResult Rendering::UpdateUniformBuffer(VkLayerDispatchTable* pTable, SwapchainMapping* sm)
+VkResult Rendering::UpdateUniformBuffer (VkLayerDispatchTable* pTable, SwapchainMapping* sm)
 {
     void* data;
-    VkResult result = pTable->MapMemory(sm->device, sm->uniformMemory, 0, 4 * sizeof(int), 0, &data);
+    VkResult result = pTable->MapMemory (sm->device, sm->uniformMemory, 0, 4 * sizeof (int), 0, &data);
     if (result != VK_SUCCESS)
     {
-        g_messageLog.LogError("UpdateOverlayPosition", "Failed to map memory.");
+        g_messageLog.LogError ("UpdateOverlayPosition", "Failed to map memory.");
         return result;
     }
 
@@ -915,28 +915,28 @@ VkResult Rendering::UpdateUniformBuffer(VkLayerDispatchTable* pTable, SwapchainM
     constants[1] = static_cast<int>(sm->overlayRect.offset.y);
     constants[2] = static_cast<int>(sm->overlayRect.extent.width);
     constants[3] = static_cast<int>(sm->overlayRect.extent.height);
-    pTable->UnmapMemory(sm->device, sm->uniformMemory);
+    pTable->UnmapMemory (sm->device, sm->uniformMemory);
 
     return VK_SUCCESS;
 }
 
-VkResult Rendering::UpdateOverlayPosition(VkLayerDispatchTable* pTable,
+VkResult Rendering::UpdateOverlayPosition (VkLayerDispatchTable* pTable,
     SwapchainMapping* sm, const OverlayBitmap::Position& position)
 {
     sm->overlayRect.offset.x = position.x;
     sm->overlayRect.offset.y = position.y;
 
     // Update uniform buffer
-    VkResult result = UpdateUniformBuffer(pTable, sm);
+    VkResult result = UpdateUniformBuffer (pTable, sm);
     if (result != VK_SUCCESS)
     {
-        g_messageLog.LogError("UpdateOverlayPosition", "Failed to update uniform buffer.");
+        g_messageLog.LogError ("UpdateOverlayPosition", "Failed to update uniform buffer.");
         return result;
     }
     return VK_SUCCESS;
 }
 
-VkSemaphore Rendering::Present(VkLayerDispatchTable* pTable,
+VkSemaphore Rendering::Present (VkLayerDispatchTable* pTable,
     PFN_vkSetDeviceLoaderData setDeviceLoaderDataFuncPtr, VkQueue queue,
     uint32_t queueFamilyIndex, VkQueueFlags queueFlags,
     uint32_t imageIndex, uint32_t waitSemaphoreCount,
@@ -986,65 +986,65 @@ VkSemaphore Rendering::Present(VkLayerDispatchTable* pTable,
             VkCommandPoolCreateInfo cmdPoolCreateInfo = { VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
               nullptr, VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, queueFamilyIndex };
             VkCommandPool cmdPool;
-            VkResult result = pTable->CreateCommandPool(swapchainMapping->device, &cmdPoolCreateInfo,
+            VkResult result = pTable->CreateCommandPool (swapchainMapping->device, &cmdPoolCreateInfo,
                 nullptr, &cmdPool);
-            g_messageLog.LogInfo("VulkanOverlay", "Create command pool");
+            g_messageLog.LogInfo ("VulkanOverlay", "Create command pool");
             if (result != VK_SUCCESS)
             {
                 return VK_NULL_HANDLE;
             }
 
-            swapchainMapping->queueMappings.insert(std::make_pair(queueFamilyIndex, SwapchainQueueMapping{ queue, graphicsQueue, cmdPool }));
-            queueMapping = &swapchainMapping->queueMappings.at(queueFamilyIndex);
+            swapchainMapping->queueMappings.insert (std::make_pair (queueFamilyIndex, SwapchainQueueMapping{ queue, graphicsQueue, cmdPool }));
+            queueMapping = &swapchainMapping->queueMappings.at (queueFamilyIndex);
         }
 
         if (imageMapping == nullptr)
         {
             SwapchainImageMapping im = {};
             im.imageIndex = imageIndex;
-            CreateImageMapping(pTable, setDeviceLoaderDataFuncPtr, swapchainMapping,
+            CreateImageMapping (pTable, setDeviceLoaderDataFuncPtr, swapchainMapping,
                 queueMapping, queueFamilyIndex, &im);
             if (im.commandBuffer == VK_NULL_HANDLE)
             {
                 return VK_NULL_HANDLE;
             }
 
-            queueMapping->imageMappings.push_back(im);
-            imageMapping = &queueMapping->imageMappings.back();
+            queueMapping->imageMappings.push_back (im);
+            imageMapping = &queueMapping->imageMappings.back ();
         }
 
-        VkResult result = UpdateUniformBuffer(pTable, swapchainMapping);
+        VkResult result = UpdateUniformBuffer (pTable, swapchainMapping);
         if (result != VK_SUCCESS)
         {
-            g_messageLog.LogError("OnPresent", "Failed to update uniform buffer.");
+            g_messageLog.LogError ("OnPresent", "Failed to update uniform buffer.");
             return VK_NULL_HANDLE;
         }
     }
 
-    overlayBitmap_->DrawOverlay();
+    overlayBitmap_->DrawOverlay ();
 
-    auto textureData = overlayBitmap_->GetBitmapDataRead();
+    auto textureData = overlayBitmap_->GetBitmapDataRead ();
     auto& overlayImageIdx = swapchainMapping->overlayImages[swapchainMapping->nextOverlayImage];
 
     uint32_t bufferSize;
     if (textureData.dataPtr && textureData.size)
     {
-        bufferSize = max(textureData.size, swapchainMapping->lastOverlayBufferSize);
+        bufferSize = max (textureData.size, swapchainMapping->lastOverlayBufferSize);
         void* data;
-        VkResult result = pTable->MapMemory(swapchainMapping->device, overlayImageIdx.overlayHostMemory,
+        VkResult result = pTable->MapMemory (swapchainMapping->device, overlayImageIdx.overlayHostMemory,
             0, bufferSize, 0, &data);
         if (result != VK_SUCCESS)
         {
             return VK_NULL_HANDLE;
         }
-        memcpy(data, textureData.dataPtr, bufferSize);
-        pTable->UnmapMemory(swapchainMapping->device, overlayImageIdx.overlayHostMemory);
+        memcpy (data, textureData.dataPtr, bufferSize);
+        pTable->UnmapMemory (swapchainMapping->device, overlayImageIdx.overlayHostMemory);
         swapchainMapping->lastOverlayBufferSize = textureData.size;
     }
 
-    overlayBitmap_->UnlockBitmapData();
+    overlayBitmap_->UnlockBitmapData ();
 
-    if (!overlayImageIdx.CopyBuffer(swapchainMapping->device, bufferSize, pTable, setDeviceLoaderDataFuncPtr,
+    if (!overlayImageIdx.CopyBuffer (swapchainMapping->device, bufferSize, pTable, setDeviceLoaderDataFuncPtr,
         swapchainMapping->queueMappings[queueFamilyIndex].commandPool, queue))
     {
         return VK_NULL_HANDLE;
@@ -1059,37 +1059,37 @@ VkSemaphore Rendering::Present(VkLayerDispatchTable* pTable,
 
     cmdBuffer = imageMapping->commandBuffer[swapchainMapping->nextOverlayImage];
 
-    auto position = overlayBitmap_->GetScreenPos();
+    auto position = overlayBitmap_->GetScreenPos ();
     if (swapchainMapping->overlayRect.offset.x != position.x
         || swapchainMapping->overlayRect.offset.y != position.y)
     {
         // Position changed.
-        VkResult result = UpdateOverlayPosition(pTable, swapchainMapping, overlayBitmap_->GetScreenPos());
+        VkResult result = UpdateOverlayPosition (pTable, swapchainMapping, overlayBitmap_->GetScreenPos ());
         if (result != VK_SUCCESS)
         {
-            g_messageLog.LogError("OnPresent", "Failed to update overlay position.");
+            g_messageLog.LogError ("OnPresent", "Failed to update overlay position.");
             return VK_NULL_HANDLE;
         }
 
-        remainingRecordRenderPassUpdates_ = static_cast<int>(swapchainMapping->imageData.size());
+        remainingRecordRenderPassUpdates_ = static_cast<int>(swapchainMapping->imageData.size ());
     }
 
     // Make sure that the render pass of every image in the image mapping gets updated.
     if (remainingRecordRenderPassUpdates_ > 0)
     {
         // Record render pass to update the viewport changes.
-        VkResult result = RecordRenderPass(pTable, setDeviceLoaderDataFuncPtr,
+        VkResult result = RecordRenderPass (pTable, setDeviceLoaderDataFuncPtr,
             swapchainMapping, queueMapping, queueFamilyIndex, imageMapping);
         if (result != VK_SUCCESS)
         {
-            g_messageLog.LogError("OnPresent", "Failed to record render pass.");
+            g_messageLog.LogError ("OnPresent", "Failed to record render pass.");
             return VK_NULL_HANDLE;
         }
         remainingRecordRenderPassUpdates_--;
     }
 
-    std::vector<VkPipelineStageFlags> pPipelineStageFlags(waitSemaphoreCount + 1);
-    std::vector<VkSemaphore> waitSemaphores(waitSemaphoreCount + 1);
+    std::vector<VkPipelineStageFlags> pPipelineStageFlags (waitSemaphoreCount + 1);
+    std::vector<VkSemaphore> waitSemaphores (waitSemaphoreCount + 1);
     VkPipelineStageFlagBits pipelineStageFlagBit = graphicsQueue
         ? VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT
         : VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
@@ -1105,11 +1105,11 @@ VkSemaphore Rendering::Present(VkLayerDispatchTable* pTable,
     ++waitSemaphoreCount;
 
     VkSubmitInfo submitInfo = {
-      VK_STRUCTURE_TYPE_SUBMIT_INFO, nullptr, waitSemaphoreCount, waitSemaphores.data(),
-      pPipelineStageFlags.data(),    1,       &cmdBuffer,         1,
+      VK_STRUCTURE_TYPE_SUBMIT_INFO, nullptr, waitSemaphoreCount, waitSemaphores.data (),
+      pPipelineStageFlags.data (),    1,       &cmdBuffer,         1,
       &imageMapping->semaphore };
 
-    VkResult result = pTable->QueueSubmit(queueMapping->queue, 1, &submitInfo, VK_NULL_HANDLE);
+    VkResult result = pTable->QueueSubmit (queueMapping->queue, 1, &submitInfo, VK_NULL_HANDLE);
     if (result != VK_SUCCESS)
     {
         return VK_NULL_HANDLE;
@@ -1117,7 +1117,7 @@ VkSemaphore Rendering::Present(VkLayerDispatchTable* pTable,
     return imageMapping->semaphore;
 }
 
-VkSemaphore Rendering::OnPresent(VkLayerDispatchTable* pTable,
+VkSemaphore Rendering::OnPresent (VkLayerDispatchTable* pTable,
     PFN_vkSetDeviceLoaderData setDeviceLoaderDataFuncPtr,
     VkQueue queue, uint32_t queueFamilyIndex, VkQueueFlags queueFlags,
     VkSwapchainKHR swapchain, uint32_t imageIndex,
@@ -1126,13 +1126,13 @@ VkSemaphore Rendering::OnPresent(VkLayerDispatchTable* pTable,
     if (!pipelineInitialized)
         return VK_NULL_HANDLE;
 
-    const auto swapchainMapping = swapchainMappings_.Get(swapchain);
+    const auto swapchainMapping = swapchainMappings_.Get (swapchain);
 
-    return Present(pTable, setDeviceLoaderDataFuncPtr, queue, queueFamilyIndex, queueFlags,
+    return Present (pTable, setDeviceLoaderDataFuncPtr, queue, queueFamilyIndex, queueFlags,
         imageIndex, waitSemaphoreCount, pWaitSemaphores, swapchainMapping);
 }
 
-VkSemaphore Rendering::OnSubmitFrameCompositor(VkLayerDispatchTable* pTable,
+VkSemaphore Rendering::OnSubmitFrameCompositor (VkLayerDispatchTable* pTable,
     PFN_vkSetDeviceLoaderData setDeviceLoaderDataFuncPtr, VkQueue queue,
     uint32_t queueFamilyIndex, VkQueueFlags queueFlags,
     uint32_t imageIndex)
@@ -1141,11 +1141,11 @@ VkSemaphore Rendering::OnSubmitFrameCompositor(VkLayerDispatchTable* pTable,
         return VK_NULL_HANDLE;
 
     // synchronizing should be done via the compositor
-    return Present(pTable, setDeviceLoaderDataFuncPtr, queue, queueFamilyIndex, queueFlags,
+    return Present (pTable, setDeviceLoaderDataFuncPtr, queue, queueFamilyIndex, queueFlags,
         imageIndex, 0, nullptr, &compositorSwapchainMapping_);
 }
 
-VkResult Rendering::RecordRenderPass(VkLayerDispatchTable * pTable,
+VkResult Rendering::RecordRenderPass (VkLayerDispatchTable * pTable,
     PFN_vkSetDeviceLoaderData setDeviceLoaderDataFuncPtr,
     SwapchainMapping * sm, SwapchainQueueMapping * qm, uint32_t queueFamilyIndex,
     SwapchainImageMapping * im)
@@ -1154,17 +1154,17 @@ VkResult Rendering::RecordRenderPass(VkLayerDispatchTable * pTable,
     for (int i = 0; i < 2; ++i)
     {
         VkDevice cmdBuf = static_cast<VkDevice>(static_cast<void*>(im->commandBuffer[i]));
-        setDeviceLoaderDataFuncPtr(sm->device, cmdBuf);
+        setDeviceLoaderDataFuncPtr (sm->device, cmdBuf);
 
         VkCommandBufferBeginInfo cmdBufferBeginInfo = {
           VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, nullptr,
           VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT, nullptr };
 
-        VkResult result = pTable->BeginCommandBuffer(im->commandBuffer[i], &cmdBufferBeginInfo);
+        VkResult result = pTable->BeginCommandBuffer (im->commandBuffer[i], &cmdBufferBeginInfo);
         if (result != VK_SUCCESS)
         {
-            g_messageLog.LogError("CreateImageMapping", "Failed to begin command buffer." + std::to_string(static_cast<int>(result)));
-            pTable->FreeCommandBuffers(sm->device, qm->commandPool, 1, &im->commandBuffer[i]);
+            g_messageLog.LogError ("CreateImageMapping", "Failed to begin command buffer." + std::to_string (static_cast<int>(result)));
+            pTable->FreeCommandBuffers (sm->device, qm->commandPool, 1, &im->commandBuffer[i]);
             im->commandBuffer[i] = VK_NULL_HANDLE;
             return result;
         }
@@ -1179,10 +1179,10 @@ VkResult Rendering::RecordRenderPass(VkLayerDispatchTable * pTable,
               0,
               nullptr };
 
-            pTable->CmdBeginRenderPass(im->commandBuffer[i], &rpBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-            pTable->CmdBindPipeline(im->commandBuffer[i], VK_PIPELINE_BIND_POINT_GRAPHICS,
+            pTable->CmdBeginRenderPass (im->commandBuffer[i], &rpBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+            pTable->CmdBindPipeline (im->commandBuffer[i], VK_PIPELINE_BIND_POINT_GRAPHICS,
                 sm->gfxPipeline);
-            pTable->CmdBindDescriptorSets(im->commandBuffer[i], VK_PIPELINE_BIND_POINT_GRAPHICS,
+            pTable->CmdBindDescriptorSets (im->commandBuffer[i], VK_PIPELINE_BIND_POINT_GRAPHICS,
                 sm->gfxPipelineLayout, 0, 1,
                 &sm->overlayImages[i].descriptorSet, 0, 0);
 
@@ -1193,10 +1193,10 @@ VkResult Rendering::RecordRenderPass(VkLayerDispatchTable * pTable,
             viewport.y = static_cast<float>(sm->overlayRect.offset.y);
             viewport.width = static_cast<float>(sm->overlayRect.extent.width);
             viewport.height = static_cast<float>(sm->overlayRect.extent.height);
-            pTable->CmdSetViewport(im->commandBuffer[i], 0, 1, &viewport);
+            pTable->CmdSetViewport (im->commandBuffer[i], 0, 1, &viewport);
 
-            pTable->CmdDraw(im->commandBuffer[i], 3, 1, 0, 0);
-            pTable->CmdEndRenderPass(im->commandBuffer[i]);
+            pTable->CmdDraw (im->commandBuffer[i], 3, 1, 0, 0);
+            pTable->CmdEndRenderPass (im->commandBuffer[i]);
         }
         else
         {
@@ -1222,25 +1222,25 @@ VkResult Rendering::RecordRenderPass(VkLayerDispatchTable * pTable,
             computeToPresentBarrier.image = sm->imageData[im->imageIndex].image;
             computeToPresentBarrier.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
 
-            pTable->CmdPipelineBarrier(im->commandBuffer[i], VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+            pTable->CmdPipelineBarrier (im->commandBuffer[i], VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
                 VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1,
                 &presentToComputeBarrier);
-            pTable->CmdBindPipeline(im->commandBuffer[i], VK_PIPELINE_BIND_POINT_COMPUTE,
+            pTable->CmdBindPipeline (im->commandBuffer[i], VK_PIPELINE_BIND_POINT_COMPUTE,
                 sm->computePipeline);
-            pTable->CmdBindDescriptorSets(im->commandBuffer[i], VK_PIPELINE_BIND_POINT_COMPUTE,
+            pTable->CmdBindDescriptorSets (im->commandBuffer[i], VK_PIPELINE_BIND_POINT_COMPUTE,
                 sm->computePipelineLayout, 0, 1,
                 &sm->imageData[im->imageIndex].computeDescriptorSet[i], 0, 0);
-            pTable->CmdDispatch(im->commandBuffer[i], sm->overlayRect.extent.width / 16,
+            pTable->CmdDispatch (im->commandBuffer[i], sm->overlayRect.extent.width / 16,
                 sm->overlayRect.extent.height / 16, 1);
-            pTable->CmdPipelineBarrier(im->commandBuffer[i], VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+            pTable->CmdPipelineBarrier (im->commandBuffer[i], VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
                 VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, nullptr, 0, nullptr, 1,
                 &computeToPresentBarrier);
         }
 
-        result = pTable->EndCommandBuffer(im->commandBuffer[i]);
+        result = pTable->EndCommandBuffer (im->commandBuffer[i]);
         if (result != VK_SUCCESS)
         {
-            pTable->FreeCommandBuffers(sm->device, qm->commandPool, 1, &im->commandBuffer[i]);
+            pTable->FreeCommandBuffers (sm->device, qm->commandPool, 1, &im->commandBuffer[i]);
             im->commandBuffer[i] = VK_NULL_HANDLE;
         }
     }
@@ -1248,7 +1248,7 @@ VkResult Rendering::RecordRenderPass(VkLayerDispatchTable * pTable,
     return VK_SUCCESS;
 }
 
-void Rendering::CreateImageMapping(VkLayerDispatchTable* pTable,
+void Rendering::CreateImageMapping (VkLayerDispatchTable* pTable,
     PFN_vkSetDeviceLoaderData setDeviceLoaderDataFuncPtr,
     SwapchainMapping* sm, SwapchainQueueMapping* qm, uint32_t queueFamilyIndex,
     SwapchainImageMapping* im)
@@ -1257,7 +1257,7 @@ void Rendering::CreateImageMapping(VkLayerDispatchTable* pTable,
 
     VkSemaphoreCreateInfo semaphoreCreateInfo = { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO, nullptr, 0 };
 
-    VkResult result = pTable->CreateSemaphore(sm->device, &semaphoreCreateInfo, nullptr, &im->semaphore);
+    VkResult result = pTable->CreateSemaphore (sm->device, &semaphoreCreateInfo, nullptr, &im->semaphore);
     if (result != VK_SUCCESS)
     {
         return;
@@ -1267,36 +1267,36 @@ void Rendering::CreateImageMapping(VkLayerDispatchTable* pTable,
         VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO, nullptr, qm->commandPool,
         VK_COMMAND_BUFFER_LEVEL_PRIMARY, 2 };
 
-    result = pTable->AllocateCommandBuffers(sm->device, &cmdBufferAllocateInfo, im->commandBuffer);
+    result = pTable->AllocateCommandBuffers (sm->device, &cmdBufferAllocateInfo, im->commandBuffer);
     if (result != VK_SUCCESS)
     {
         return;
     }
 
-    result = RecordRenderPass(pTable, setDeviceLoaderDataFuncPtr,
+    result = RecordRenderPass (pTable, setDeviceLoaderDataFuncPtr,
         sm, qm, queueFamilyIndex, im);
 }
 
-VkShaderModule Rendering::CreateShaderModuleFromFile(VkDevice device, VkLayerDispatchTable* pTable,
+VkShaderModule Rendering::CreateShaderModuleFromFile (VkDevice device, VkLayerDispatchTable* pTable,
     const std::wstring& fileName) const
 {
-    std::ifstream shaderFile(fileName, std::ios::ate | std::ios::binary);
-    if (!shaderFile.is_open())
+    std::ifstream shaderFile (fileName, std::ios::ate | std::ios::binary);
+    if (!shaderFile.is_open ())
     {
         return VK_NULL_HANDLE;
     }
 
-    size_t fileSize = static_cast<::size_t>(shaderFile.tellg());
-    shaderFile.seekg(0);
-    std::vector<char> shaderBuffer(fileSize);
-    shaderFile.read(shaderBuffer.data(), fileSize);
-    shaderFile.close();
+    size_t fileSize = static_cast<::size_t>(shaderFile.tellg ());
+    shaderFile.seekg (0);
+    std::vector<char> shaderBuffer (fileSize);
+    shaderFile.read (shaderBuffer.data (), fileSize);
+    shaderFile.close ();
 
-    return CreateShaderModuleFromBuffer(device, pTable, shaderBuffer.data(),
+    return CreateShaderModuleFromBuffer (device, pTable, shaderBuffer.data (),
         static_cast<uint32_t>(fileSize));
 }
 
-VkShaderModule Rendering::CreateShaderModuleFromBuffer(VkDevice device,
+VkShaderModule Rendering::CreateShaderModuleFromBuffer (VkDevice device,
     VkLayerDispatchTable* pTable,
     const char* shaderBuffer,
     uint32_t bufferSize) const
@@ -1306,7 +1306,7 @@ VkShaderModule Rendering::CreateShaderModuleFromBuffer(VkDevice device,
                                              reinterpret_cast<const uint32_t*>(shaderBuffer) };
 
     VkShaderModule shaderModule;
-    VkResult result = pTable->CreateShaderModule(device, &smCreateInfo, nullptr, &shaderModule);
+    VkResult result = pTable->CreateShaderModule (device, &smCreateInfo, nullptr, &shaderModule);
     if (result != VK_SUCCESS)
     {
         return VK_NULL_HANDLE;

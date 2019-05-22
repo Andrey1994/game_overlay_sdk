@@ -114,65 +114,65 @@ BOOL APIENTRY DllMain (HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
     UNREFERENCED_PARAMETER (lpReserved);
     switch (fdwReason)
     {
-        case DLL_PROCESS_ATTACH:
+    case DLL_PROCESS_ATTACH:
+    {
+        // unicode!!
+        wchar_t buffer[4096];
+        GetModuleFileName (NULL, buffer, 4096);
+        std::wstring moduleName (buffer);
+        std::string moduleNameStr = ConvertUTF16StringToUTF8String (moduleName);
+        std::string::size_type pos = moduleNameStr.find_last_of ("\\/");
+        VK_Environment vkEnv;
+        vkEnv.SetVKEnvironment (ConvertUTF8StringToUTF16String (moduleNameStr.substr (0, pos)));
+
+        g_module_handle = hModule;
+        DisableThreadLibraryCalls (hModule);
+
+        // Register modules for hooking
+        wchar_t system_path_buffer[MAX_PATH];
+        GetSystemDirectoryW (system_path_buffer, MAX_PATH);
+        const std::wstring system_path (system_path_buffer);
+
+        InitLogging ();
+        SendDllStateMessage (OverlayMessageType::AttachDll);
+
+        // DXGI
+        GetSystemDirectoryW (system_path_buffer, MAX_PATH);
+        if (!GameOverlay::register_module (system_path + L"\\dxgi.dll"))
         {
-            // unicode!!
-            wchar_t buffer[4096];
-            GetModuleFileName (NULL, buffer, 4096);
-            std::wstring moduleName (buffer);
-            std::string moduleNameStr = ConvertUTF16StringToUTF8String (moduleName);
-            std::string::size_type pos = moduleNameStr.find_last_of ("\\/");
-            VK_Environment vkEnv;
-            vkEnv.SetVKEnvironment (ConvertUTF8StringToUTF16String (moduleNameStr.substr (0, pos)));
-
-            g_module_handle = hModule;
-            DisableThreadLibraryCalls (hModule);
-
-            // Register modules for hooking
-            wchar_t system_path_buffer[MAX_PATH];
-            GetSystemDirectoryW (system_path_buffer, MAX_PATH);
-            const std::wstring system_path (system_path_buffer);
-
-            InitLogging ();
-            SendDllStateMessage (OverlayMessageType::AttachDll);
-
-            // DXGI
-            GetSystemDirectoryW (system_path_buffer, MAX_PATH);
-            if (!GameOverlay::register_module (system_path + L"\\dxgi.dll"))
-            {
-                g_messageLog.LogError ("GameOverlay", "Failed to register module for DXGI");
-            }
-
-            // D3D12
-            GameOverlay::register_additional_module (L"d3d12.dll");
-
-            // Oculus Compositor
-    #if _WIN64
-            GameOverlay::register_additional_module (L"LibOVRRT64_1.dll");
-    #else
-            GameOverlay::register_additional_module (L"LibOVRRT32_1.dll");
-    #endif
-
-            // SteamVR Compositor
-            GameOverlay::register_additional_module (L"openvr_api.dll");
-            break;
+            g_messageLog.LogError ("GameOverlay", "Failed to register module for DXGI");
         }
-        case DLL_PROCESS_DETACH:
+
+        // D3D12
+        GameOverlay::register_additional_module (L"d3d12.dll");
+
+        // Oculus Compositor
+#if _WIN64
+        GameOverlay::register_additional_module (L"LibOVRRT64_1.dll");
+#else
+        GameOverlay::register_additional_module (L"LibOVRRT32_1.dll");
+#endif
+
+        // SteamVR Compositor
+        GameOverlay::register_additional_module (L"openvr_api.dll");
+        break;
+    }
+    case DLL_PROCESS_DETACH:
+    {
+        if (lpReserved == NULL)
         {
-            if (lpReserved == NULL)
-            {
-                g_messageLog.LogInfo ("GameOverlay", L"Detach because DLL load failed or FreeLibrary called");
-            }
-            else
-            {
-                g_messageLog.LogInfo ("GameOverlay", L"Detach because process is terminating");
-            }
-
-            // Uninstall and clean up all hooks before unloading
-            SendDllStateMessage (OverlayMessageType::DetachDll);
-            GameOverlay::uninstall_hook ();
-            break;
+            g_messageLog.LogInfo ("GameOverlay", L"Detach because DLL load failed or FreeLibrary called");
         }
+        else
+        {
+            g_messageLog.LogInfo ("GameOverlay", L"Detach because process is terminating");
+        }
+
+        // Uninstall and clean up all hooks before unloading
+        SendDllStateMessage (OverlayMessageType::DetachDll);
+        GameOverlay::uninstall_hook ();
+        break;
+    }
     }
 
     return TRUE;
