@@ -61,7 +61,7 @@ int Monitor::RunProcess (char *exePath, char *args, char *dllLoc)
         return res;
     }
     int architecture = GetArchitecture (pid);
-    DLLInjection dllInjection (this->pid, architecture, (char *)this->dllLoc);
+    DLLInjection dllInjection (this->pid, architecture, dllLoc);
     dllInjection.InjectDLL ();
     ResumeThread (this->thread);
     return STATUS_OK;

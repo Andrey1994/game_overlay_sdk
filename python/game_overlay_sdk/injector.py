@@ -77,6 +77,15 @@ class InjectorDLL (object):
             ctypes.c_char_p
         ]
 
+        # run process
+        self.RunProcess = self.lib.RunProcess
+        self.RunProcess.restype = ctypes.c_int
+        self.RunProcess.argtypes = [
+            ctypes.c_char_p,
+            ctypes.c_char_p,
+            ctypes.c_char_p
+        ]
+
 
 def start_monitor (process_name):
     location = os.path.abspath (os.path.dirname (pkg_resources.resource_filename (__name__, os.path.join ('lib', 'GameOverlay64.dll'))))
@@ -105,3 +114,9 @@ def send_message (message):
     res = InjectorDLL.get_instance ().SendMessageToOverlay (message.encode ())
     if res != CustomExitCodes.STATUS_OK.value:
         raise InjectionError ('failed to send message', res)
+
+def run_process (exe_path, exe_args = ""):
+    location = os.path.abspath (os.path.dirname (pkg_resources.resource_filename (__name__, os.path.join ('lib', 'GameOverlay64.dll'))))
+    res = InjectorDLL.get_instance ().RunProcess (exe_path.encode (), exe_args.encode(), location.encode ())
+    if res != CustomExitCodes.STATUS_OK.value:
+        raise InjectionError ('failed to run process please check logs', res)
