@@ -21,16 +21,19 @@ class MessageThread (threading.Thread):
                 if err.exit_code == game_overlay_sdk.injector.CustomExitCodes.TARGET_PROCESS_IS_NOT_CREATED_ERROR.value:
                     print ('target process is not created')
                     time.sleep (5)
+                elif err.exit_code == game_overlay_sdk.injector.CustomExitCodes.TARGET_PROCESS_WAS_TERMINATED_ERROR.value:
+                    print ('target process was stopped')
+                    self.need_quit = True
                 else:
                     raise err
 
 def main ():
     parser = argparse.ArgumentParser ()
     parser.add_argument ('--exe_path', type = str, help = 'exe path', required = True)
-    parser.add_argument ('--exe_args', type = str, help = 'exe args', default = "")
+    parser.add_argument ('--exe_args', type = str, help = 'exe args', default = '')
     args = parser.parse_args ()
 
-    game_overlay_sdk.injector.set_log_level (0)
+    game_overlay_sdk.injector.enable_monitor_logger ()
     game_overlay_sdk.injector.run_process (args.exe_path, args.exe_args)
 
     # start sending messages to overlay

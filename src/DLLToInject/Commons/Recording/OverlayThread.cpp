@@ -93,7 +93,7 @@ namespace GameOverlay {
                     g_messageLog.LogError ("OverlayThread", "Failed to read from mapped file");
                 }
             }
-            Sleep (500);
+            Sleep (200);
         }
     }
 

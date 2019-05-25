@@ -29,6 +29,7 @@ Monitor::Monitor ()
     this->stopEvent = NULL;
     this->mapFile = NULL;
     this->pid = 0;
+    this->processHandle = NULL;
 }
 
 Monitor::~Monitor ()
@@ -62,8 +63,14 @@ int Monitor::RunProcess (char *exePath, char *args, char *dllLoc)
     }
     int architecture = GetArchitecture (pid);
     DLLInjection dllInjection (this->pid, architecture, dllLoc);
-    dllInjection.InjectDLL ();
+    bool is_injected = dllInjection.InjectDLL ();
     ResumeThread (this->thread);
+    if (!is_injected)
+    {
+        Monitor::monitorLogger->error ("Failed to inject dll");
+        return GENERAL_ERROR;
+    }
+    this->processHandle = dllInjection.GetTargetProcessHandle ();
     return STATUS_OK;
 }
 
@@ -140,6 +147,7 @@ int Monitor::StopMonitor ()
         this->mapFile = NULL;
     }
     this->pid = 0;
+    this->processHandle = NULL;
     return STATUS_OK;
 }
 
@@ -152,10 +160,17 @@ int Monitor::SendMessageToOverlay (char *message)
 {
     if ((this->mapFile == NULL) || (this->pid == 0))
     {
-        monitorLogger->error ("Overlay is not ready");
+        Monitor::monitorLogger->error ("Overlay is not ready");
         return TARGET_PROCESS_IS_NOT_CREATED_ERROR;
     }
-    monitorLogger->info ("sending message '{}' to {}", message, this->pid);
+    if (!CheckTargetProcessAlive ())
+    {
+        Monitor::monitorLogger->error ("target process was terminated, dont send message");
+        this->pid = 0;
+        this->processHandle = NULL;
+        return TARGET_PROCESS_WAS_TERMINATED_ERROR;
+    }
+    monitorLogger->trace ("sending message '{}' to {}", message, this->pid);
     char *buf = (char *)MapViewOfFile (this->mapFile, FILE_MAP_WRITE, 0, 0, MMAPSIZE);
     if (buf == NULL)
     {
@@ -171,14 +186,34 @@ void Monitor::Callback (int pid, char *pName)
 {
     if (strcmp (pName, (char *)this->processName) == 0)
     {
+        if (this->pid != 0)
+        {
+            if (!this->CheckTargetProcessAlive ())
+            {
+                Monitor::monitorLogger->info ("Previous process was terminated running callback for the new one");
+            }
+            else
+            {
+                Monitor::monitorLogger->warn ("Only single process is allowed, dont injectdll to new process");
+                return;
+            }
+        }
         int architecture = GetArchitecture (pid);
         Monitor::monitorLogger->info (
             "Target Process created, name {}, pid {}, architecture {}", pName, pid, architecture);
         DLLInjection dllInjection (pid, architecture, (char *)this->dllLoc);
         SuspendAllThreads (pid);
-        dllInjection.InjectDLL ();
+        bool res = dllInjection.InjectDLL ();
         ResumeAllThreads (pid);
-        this->pid = pid;
+        if (!res)
+        {
+            Monitor::monitorLogger->error ("Failed to inject dll to {}", pName);
+        }
+        else
+        {
+            this->processHandle = dllInjection.GetTargetProcessHandle ();
+            this->pid = pid;
+        }
     }
     else
     {
@@ -262,7 +297,7 @@ int Monitor::GetArchitecture (int pid)
     if (!wow64FunctionAdress)
     {
         Monitor::monitorLogger->error ("IsWow64Process function not found in kernel32");
-        return 64;
+        return X64;
     }
 
     BOOL wow64Process = true;
@@ -270,18 +305,18 @@ int Monitor::GetArchitecture (int pid)
     if (!processHandle.Get ())
     {
         Monitor::monitorLogger->error ("can not get handle from pid");
-        return 64;
+        return X64;
     }
     if (!IsWow64Process (processHandle.Get (), &wow64Process))
     {
         Monitor::monitorLogger->error ("IsWow64Process failed, error {}", GetLastError ());
-        return 64;
+        return X64;
     }
 
     if (wow64Process)
-        return 86;
+        return X86;
     else
-        return 64;
+        return X64;
 }
 
 HANDLE Monitor::GetProcessHandleFromID (DWORD id, DWORD access)
@@ -324,4 +359,19 @@ int Monitor::CreateDesktopProcess (char *path, char *cmdArgs)
     this->pid = processInfo_.dwProcessId;
     this->thread = processInfo_.hThread;
     return STATUS_OK;
+}
+
+bool Monitor::CheckTargetProcessAlive ()
+{
+    if (this->processHandle == NULL)
+    {
+        Monitor::monitorLogger->info ("target process is not created yet");
+        return false;
+    }
+    DWORD exitCode = 0;
+    bool status = GetExitCodeProcess (this->processHandle, &exitCode);
+    if (exitCode == STILL_ACTIVE)
+        return true;
+    else
+        return false;
 }

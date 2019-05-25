@@ -30,6 +30,7 @@ class Monitor
         volatile char processName[1024];
         volatile char dllLoc[1024];
         volatile int pid;
+        volatile HANDLE processHandle;
 
         bool RegisterCreationCallback ();
         static DWORD WINAPI ThreadProc (LPVOID lpParameter);
@@ -38,6 +39,7 @@ class Monitor
         HANDLE GetProcessHandleFromID (DWORD id, DWORD access);
         int CreateDesktopProcess (char *path, char *cmdArgs);
         int CreateFileMap ();
+        bool CheckTargetProcessAlive ();
 };
 
 #endif

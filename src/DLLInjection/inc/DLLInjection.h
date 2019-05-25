@@ -46,6 +46,7 @@ class DLLInjection
 
         bool InjectDLL ();
         bool FreeDLL ();
+        HANDLE GetTargetProcessHandle ();
 
         static const std::string dllNameX64;
         static const std::string dllNameX32;

@@ -16,6 +16,7 @@ class CustomExitCodes (enum.Enum):
     PROCESS_MONITOR_IS_NOT_RUNNING_ERROR = 3
     GENERAL_ERROR = 4
     PATH_NOT_FOUND_ERROR = 5
+    TARGET_PROCESS_WAS_TERMINATED_ERROR = 6
 
 
 class InjectionError (Exception):
@@ -72,7 +73,7 @@ class InjectorDLL (object):
 
         # send message
         self.SendMessageToOverlay = self.lib.SendMessageToOverlay
-        self.SendMessageToOverlay.restype = ctypes.c_bool
+        self.SendMessageToOverlay.restype = ctypes.c_int
         self.SendMessageToOverlay.argtypes = [
             ctypes.c_char_p
         ]
@@ -102,6 +103,16 @@ def set_log_level (level):
     res = InjectorDLL.get_instance ().SetLogLevel (level)
     if res != CustomExitCodes.STATUS_OK.value:
         raise InjectionError ('failed to set log level', res)
+
+# log level for core module of this library, not related to python logging
+def enable_monitor_logger ():
+    set_log_level (2)
+
+def disble_monitor_logger ():
+    set_log_level (6)
+
+def enable_dev_logger ():
+    set_log_level (0)
 
 def get_pid ():
     pid = numpy.zeros (1).astype (numpy.int64)

@@ -1,18 +1,22 @@
 #include <string.h>
+#include <mutex>
 
 #include "MonitorProcessCreation.h"
 #include "Monitor.h"
 
 Monitor *monitor = NULL;
+std::mutex mutex;
 
 int SetLogLevel (int level)
 {
+    std::lock_guard<std::mutex> lock (mutex);
     Monitor::SetLogLevel (level);
     return STATUS_OK;
 }
 
 int StartMonitor (char *processName, char *dllLoc)
 {
+    std::lock_guard<std::mutex> lock (mutex);
     if (monitor)
     {
         Monitor::monitorLogger->error ("process monitor already running");
@@ -29,6 +33,7 @@ int StartMonitor (char *processName, char *dllLoc)
 
 int RunProcess (char *exePath, char *args, char *dllLoc)
 {
+    std::lock_guard<std::mutex> lock (mutex);
     if (monitor)
     {
         Monitor::monitorLogger->error ("process monitor already running");
@@ -45,6 +50,7 @@ int RunProcess (char *exePath, char *args, char *dllLoc)
 
 int StopMonitor ()
 {
+    std::lock_guard<std::mutex> lock (mutex);
     if (!monitor)
     {
         Monitor::monitorLogger->error ("process monitor is not running");
@@ -58,6 +64,7 @@ int StopMonitor ()
 
 int GetPid (int *pid)
 {
+    std::lock_guard<std::mutex> lock (mutex);
     if (!monitor)
     {
         Monitor::monitorLogger->error ("process monitor is not running");
@@ -71,6 +78,7 @@ int GetPid (int *pid)
 
 int SendMessageToOverlay (char *message)
 {
+    std::lock_guard<std::mutex> lock (mutex);
     if (!monitor)
     {
         Monitor::monitorLogger->error ("process monitor is not running");

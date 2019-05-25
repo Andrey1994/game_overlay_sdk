@@ -255,3 +255,8 @@ bool DLLInjection::ExecuteRemoteThread (const std::string &functionName, void *f
     }
     return true;
 }
+
+HANDLE DLLInjection::GetTargetProcessHandle ()
+{
+    return this->processHandle;
+}

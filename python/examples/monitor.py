@@ -4,6 +4,7 @@ import game_overlay_sdk
 import game_overlay_sdk.injector
 import threading
 
+
 class MessageThread (threading.Thread):
 
     def __init__ (self):
@@ -21,15 +22,21 @@ class MessageThread (threading.Thread):
                 if err.exit_code == game_overlay_sdk.injector.CustomExitCodes.TARGET_PROCESS_IS_NOT_CREATED_ERROR.value:
                     print ('target process is not created')
                     time.sleep (5)
+                elif err.exit_code == game_overlay_sdk.injector.CustomExitCodes.TARGET_PROCESS_WAS_TERMINATED_ERROR.value:
+                    print ('target process was stopped')
+                    # in monitor mode we can run process several times so dont need to stop this thread here
+                    i = 0
+                    time.sleep (5)
                 else:
                     raise err
+
 
 def main ():
     parser = argparse.ArgumentParser ()
     parser.add_argument ('--name', type = str, help  = 'process name', required = True)
     args = parser.parse_args ()
 
-    game_overlay_sdk.injector.set_log_level (0)
+    game_overlay_sdk.injector.enable_monitor_logger ()
     game_overlay_sdk.injector.start_monitor (args.name)
 
     # start sending messages to overlay
