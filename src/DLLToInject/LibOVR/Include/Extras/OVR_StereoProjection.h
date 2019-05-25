@@ -29,44 +29,33 @@ limitations under the License.
 
 #include "Extras/OVR_Math.h"
 
-namespace OVR {
+namespace OVR
+{
 
-//-----------------------------------------------------------------------------------
-// ***** Stereo Enumerations
+    //-----------------------------------------------------------------------------------
+    // ***** Stereo Enumerations
 
-// StereoEye specifies which eye we are rendering for; it is used to
-// retrieve StereoEyeParams.
-enum StereoEye { StereoEye_Left, StereoEye_Right, StereoEye_Center };
+    // StereoEye specifies which eye we are rendering for; it is used to
+    // retrieve StereoEyeParams.
+    enum StereoEye
+    {
+        StereoEye_Left,
+        StereoEye_Right,
+        StereoEye_Center
+    };
 
-//-----------------------------------------------------------------------------------
-// ***** Propjection functions
+    //-----------------------------------------------------------------------------------
+    // ***** Propjection functions
 
-Matrix4f CreateProjection(
-    bool rightHanded,
-    bool isOpenGL,
-    FovPort fov,
-    StereoEye eye,
-    float zNear = 0.01f,
-    float zFar = 10000.0f,
-    bool flipZ = false,
-    bool farAtInfinity = false);
+    Matrix4f CreateProjection (bool rightHanded, bool isOpenGL, FovPort fov, StereoEye eye,
+        float zNear = 0.01f, float zFar = 10000.0f, bool flipZ = false, bool farAtInfinity = false);
 
-Matrix4f CreateOrthoSubProjection(
-    bool rightHanded,
-    StereoEye eyeType,
-    float tanHalfFovX,
-    float tanHalfFovY,
-    float unitsX,
-    float unitsY,
-    float distanceFromCamera,
-    float interpupillaryDistance,
-    Matrix4f const& projection,
-    float zNear = 0.0f,
-    float zFar = 0.0f,
-    bool flipZ = false,
-    bool farAtInfinity = false);
+    Matrix4f CreateOrthoSubProjection (bool rightHanded, StereoEye eyeType, float tanHalfFovX,
+        float tanHalfFovY, float unitsX, float unitsY, float distanceFromCamera,
+        float interpupillaryDistance, Matrix4f const &projection, float zNear = 0.0f,
+        float zFar = 0.0f, bool flipZ = false, bool farAtInfinity = false);
 
-ScaleAndOffset2D CreateNDCScaleAndOffsetFromFov(FovPort fov);
+    ScaleAndOffset2D CreateNDCScaleAndOffsetFromFov (FovPort fov);
 
 } // namespace OVR
 

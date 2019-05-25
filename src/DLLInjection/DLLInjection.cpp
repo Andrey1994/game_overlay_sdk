@@ -20,16 +20,18 @@
 // SOFTWARE.
 //
 
-#include <string>
 #include <windows.h>
-#include <tlhelp32.h>
+
 #include <psapi.h>
+#include <string>
+#include <tlhelp32.h>
 
 #include "DLLInjection.h"
 #include "StringUtils.h"
 #include "Win32Handle.h"
 
-std::shared_ptr<spdlog::logger> DLLInjection::injectLogger = spdlog::stderr_logger_mt ("recordLogger");
+std::shared_ptr<spdlog::logger> DLLInjection::injectLogger =
+    spdlog::stderr_logger_mt ("recordLogger");
 const std::string DLLInjection::dllNameX64 = "GameOverlay64.dll";
 const std::string DLLInjection::dllNameX32 = "GameOverlay32.dll";
 

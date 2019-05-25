@@ -24,11 +24,11 @@
 #include "FileDirectory.h"
 #include <shlobj.h>
 
-#include "Utility/ProcessHelper.h"
 #include "Utility/Constants.h"
-#include "Utility/MessageLog.h"
-#include "Utility/StringUtils.h"
 #include "Utility/FileUtils.h"
+#include "Utility/MessageLog.h"
+#include "Utility/ProcessHelper.h"
+#include "Utility/StringUtils.h"
 
 FileDirectory g_fileDirectory;
 
@@ -59,10 +59,11 @@ bool FileDirectory::Initialize ()
         return false;
     }
 
-    std::vector<DirectoryType> documentDirectories = { DirectoryType::Log };
-    for (const auto& type : documentDirectories)
+    std::vector<DirectoryType> documentDirectories = {DirectoryType::Log};
+    for (const auto &type : documentDirectories)
     {
-        bool success = CreateDir (directories_[DirectoryType::Documents].dirW + folders_[type].dirW, type);
+        bool success =
+            CreateDir (directories_[DirectoryType::Documents].dirW + folders_[type].dirW, type);
         if (!success)
         {
             return false;
@@ -74,7 +75,7 @@ bool FileDirectory::Initialize ()
     return true;
 }
 
-const std::wstring& FileDirectory::GetDirectory (DirectoryType type)
+const std::wstring &FileDirectory::GetDirectory (DirectoryType type)
 {
     if (!initialized_)
     {
@@ -84,7 +85,7 @@ const std::wstring& FileDirectory::GetDirectory (DirectoryType type)
     return directories_[type].dirW;
 }
 
-const std::wstring& FileDirectory::GetFolder (DirectoryType type)
+const std::wstring &FileDirectory::GetFolder (DirectoryType type)
 {
     return folders_[type].dirW;
 }
@@ -94,8 +95,7 @@ FileDirectory::Directory::Directory ()
     // Do nothing.
 }
 
-FileDirectory::Directory::Directory (const std::wstring& directory)
-    : dirW (directory)
+FileDirectory::Directory::Directory (const std::wstring &directory) : dirW (directory)
 {
     // Empty
 }
@@ -110,18 +110,20 @@ bool FileDirectory::FindDocumentsDir ()
         return false;
     }
 
-    directories_[DirectoryType::Documents] = Directory (std::wstring (docDir) + L"\\" + folders_[DirectoryType::Documents].dirW);
-    LogFileDirectory (directories_[DirectoryType::Documents].dirW, folders_[DirectoryType::Documents].dirW);
+    directories_[DirectoryType::Documents] =
+        Directory (std::wstring (docDir) + L"\\" + folders_[DirectoryType::Documents].dirW);
+    LogFileDirectory (
+        directories_[DirectoryType::Documents].dirW, folders_[DirectoryType::Documents].dirW);
     CoTaskMemFree (docDir);
     return true;
 }
 
-void FileDirectory::LogFileDirectory (const std::wstring& value, const std::wstring& message)
+void FileDirectory::LogFileDirectory (const std::wstring &value, const std::wstring &message)
 {
     g_messageLog.LogInfo ("FileDirectory", message + L"\t" + value);
 }
 
-bool FileDirectory::CreateDir (const std::wstring& dir, DirectoryType type)
+bool FileDirectory::CreateDir (const std::wstring &dir, DirectoryType type)
 {
     const auto result = CreateDirectory (dir.c_str (), NULL);
     if (!result)

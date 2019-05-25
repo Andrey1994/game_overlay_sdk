@@ -27,12 +27,13 @@
 
 
 #include <d3d11.h>
-#include <wrl.h>
 #include <vector>
+#include <wrl.h>
 
 #include "Rendering/OverlayBitmap.h"
 
-namespace GameOverlay {
+namespace GameOverlay
+{
     enum class InitializationStatus
     {
         DEFERRED_CONTEXT_INITIALIZED,
@@ -43,28 +44,30 @@ namespace GameOverlay {
     class d3d11_renderer final
     {
     public:
-        d3d11_renderer(ID3D11Device *device, IDXGISwapChain *swapchain);
-        d3d11_renderer(ID3D11Device *device,
+        d3d11_renderer (ID3D11Device *device, IDXGISwapChain *swapchain);
+        d3d11_renderer (ID3D11Device *device,
             std::vector<Microsoft::WRL::ComPtr<ID3D11RenderTargetView>> renderTargets_,
             int backBufferWidth, int backBufferHeight);
-        ~d3d11_renderer();
+        ~d3d11_renderer ();
 
 
-        bool on_present();
-        bool on_present(int backBufferIndex);
+        bool on_present ();
+        bool on_present (int backBufferIndex);
 
-        D3D11_VIEWPORT GetViewport() { return viewPort_; }
+        D3D11_VIEWPORT GetViewport ()
+        {
+            return viewPort_;
+        }
 
     private:
+        bool CreateOverlayRenderTarget ();
+        bool CreateOverlayTexture ();
+        bool CreateOverlayResources (int backBufferWidth, int backBufferHeight);
+        bool RecordOverlayCommandList ();
 
-        bool CreateOverlayRenderTarget();
-        bool CreateOverlayTexture();
-        bool CreateOverlayResources(int backBufferWidth, int backBufferHeight);
-        bool RecordOverlayCommandList();
-
-        void CopyOverlayTexture();
-        bool UpdateOverlayPosition();
-        void UpdateOverlayTexture();
+        void CopyOverlayTexture ();
+        bool UpdateOverlayPosition ();
+        void UpdateOverlayTexture ();
 
         Microsoft::WRL::ComPtr<ID3D11Device> device_;
         Microsoft::WRL::ComPtr<ID3D11DeviceContext> context_;

@@ -22,9 +22,9 @@
 
 #include "SwapchainMapping.h"
 
-void SwapchainMapping::ClearImageData (VkLayerDispatchTable * pTable)
+void SwapchainMapping::ClearImageData (VkLayerDispatchTable *pTable)
 {
-    for (auto& id : imageData)
+    for (auto &id : imageData)
     {
         if (id.view != VK_NULL_HANDLE)
         {

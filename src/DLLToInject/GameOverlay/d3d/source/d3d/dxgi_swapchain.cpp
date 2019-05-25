@@ -33,55 +33,55 @@ using namespace Microsoft::WRL;
 extern bool g_uwpApp;
 
 DXGISwapChain::DXGISwapChain (ID3D11Device *device, IDXGISwapChain *swapChain)
-    : d3d11Device_{ device },
-    swapChain_{ swapChain },
-    d3dVersion_{ D3DVersion_11 }
+    : d3d11Device_ {device}, swapChain_ {swapChain}, d3dVersion_ {D3DVersion_11}
 {
     g_messageLog.LogInfo ("DXGISwapChain", "calling constructor D3D11");
     d3d11Renderer_ = std::make_unique<GameOverlay::d3d11_renderer> (device, swapChain);
 }
 
 DXGISwapChain::DXGISwapChain (ID3D11Device *device, IDXGISwapChain1 *swapChain)
-    : DXGISwapChain (device, static_cast<IDXGISwapChain *>(swapChain))
+    : DXGISwapChain (device, static_cast<IDXGISwapChain *> (swapChain))
 {
-    g_messageLog.LogInfo ("DXGISwapChain",
-        "calling constructor D3D11 IDXGISwapchain1");
+    g_messageLog.LogInfo ("DXGISwapChain", "calling constructor D3D11 IDXGISwapchain1");
     swapChainVersion_ = SWAPCHAIN_1;
 }
 
 DXGISwapChain::DXGISwapChain (ID3D12CommandQueue *commandQueue, IDXGISwapChain *swapChain)
-    : d3d12CommandQueue_{ commandQueue },
-    swapChain_{ swapChain },
-    d3dVersion_{ D3DVersion_12 },
-    swapChainVersion_{ SWAPCHAIN_3 }
+    : d3d12CommandQueue_ {commandQueue}
+    , swapChain_ {swapChain}
+    , d3dVersion_ {D3DVersion_12}
+    , swapChainVersion_ {SWAPCHAIN_3}
 {
     g_messageLog.LogInfo ("DXGISwapChain", "calling constructor D3D12");
     d3d12Renderer_ = std::make_unique<GameOverlay::d3d12_renderer> (
-        commandQueue, static_cast<IDXGISwapChain3 *>(swapChain));
+        commandQueue, static_cast<IDXGISwapChain3 *> (swapChain));
 }
 
 // IUnknown
 HRESULT STDMETHODCALLTYPE DXGISwapChain::QueryInterface (REFIID riid, void **ppvObj)
 {
     g_messageLog.LogVerbose ("QueryInterface", "Entered function");
-    if (ppvObj == nullptr) {
+    if (ppvObj == nullptr)
+    {
         g_messageLog.LogVerbose ("QueryInterface", "Invalid pointer");
         return E_POINTER;
     }
 
     bool swapChainUpdated = false;
 #pragma region Update to IDXGISwapChain interface
-    if (riid == __uuidof(IDXGISwapChain)) {
-        if (swapChainVersion_ > SWAPCHAIN_0) {
-            g_messageLog.LogWarning ("DXGISwapChain",
-                "QueryInterface IDXGISwapChain with higher swapChainVersion");
+    if (riid == __uuidof(IDXGISwapChain))
+    {
+        if (swapChainVersion_ > SWAPCHAIN_0)
+        {
+            g_messageLog.LogWarning (
+                "DXGISwapChain", "QueryInterface IDXGISwapChain with higher swapChainVersion");
         }
         IDXGISwapChain1 *swapchain = nullptr;
 
         HRESULT hr = swapChain_->QueryInterface (&swapchain);
-        if (FAILED (hr)) {
-            g_messageLog.LogError ("DXGISwapChain",
-                "QueryInterface IDXGISwapChain failed", hr);
+        if (FAILED (hr))
+        {
+            g_messageLog.LogError ("DXGISwapChain", "QueryInterface IDXGISwapChain failed", hr);
             return E_NOINTERFACE;
         }
 
@@ -94,17 +94,19 @@ HRESULT STDMETHODCALLTYPE DXGISwapChain::QueryInterface (REFIID riid, void **ppv
     }
 #pragma endregion
 #pragma region Update to IDXGISwapChain1 interface
-    if (riid == __uuidof(IDXGISwapChain1)) {
-        if (swapChainVersion_ > SWAPCHAIN_1) {
-            g_messageLog.LogWarning ("DXGISwapChain",
-                "QueryInterface IDXGISwapChain1 with higher swapChainVersion");
+    if (riid == __uuidof(IDXGISwapChain1))
+    {
+        if (swapChainVersion_ > SWAPCHAIN_1)
+        {
+            g_messageLog.LogWarning (
+                "DXGISwapChain", "QueryInterface IDXGISwapChain1 with higher swapChainVersion");
         }
         IDXGISwapChain1 *swapchain1 = nullptr;
 
         HRESULT hr = swapChain_->QueryInterface (&swapchain1);
-        if (FAILED (hr)) {
-            g_messageLog.LogError ("DXGISwapChain",
-                "QueryInterface IDXGISwapChain1 failed", hr);
+        if (FAILED (hr))
+        {
+            g_messageLog.LogError ("DXGISwapChain", "QueryInterface IDXGISwapChain1 failed", hr);
             return E_NOINTERFACE;
         }
 
@@ -117,17 +119,19 @@ HRESULT STDMETHODCALLTYPE DXGISwapChain::QueryInterface (REFIID riid, void **ppv
     }
 #pragma endregion
 #pragma region Update to IDXGISwapChain2 interface
-    if (riid == __uuidof(IDXGISwapChain2)) {
-        if (swapChainVersion_ > SWAPCHAIN_2) {
-            g_messageLog.LogWarning ("DXGISwapChain",
-                "QueryInterface IDXGISwapChain2 with higher swapChainVersion");
+    if (riid == __uuidof(IDXGISwapChain2))
+    {
+        if (swapChainVersion_ > SWAPCHAIN_2)
+        {
+            g_messageLog.LogWarning (
+                "DXGISwapChain", "QueryInterface IDXGISwapChain2 with higher swapChainVersion");
         }
         IDXGISwapChain2 *swapchain2 = nullptr;
 
         HRESULT hr = swapChain_->QueryInterface (&swapchain2);
-        if (FAILED (hr)) {
-            g_messageLog.LogError ("DXGISwapChain",
-                "QueryInterface IDXGISwapChain2 failed", hr);
+        if (FAILED (hr))
+        {
+            g_messageLog.LogError ("DXGISwapChain", "QueryInterface IDXGISwapChain2 failed", hr);
             return E_NOINTERFACE;
         }
 
@@ -140,17 +144,19 @@ HRESULT STDMETHODCALLTYPE DXGISwapChain::QueryInterface (REFIID riid, void **ppv
     }
 #pragma endregion
 #pragma region Update to IDXGISwapChain3 interface
-    if (riid == __uuidof(IDXGISwapChain3)) {
-        if (swapChainVersion_ > SWAPCHAIN_3) {
-            g_messageLog.LogWarning ("DXGISwapChain",
-                "QueryInterface IDXGISwapChain3 with higher swapChainVersion");
+    if (riid == __uuidof(IDXGISwapChain3))
+    {
+        if (swapChainVersion_ > SWAPCHAIN_3)
+        {
+            g_messageLog.LogWarning (
+                "DXGISwapChain", "QueryInterface IDXGISwapChain3 with higher swapChainVersion");
         }
         IDXGISwapChain3 *swapchain3 = nullptr;
 
         HRESULT hr = swapChain_->QueryInterface (&swapchain3);
-        if (FAILED (hr)) {
-            g_messageLog.LogError ("DXGISwapChain",
-                "QueryInterface IDXGISwapChain3 failed", hr);
+        if (FAILED (hr))
+        {
+            g_messageLog.LogError ("DXGISwapChain", "QueryInterface IDXGISwapChain3 failed", hr);
             return E_NOINTERFACE;
         }
 
@@ -163,17 +169,19 @@ HRESULT STDMETHODCALLTYPE DXGISwapChain::QueryInterface (REFIID riid, void **ppv
     }
 #pragma endregion
 #pragma region Update to IDXGISwapChain4 interface
-    if (riid == __uuidof(IDXGISwapChain4)) {
-        if (swapChainVersion_ > SWAPCHAIN_4) {
-            g_messageLog.LogWarning ("DXGISwapChain",
-                "QueryInterface IDXGISwapChain4 with higher swapChainVersion");
+    if (riid == __uuidof(IDXGISwapChain4))
+    {
+        if (swapChainVersion_ > SWAPCHAIN_4)
+        {
+            g_messageLog.LogWarning (
+                "DXGISwapChain", "QueryInterface IDXGISwapChain4 with higher swapChainVersion");
         }
         IDXGISwapChain4 *swapchain4 = nullptr;
 
         HRESULT hr = swapChain_->QueryInterface (&swapchain4);
-        if (FAILED (hr)) {
-            g_messageLog.LogError ("DXGISwapChain",
-                "QueryInterface IDXGISwapChain4 failed", hr);
+        if (FAILED (hr))
+        {
+            g_messageLog.LogError ("DXGISwapChain", "QueryInterface IDXGISwapChain4 failed", hr);
             return E_NOINTERFACE;
         }
 
@@ -186,13 +194,15 @@ HRESULT STDMETHODCALLTYPE DXGISwapChain::QueryInterface (REFIID riid, void **ppv
     }
 #pragma endregion
 
-    if (swapChainUpdated || g_uwpApp) {
+    if (swapChainUpdated || g_uwpApp)
+    {
         AddRef ();
         *ppvObj = this;
         g_messageLog.LogVerbose ("QueryInterface", "Return this");
         return S_OK;
     }
-    else {
+    else
+    {
         g_messageLog.LogVerbose ("QueryInterface", "Forward query interface");
         return swapChain_->QueryInterface (riid, ppvObj);
     }
@@ -209,13 +219,13 @@ ULONG STDMETHODCALLTYPE DXGISwapChain::Release ()
 }
 
 // IDXGIObject
-HRESULT STDMETHODCALLTYPE DXGISwapChain::SetPrivateData (REFGUID Name, UINT DataSize,
-    const void *pData)
+HRESULT STDMETHODCALLTYPE DXGISwapChain::SetPrivateData (
+    REFGUID Name, UINT DataSize, const void *pData)
 {
     return swapChain_->SetPrivateData (Name, DataSize, pData);
 }
-HRESULT STDMETHODCALLTYPE DXGISwapChain::SetPrivateDataInterface (REFGUID Name,
-    const IUnknown *pUnknown)
+HRESULT STDMETHODCALLTYPE DXGISwapChain::SetPrivateDataInterface (
+    REFGUID Name, const IUnknown *pUnknown)
 {
     return swapChain_->SetPrivateDataInterface (Name, pUnknown);
 }
@@ -231,20 +241,21 @@ HRESULT STDMETHODCALLTYPE DXGISwapChain::GetParent (REFIID riid, void **ppParent
 // IDXGIDeviceSubObject
 HRESULT STDMETHODCALLTYPE DXGISwapChain::GetDevice (REFIID riid, void **ppDevice)
 {
-    if (ppDevice == nullptr) {
+    if (ppDevice == nullptr)
+    {
         return DXGI_ERROR_INVALID_CALL;
     }
 
     switch (d3dVersion_)
     {
-    case D3DVersion_11:
-    {
-        return d3d11Device_->QueryInterface (riid, ppDevice);
-    }
-    case D3DVersion_12:
-    {
-        return d3d12CommandQueue_->QueryInterface (riid, ppDevice);
-    }
+        case D3DVersion_11:
+        {
+            return d3d11Device_->QueryInterface (riid, ppDevice);
+        }
+        case D3DVersion_12:
+        {
+            return d3d12CommandQueue_->QueryInterface (riid, ppDevice);
+        }
     }
 
     return DXGI_ERROR_INVALID_CALL;
@@ -254,14 +265,16 @@ HRESULT STDMETHODCALLTYPE DXGISwapChain::GetDevice (REFIID riid, void **ppDevice
 HRESULT STDMETHODCALLTYPE DXGISwapChain::Present (UINT SyncInterval, UINT Flags)
 {
     // skip presents that are discarded
-    if (Flags != DXGI_PRESENT_TEST) {
-        switch (d3dVersion_) {
-        case D3DVersion_11:
-            d3d11Renderer_->on_present ();
-            break;
-        case D3DVersion_12:
-            d3d12Renderer_->on_present ();
-            break;
+    if (Flags != DXGI_PRESENT_TEST)
+    {
+        switch (d3dVersion_)
+        {
+            case D3DVersion_11:
+                d3d11Renderer_->on_present ();
+                break;
+            case D3DVersion_12:
+                d3d12Renderer_->on_present ();
+                break;
         }
     }
 
@@ -275,8 +288,8 @@ HRESULT STDMETHODCALLTYPE DXGISwapChain::SetFullscreenState (BOOL Fullscreen, ID
 {
     return swapChain_->SetFullscreenState (Fullscreen, pTarget);
 }
-HRESULT STDMETHODCALLTYPE DXGISwapChain::GetFullscreenState (BOOL *pFullscreen,
-    IDXGIOutput **ppTarget)
+HRESULT STDMETHODCALLTYPE DXGISwapChain::GetFullscreenState (
+    BOOL *pFullscreen, IDXGIOutput **ppTarget)
 {
     return swapChain_->GetFullscreenState (pFullscreen, ppTarget);
 }
@@ -284,29 +297,31 @@ HRESULT STDMETHODCALLTYPE DXGISwapChain::GetDesc (DXGI_SWAP_CHAIN_DESC *pDesc)
 {
     return swapChain_->GetDesc (pDesc);
 }
-HRESULT STDMETHODCALLTYPE DXGISwapChain::ResizeBuffers (UINT BufferCount, UINT Width, UINT Height,
-    DXGI_FORMAT NewFormat, UINT SwapChainFlags)
+HRESULT STDMETHODCALLTYPE DXGISwapChain::ResizeBuffers (
+    UINT BufferCount, UINT Width, UINT Height, DXGI_FORMAT NewFormat, UINT SwapChainFlags)
 {
     d3d11Renderer_.reset ();
     d3d12Renderer_.reset ();
 
     const HRESULT hr =
         swapChain_->ResizeBuffers (BufferCount, Width, Height, NewFormat, SwapChainFlags);
-    if (FAILED (hr)) {
+    if (FAILED (hr))
+    {
         g_messageLog.LogError ("DXGISwapChain", "Resize Buffers failed, HRESULT", hr);
     }
 
-    if (SUCCEEDED (hr) || hr == DXGI_ERROR_INVALID_CALL) {
-        switch (d3dVersion_) {
-        case D3DVersion_11:
-            d3d11Renderer_ = std::make_unique<GameOverlay::d3d11_renderer> (
-                d3d11Device_.Get (), swapChain_);
-            break;
-        case D3DVersion_12:
-            d3d12Renderer_ = std::make_unique<GameOverlay::d3d12_renderer> (
-                d3d12CommandQueue_.Get (),
-                static_cast<IDXGISwapChain3 *>(swapChain_));
-            break;
+    if (SUCCEEDED (hr) || hr == DXGI_ERROR_INVALID_CALL)
+    {
+        switch (d3dVersion_)
+        {
+            case D3DVersion_11:
+                d3d11Renderer_ =
+                    std::make_unique<GameOverlay::d3d11_renderer> (d3d11Device_.Get (), swapChain_);
+                break;
+            case D3DVersion_12:
+                d3d12Renderer_ = std::make_unique<GameOverlay::d3d12_renderer> (
+                    d3d12CommandQueue_.Get (), static_cast<IDXGISwapChain3 *> (swapChain_));
+                break;
         }
     }
 
@@ -332,136 +347,137 @@ HRESULT STDMETHODCALLTYPE DXGISwapChain::GetLastPresentCount (UINT *pLastPresent
 // IDXGISwapChain1
 HRESULT STDMETHODCALLTYPE DXGISwapChain::GetDesc1 (DXGI_SWAP_CHAIN_DESC1 *pDesc)
 {
-    return static_cast<IDXGISwapChain1 *>(swapChain_)->GetDesc1 (pDesc);
+    return static_cast<IDXGISwapChain1 *> (swapChain_)->GetDesc1 (pDesc);
 }
 HRESULT STDMETHODCALLTYPE DXGISwapChain::GetFullscreenDesc (DXGI_SWAP_CHAIN_FULLSCREEN_DESC *pDesc)
 {
-    return static_cast<IDXGISwapChain1 *>(swapChain_)->GetFullscreenDesc (pDesc);
+    return static_cast<IDXGISwapChain1 *> (swapChain_)->GetFullscreenDesc (pDesc);
 }
 HRESULT STDMETHODCALLTYPE DXGISwapChain::GetHwnd (HWND *pHwnd)
 {
-    return static_cast<IDXGISwapChain1 *>(swapChain_)->GetHwnd (pHwnd);
+    return static_cast<IDXGISwapChain1 *> (swapChain_)->GetHwnd (pHwnd);
 }
 HRESULT STDMETHODCALLTYPE DXGISwapChain::GetCoreWindow (REFIID refiid, void **ppUnk)
 {
-    return static_cast<IDXGISwapChain1 *>(swapChain_)->GetCoreWindow (refiid, ppUnk);
+    return static_cast<IDXGISwapChain1 *> (swapChain_)->GetCoreWindow (refiid, ppUnk);
 }
-HRESULT STDMETHODCALLTYPE DXGISwapChain::Present1 (UINT SyncInterval, UINT PresentFlags,
-    const DXGI_PRESENT_PARAMETERS *pPresentParameters)
+HRESULT STDMETHODCALLTYPE DXGISwapChain::Present1 (
+    UINT SyncInterval, UINT PresentFlags, const DXGI_PRESENT_PARAMETERS *pPresentParameters)
 {
     // skip presents that are discarded
     // ---> can't, if skipped it can cause flickering issues
-    //if (PresentFlags != DXGI_PRESENT_TEST) {
-    switch (d3dVersion_) {
-    case D3DVersion_11:
-        d3d11Renderer_->on_present (PresentFlags);
-        break;
-    case D3DVersion_12:
-        d3d12Renderer_->on_present (PresentFlags);
-        break;
+    // if (PresentFlags != DXGI_PRESENT_TEST) {
+    switch (d3dVersion_)
+    {
+        case D3DVersion_11:
+            d3d11Renderer_->on_present (PresentFlags);
+            break;
+        case D3DVersion_12:
+            d3d12Renderer_->on_present (PresentFlags);
+            break;
     }
     //}
 
-    return static_cast<IDXGISwapChain1 *>(swapChain_)
+    return static_cast<IDXGISwapChain1 *> (swapChain_)
         ->Present1 (SyncInterval, PresentFlags, pPresentParameters);
 }
 BOOL STDMETHODCALLTYPE DXGISwapChain::IsTemporaryMonoSupported ()
 {
-    return static_cast<IDXGISwapChain1 *>(swapChain_)->IsTemporaryMonoSupported ();
+    return static_cast<IDXGISwapChain1 *> (swapChain_)->IsTemporaryMonoSupported ();
 }
 HRESULT STDMETHODCALLTYPE DXGISwapChain::GetRestrictToOutput (IDXGIOutput **ppRestrictToOutput)
 {
-    return static_cast<IDXGISwapChain1 *>(swapChain_)->GetRestrictToOutput (ppRestrictToOutput);
+    return static_cast<IDXGISwapChain1 *> (swapChain_)->GetRestrictToOutput (ppRestrictToOutput);
 }
 HRESULT STDMETHODCALLTYPE DXGISwapChain::SetBackgroundColor (const DXGI_RGBA *pColor)
 {
-    return static_cast<IDXGISwapChain1 *>(swapChain_)->SetBackgroundColor (pColor);
+    return static_cast<IDXGISwapChain1 *> (swapChain_)->SetBackgroundColor (pColor);
 }
 HRESULT STDMETHODCALLTYPE DXGISwapChain::GetBackgroundColor (DXGI_RGBA *pColor)
 {
-    return static_cast<IDXGISwapChain1 *>(swapChain_)->GetBackgroundColor (pColor);
+    return static_cast<IDXGISwapChain1 *> (swapChain_)->GetBackgroundColor (pColor);
 }
 HRESULT STDMETHODCALLTYPE DXGISwapChain::SetRotation (DXGI_MODE_ROTATION Rotation)
 {
-    return static_cast<IDXGISwapChain1 *>(swapChain_)->SetRotation (Rotation);
+    return static_cast<IDXGISwapChain1 *> (swapChain_)->SetRotation (Rotation);
 }
 HRESULT STDMETHODCALLTYPE DXGISwapChain::GetRotation (DXGI_MODE_ROTATION *pRotation)
 {
-    return static_cast<IDXGISwapChain1 *>(swapChain_)->GetRotation (pRotation);
+    return static_cast<IDXGISwapChain1 *> (swapChain_)->GetRotation (pRotation);
 }
 
 // IDXGISwapChain2
 HRESULT STDMETHODCALLTYPE DXGISwapChain::SetSourceSize (UINT Width, UINT Height)
 {
-    return static_cast<IDXGISwapChain2 *>(swapChain_)->SetSourceSize (Width, Height);
+    return static_cast<IDXGISwapChain2 *> (swapChain_)->SetSourceSize (Width, Height);
 }
 HRESULT STDMETHODCALLTYPE DXGISwapChain::GetSourceSize (UINT *pWidth, UINT *pHeight)
 {
-    return static_cast<IDXGISwapChain2 *>(swapChain_)->GetSourceSize (pWidth, pHeight);
+    return static_cast<IDXGISwapChain2 *> (swapChain_)->GetSourceSize (pWidth, pHeight);
 }
 HRESULT STDMETHODCALLTYPE DXGISwapChain::SetMaximumFrameLatency (UINT MaxLatency)
 {
-    return static_cast<IDXGISwapChain2 *>(swapChain_)->SetMaximumFrameLatency (MaxLatency);
+    return static_cast<IDXGISwapChain2 *> (swapChain_)->SetMaximumFrameLatency (MaxLatency);
 }
 HRESULT STDMETHODCALLTYPE DXGISwapChain::GetMaximumFrameLatency (UINT *pMaxLatency)
 {
-    return static_cast<IDXGISwapChain2 *>(swapChain_)->GetMaximumFrameLatency (pMaxLatency);
+    return static_cast<IDXGISwapChain2 *> (swapChain_)->GetMaximumFrameLatency (pMaxLatency);
 }
 HANDLE STDMETHODCALLTYPE DXGISwapChain::GetFrameLatencyWaitableObject ()
 {
-    return static_cast<IDXGISwapChain2 *>(swapChain_)->GetFrameLatencyWaitableObject ();
+    return static_cast<IDXGISwapChain2 *> (swapChain_)->GetFrameLatencyWaitableObject ();
 }
 HRESULT STDMETHODCALLTYPE DXGISwapChain::SetMatrixTransform (const DXGI_MATRIX_3X2_F *pMatrix)
 {
-    return static_cast<IDXGISwapChain2 *>(swapChain_)->SetMatrixTransform (pMatrix);
+    return static_cast<IDXGISwapChain2 *> (swapChain_)->SetMatrixTransform (pMatrix);
 }
 HRESULT STDMETHODCALLTYPE DXGISwapChain::GetMatrixTransform (DXGI_MATRIX_3X2_F *pMatrix)
 {
-    return static_cast<IDXGISwapChain2 *>(swapChain_)->GetMatrixTransform (pMatrix);
+    return static_cast<IDXGISwapChain2 *> (swapChain_)->GetMatrixTransform (pMatrix);
 }
 
 // IDXGISwapChain3
 UINT STDMETHODCALLTYPE DXGISwapChain::GetCurrentBackBufferIndex ()
 {
-    return static_cast<IDXGISwapChain3 *>(swapChain_)->GetCurrentBackBufferIndex ();
+    return static_cast<IDXGISwapChain3 *> (swapChain_)->GetCurrentBackBufferIndex ();
 }
-HRESULT STDMETHODCALLTYPE DXGISwapChain::CheckColorSpaceSupport (DXGI_COLOR_SPACE_TYPE ColorSpace,
-    UINT *pColorSpaceSupport)
+HRESULT STDMETHODCALLTYPE DXGISwapChain::CheckColorSpaceSupport (
+    DXGI_COLOR_SPACE_TYPE ColorSpace, UINT *pColorSpaceSupport)
 {
-    return static_cast<IDXGISwapChain3 *>(swapChain_)
+    return static_cast<IDXGISwapChain3 *> (swapChain_)
         ->CheckColorSpaceSupport (ColorSpace, pColorSpaceSupport);
 }
 HRESULT STDMETHODCALLTYPE DXGISwapChain::SetColorSpace1 (DXGI_COLOR_SPACE_TYPE ColorSpace)
 {
-    return static_cast<IDXGISwapChain3 *>(swapChain_)->SetColorSpace1 (ColorSpace);
+    return static_cast<IDXGISwapChain3 *> (swapChain_)->SetColorSpace1 (ColorSpace);
 }
 HRESULT STDMETHODCALLTYPE DXGISwapChain::ResizeBuffers1 (UINT BufferCount, UINT Width, UINT Height,
-    DXGI_FORMAT Format, UINT SwapChainFlags,
-    const UINT *pCreationNodeMask,
+    DXGI_FORMAT Format, UINT SwapChainFlags, const UINT *pCreationNodeMask,
     IUnknown *const *ppPresentQueue)
 {
     d3d11Renderer_.reset ();
     d3d12Renderer_.reset ();
 
-    const HRESULT hr = static_cast<IDXGISwapChain3 *>(swapChain_)
-        ->ResizeBuffers1 (BufferCount, Width, Height, Format, SwapChainFlags,
-            pCreationNodeMask, ppPresentQueue);
-    if (FAILED (hr)) {
-        g_messageLog.LogError ("DXGISwapChain", "Resize buffers 1 failed, HRESULT",
-            hr);
+    const HRESULT hr = static_cast<IDXGISwapChain3 *> (swapChain_)
+                           ->ResizeBuffers1 (BufferCount, Width, Height, Format, SwapChainFlags,
+                               pCreationNodeMask, ppPresentQueue);
+    if (FAILED (hr))
+    {
+        g_messageLog.LogError ("DXGISwapChain", "Resize buffers 1 failed, HRESULT", hr);
     }
 
-    if (SUCCEEDED (hr) || hr == DXGI_ERROR_INVALID_CALL) {
-        switch (d3dVersion_) {
-        case D3DVersion_11:
-            d3d11Renderer_ = std::make_unique<GameOverlay::d3d11_renderer> (
-                d3d11Device_.Get (), swapChain_);
-            break;
-        case D3DVersion_12:
-            d3d12Renderer_ = std::make_unique<GameOverlay::d3d12_renderer> (
-                d3d12CommandQueue_.Get (),
-                static_cast<IDXGISwapChain3 *>(swapChain_));
-            break;
+    if (SUCCEEDED (hr) || hr == DXGI_ERROR_INVALID_CALL)
+    {
+        switch (d3dVersion_)
+        {
+            case D3DVersion_11:
+                d3d11Renderer_ =
+                    std::make_unique<GameOverlay::d3d11_renderer> (d3d11Device_.Get (), swapChain_);
+                break;
+            case D3DVersion_12:
+                d3d12Renderer_ = std::make_unique<GameOverlay::d3d12_renderer> (
+                    d3d12CommandQueue_.Get (), static_cast<IDXGISwapChain3 *> (swapChain_));
+                break;
         }
     }
 
@@ -469,8 +485,8 @@ HRESULT STDMETHODCALLTYPE DXGISwapChain::ResizeBuffers1 (UINT BufferCount, UINT 
 }
 
 // IDXGISwapChain4
-HRESULT STDMETHODCALLTYPE DXGISwapChain::SetHDRMetaData (DXGI_HDR_METADATA_TYPE Type, UINT Size,
-    _In_reads_opt_ (Size) void *pMetaData)
+HRESULT STDMETHODCALLTYPE DXGISwapChain::SetHDRMetaData (
+    DXGI_HDR_METADATA_TYPE Type, UINT Size, _In_reads_opt_ (Size) void *pMetaData)
 {
-    return static_cast<IDXGISwapChain4 *>(swapChain_)->SetHDRMetaData (Type, Size, pMetaData);
+    return static_cast<IDXGISwapChain4 *> (swapChain_)->SetHDRMetaData (Type, Size, pMetaData);
 }

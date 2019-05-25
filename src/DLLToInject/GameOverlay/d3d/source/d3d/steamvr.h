@@ -6,29 +6,30 @@
 #include "d3d/d3d11_renderer.hpp"
 #include "d3d/d3d12_renderer.hpp"
 
-void* VR_GetGenericInterface(const char* pchInterfaceVersion, vr::EVRInitError *peError);
+void *VR_GetGenericInterface (const char *pchInterfaceVersion, vr::EVRInitError *peError);
 
-vr::EVRCompositorError IVRCompositor_Submit(vr::IVRCompositor* pCompositor,
-    vr::EVREye eEye, const vr::Texture_t *pTexture,
-    const vr::VRTextureBounds_t* pBounds = 0,
+vr::EVRCompositorError IVRCompositor_Submit (vr::IVRCompositor *pCompositor, vr::EVREye eEye,
+    const vr::Texture_t *pTexture, const vr::VRTextureBounds_t *pBounds = 0,
     vr::EVRSubmitFlags nSubmitFlags = vr::Submit_Default);
 
-__declspec(dllexport) vr::IVRCompositor* GetVRCompositor();
-__declspec(dllexport) vr::IVROverlay* CreateVROverlay();
+__declspec(dllexport) vr::IVRCompositor *GetVRCompositor ();
+__declspec(dllexport) vr::IVROverlay *CreateVROverlay ();
 
-namespace CompositorOverlay {
+namespace CompositorOverlay
+{
     class SteamVR_D3D
     {
     public:
-        bool Init(const vr::ETextureType eType);
-        void Render(const vr::Texture_t *pTexture);
+        bool Init (const vr::ETextureType eType);
+        void Render (const vr::Texture_t *pTexture);
 
-        void SetDevice(IUnknown* device);
+        void SetDevice (IUnknown *device);
+
     private:
         const uint32_t screenWidth_ = 256;
         const uint32_t screenHeight_ = 180;
 
-        vr::IVROverlay* overlay_;
+        vr::IVROverlay *overlay_;
         vr::VROverlayHandle_t overlayHandle_;
 
         std::unique_ptr<GameOverlay::d3d11_renderer> d3d11Renderer_;
@@ -50,5 +51,5 @@ namespace CompositorOverlay {
     };
 }
 
-extern vr::IVRCompositor* g_Compositor;
+extern vr::IVRCompositor *g_Compositor;
 extern std::unique_ptr<CompositorOverlay::SteamVR_D3D> g_SteamVRD3D;

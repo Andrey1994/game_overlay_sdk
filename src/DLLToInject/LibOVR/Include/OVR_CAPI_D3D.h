@@ -60,12 +60,9 @@
 /// \see ovr_GetTextureSwapChainBufferDX
 /// \see ovr_DestroyTextureSwapChain
 ///
-OVR_PUBLIC_FUNCTION(ovrResult)
-ovr_CreateTextureSwapChainDX(
-    ovrSession session,
-    IUnknown* d3dPtr,
-    const ovrTextureSwapChainDesc* desc,
-    ovrTextureSwapChain* out_TextureSwapChain);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_CreateTextureSwapChainDX (ovrSession session, IUnknown *d3dPtr,
+    const ovrTextureSwapChainDesc *desc, ovrTextureSwapChain *out_TextureSwapChain);
 
 /// Get a specific buffer within the chain as any compatible COM interface (similar to
 /// QueryInterface)
@@ -89,13 +86,9 @@ ovr_CreateTextureSwapChainDX(
 ///         ovr_GetTextureSwapChainBufferDX(session, chain, 1, IID_PPV_ARGS(&dxgiResource));
 ///     \endcode
 ///
-OVR_PUBLIC_FUNCTION(ovrResult)
-ovr_GetTextureSwapChainBufferDX(
-    ovrSession session,
-    ovrTextureSwapChain chain,
-    int index,
-    IID iid,
-    void** out_Buffer);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_GetTextureSwapChainBufferDX (
+    ovrSession session, ovrTextureSwapChain chain, int index, IID iid, void **out_Buffer);
 
 /// Create Mirror Texture which is auto-refreshed to mirror Rift contents produced by this
 /// application.
@@ -148,12 +141,9 @@ ovr_GetTextureSwapChainBufferDX(
 /// \see ovr_GetMirrorTextureBufferDX
 /// \see ovr_DestroyMirrorTexture
 ///
-OVR_PUBLIC_FUNCTION(ovrResult)
-ovr_CreateMirrorTextureWithOptionsDX(
-    ovrSession session,
-    IUnknown* d3dPtr,
-    const ovrMirrorTextureDesc* desc,
-    ovrMirrorTexture* out_MirrorTexture);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_CreateMirrorTextureWithOptionsDX (ovrSession session, IUnknown *d3dPtr,
+    const ovrMirrorTextureDesc *desc, ovrMirrorTexture *out_MirrorTexture);
 
 /// Deprecated. Use ovr_CreateMirrorTextureWithOptionsDX instead
 ///
@@ -162,12 +152,9 @@ ovr_CreateMirrorTextureWithOptionsDX(
 ///
 /// \see ovrMirrorOptions, ovr_CreateMirrorTextureWithOptionsDX
 ///
-OVR_PUBLIC_FUNCTION(ovrResult)
-ovr_CreateMirrorTextureDX(
-    ovrSession session,
-    IUnknown* d3dPtr,
-    const ovrMirrorTextureDesc* desc,
-    ovrMirrorTexture* out_MirrorTexture);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_CreateMirrorTextureDX (ovrSession session, IUnknown *d3dPtr, const ovrMirrorTextureDesc *desc,
+    ovrMirrorTexture *out_MirrorTexture);
 
 /// Get a the underlying buffer as any compatible COM interface (similar to QueryInterface)
 ///
@@ -189,12 +176,9 @@ ovr_CreateMirrorTextureDX(
 ///         dxgiSwapChain->Present(0, 0);
 ///     \endcode
 ///
-OVR_PUBLIC_FUNCTION(ovrResult)
-ovr_GetMirrorTextureBufferDX(
-    ovrSession session,
-    ovrMirrorTexture mirrorTexture,
-    IID iid,
-    void** out_Buffer);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_GetMirrorTextureBufferDX (
+    ovrSession session, ovrMirrorTexture mirrorTexture, IID iid, void **out_Buffer);
 
 #endif // !defined(OVR_EXPORTING_CAPI)
 

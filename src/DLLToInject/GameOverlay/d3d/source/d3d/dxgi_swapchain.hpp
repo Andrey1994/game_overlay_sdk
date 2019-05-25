@@ -25,99 +25,112 @@
 
 #pragma once
 
-#include <dxgi1_5.h>
-#include <wrl.h>
-#include <memory>
 #include "d3d11_renderer.hpp"
 #include "d3d12_renderer.hpp"
+#include <dxgi1_5.h>
+#include <memory>
+#include <wrl.h>
 
-struct __declspec(uuid("1F445F9F-9887-4C4C-9055-4E3BADAFCCA8")) DXGISwapChain;
+struct __declspec(uuid ("1F445F9F-9887-4C4C-9055-4E3BADAFCCA8")) DXGISwapChain;
 
-struct DXGISwapChain : IDXGISwapChain4 {
-    DXGISwapChain(ID3D11Device *device, IDXGISwapChain *swapChain);
-    DXGISwapChain(ID3D11Device *device, IDXGISwapChain1 *swapChain);
-    DXGISwapChain(ID3D12CommandQueue *commandQueue, IDXGISwapChain *swapChain);
+struct DXGISwapChain : IDXGISwapChain4
+{
+    DXGISwapChain (ID3D11Device *device, IDXGISwapChain *swapChain);
+    DXGISwapChain (ID3D11Device *device, IDXGISwapChain1 *swapChain);
+    DXGISwapChain (ID3D12CommandQueue *commandQueue, IDXGISwapChain *swapChain);
 
 #pragma region IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **ppvObj) override;
-    virtual ULONG STDMETHODCALLTYPE AddRef() override;
-    virtual ULONG STDMETHODCALLTYPE Release() override;
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface (REFIID riid, void **ppvObj) override;
+    virtual ULONG STDMETHODCALLTYPE AddRef () override;
+    virtual ULONG STDMETHODCALLTYPE Release () override;
 #pragma endregion
 #pragma region IDXGIObject
-    virtual HRESULT STDMETHODCALLTYPE SetPrivateData(REFGUID Name, UINT DataSize,
-        const void *pData) override;
-    virtual HRESULT STDMETHODCALLTYPE SetPrivateDataInterface(REFGUID Name,
-        const IUnknown *pUnknown) override;
-    virtual HRESULT STDMETHODCALLTYPE GetPrivateData(REFGUID Name, UINT *pDataSize,
-        void *pData) override;
-    virtual HRESULT STDMETHODCALLTYPE GetParent(REFIID riid, void **ppParent) override;
+    virtual HRESULT STDMETHODCALLTYPE SetPrivateData (
+        REFGUID Name, UINT DataSize, const void *pData) override;
+    virtual HRESULT STDMETHODCALLTYPE SetPrivateDataInterface (
+        REFGUID Name, const IUnknown *pUnknown) override;
+    virtual HRESULT STDMETHODCALLTYPE GetPrivateData (
+        REFGUID Name, UINT *pDataSize, void *pData) override;
+    virtual HRESULT STDMETHODCALLTYPE GetParent (REFIID riid, void **ppParent) override;
 #pragma endregion
 #pragma region IDXGIDeviceSubObject
-    virtual HRESULT STDMETHODCALLTYPE GetDevice(REFIID riid, void **ppDevice) override;
+    virtual HRESULT STDMETHODCALLTYPE GetDevice (REFIID riid, void **ppDevice) override;
 #pragma endregion
 #pragma region IDXGISwapChain
-    virtual HRESULT STDMETHODCALLTYPE Present(UINT SyncInterval, UINT Flags) override;
-    virtual HRESULT STDMETHODCALLTYPE GetBuffer(UINT Buffer, REFIID riid, void **ppSurface) override;
-    virtual HRESULT STDMETHODCALLTYPE SetFullscreenState(BOOL Fullscreen,
-        IDXGIOutput *pTarget) override;
-    virtual HRESULT STDMETHODCALLTYPE GetFullscreenState(BOOL *pFullscreen,
-        IDXGIOutput **ppTarget) override;
-    virtual HRESULT STDMETHODCALLTYPE GetDesc(DXGI_SWAP_CHAIN_DESC *pDesc) override;
-    virtual HRESULT STDMETHODCALLTYPE ResizeBuffers(UINT BufferCount, UINT Width, UINT Height,
-        DXGI_FORMAT NewFormat,
-        UINT SwapChainFlags) override;
-    virtual HRESULT STDMETHODCALLTYPE
-        ResizeTarget(const DXGI_MODE_DESC *pNewTargetParameters) override;
-    virtual HRESULT STDMETHODCALLTYPE GetContainingOutput(IDXGIOutput **ppOutput) override;
-    virtual HRESULT STDMETHODCALLTYPE GetFrameStatistics(DXGI_FRAME_STATISTICS *pStats) override;
-    virtual HRESULT STDMETHODCALLTYPE GetLastPresentCount(UINT *pLastPresentCount) override;
+    virtual HRESULT STDMETHODCALLTYPE Present (UINT SyncInterval, UINT Flags) override;
+    virtual HRESULT STDMETHODCALLTYPE GetBuffer (
+        UINT Buffer, REFIID riid, void **ppSurface) override;
+    virtual HRESULT STDMETHODCALLTYPE SetFullscreenState (
+        BOOL Fullscreen, IDXGIOutput *pTarget) override;
+    virtual HRESULT STDMETHODCALLTYPE GetFullscreenState (
+        BOOL *pFullscreen, IDXGIOutput **ppTarget) override;
+    virtual HRESULT STDMETHODCALLTYPE GetDesc (DXGI_SWAP_CHAIN_DESC *pDesc) override;
+    virtual HRESULT STDMETHODCALLTYPE ResizeBuffers (UINT BufferCount, UINT Width, UINT Height,
+        DXGI_FORMAT NewFormat, UINT SwapChainFlags) override;
+    virtual HRESULT STDMETHODCALLTYPE ResizeTarget (
+        const DXGI_MODE_DESC *pNewTargetParameters) override;
+    virtual HRESULT STDMETHODCALLTYPE GetContainingOutput (IDXGIOutput **ppOutput) override;
+    virtual HRESULT STDMETHODCALLTYPE GetFrameStatistics (DXGI_FRAME_STATISTICS *pStats) override;
+    virtual HRESULT STDMETHODCALLTYPE GetLastPresentCount (UINT *pLastPresentCount) override;
 #pragma endregion
 #pragma region IDXGISwapChain1
-    virtual HRESULT STDMETHODCALLTYPE GetDesc1(DXGI_SWAP_CHAIN_DESC1 *pDesc) override;
-    virtual HRESULT STDMETHODCALLTYPE
-        GetFullscreenDesc(DXGI_SWAP_CHAIN_FULLSCREEN_DESC *pDesc) override;
-    virtual HRESULT STDMETHODCALLTYPE GetHwnd(HWND *pHwnd) override;
-    virtual HRESULT STDMETHODCALLTYPE GetCoreWindow(REFIID refiid, void **ppUnk) override;
-    virtual HRESULT STDMETHODCALLTYPE
-        Present1(UINT SyncInterval, UINT PresentFlags,
-            const DXGI_PRESENT_PARAMETERS *pPresentParameters) override;
-    virtual BOOL STDMETHODCALLTYPE IsTemporaryMonoSupported() override;
-    virtual HRESULT STDMETHODCALLTYPE GetRestrictToOutput(IDXGIOutput **ppRestrictToOutput) override;
-    virtual HRESULT STDMETHODCALLTYPE SetBackgroundColor(const DXGI_RGBA *pColor) override;
-    virtual HRESULT STDMETHODCALLTYPE GetBackgroundColor(DXGI_RGBA *pColor) override;
-    virtual HRESULT STDMETHODCALLTYPE SetRotation(DXGI_MODE_ROTATION Rotation) override;
-    virtual HRESULT STDMETHODCALLTYPE GetRotation(DXGI_MODE_ROTATION *pRotation) override;
+    virtual HRESULT STDMETHODCALLTYPE GetDesc1 (DXGI_SWAP_CHAIN_DESC1 *pDesc) override;
+    virtual HRESULT STDMETHODCALLTYPE GetFullscreenDesc (
+        DXGI_SWAP_CHAIN_FULLSCREEN_DESC *pDesc) override;
+    virtual HRESULT STDMETHODCALLTYPE GetHwnd (HWND *pHwnd) override;
+    virtual HRESULT STDMETHODCALLTYPE GetCoreWindow (REFIID refiid, void **ppUnk) override;
+    virtual HRESULT STDMETHODCALLTYPE Present1 (UINT SyncInterval, UINT PresentFlags,
+        const DXGI_PRESENT_PARAMETERS *pPresentParameters) override;
+    virtual BOOL STDMETHODCALLTYPE IsTemporaryMonoSupported () override;
+    virtual HRESULT STDMETHODCALLTYPE GetRestrictToOutput (
+        IDXGIOutput **ppRestrictToOutput) override;
+    virtual HRESULT STDMETHODCALLTYPE SetBackgroundColor (const DXGI_RGBA *pColor) override;
+    virtual HRESULT STDMETHODCALLTYPE GetBackgroundColor (DXGI_RGBA *pColor) override;
+    virtual HRESULT STDMETHODCALLTYPE SetRotation (DXGI_MODE_ROTATION Rotation) override;
+    virtual HRESULT STDMETHODCALLTYPE GetRotation (DXGI_MODE_ROTATION *pRotation) override;
 #pragma endregion
 #pragma region IDXGISwapChain2
-    virtual HRESULT STDMETHODCALLTYPE SetSourceSize(UINT Width, UINT Height) override;
-    virtual HRESULT STDMETHODCALLTYPE GetSourceSize(UINT *pWidth, UINT *pHeight) override;
-    virtual HRESULT STDMETHODCALLTYPE SetMaximumFrameLatency(UINT MaxLatency) override;
-    virtual HRESULT STDMETHODCALLTYPE GetMaximumFrameLatency(UINT *pMaxLatency) override;
-    virtual HANDLE STDMETHODCALLTYPE GetFrameLatencyWaitableObject() override;
-    virtual HRESULT STDMETHODCALLTYPE SetMatrixTransform(const DXGI_MATRIX_3X2_F *pMatrix) override;
-    virtual HRESULT STDMETHODCALLTYPE GetMatrixTransform(DXGI_MATRIX_3X2_F *pMatrix) override;
+    virtual HRESULT STDMETHODCALLTYPE SetSourceSize (UINT Width, UINT Height) override;
+    virtual HRESULT STDMETHODCALLTYPE GetSourceSize (UINT *pWidth, UINT *pHeight) override;
+    virtual HRESULT STDMETHODCALLTYPE SetMaximumFrameLatency (UINT MaxLatency) override;
+    virtual HRESULT STDMETHODCALLTYPE GetMaximumFrameLatency (UINT *pMaxLatency) override;
+    virtual HANDLE STDMETHODCALLTYPE GetFrameLatencyWaitableObject () override;
+    virtual HRESULT STDMETHODCALLTYPE SetMatrixTransform (
+        const DXGI_MATRIX_3X2_F *pMatrix) override;
+    virtual HRESULT STDMETHODCALLTYPE GetMatrixTransform (DXGI_MATRIX_3X2_F *pMatrix) override;
 #pragma endregion
 #pragma region IDXGISwapChain3
-    virtual UINT STDMETHODCALLTYPE GetCurrentBackBufferIndex() override;
-    virtual HRESULT STDMETHODCALLTYPE CheckColorSpaceSupport(DXGI_COLOR_SPACE_TYPE ColorSpace,
-        UINT *pColorSpaceSupport) override;
-    virtual HRESULT STDMETHODCALLTYPE SetColorSpace1(DXGI_COLOR_SPACE_TYPE ColorSpace) override;
-    virtual HRESULT STDMETHODCALLTYPE ResizeBuffers1(UINT BufferCount, UINT Width, UINT Height,
-        DXGI_FORMAT Format, UINT SwapChainFlags,
-        const UINT *pCreationNodeMask,
+    virtual UINT STDMETHODCALLTYPE GetCurrentBackBufferIndex () override;
+    virtual HRESULT STDMETHODCALLTYPE CheckColorSpaceSupport (
+        DXGI_COLOR_SPACE_TYPE ColorSpace, UINT *pColorSpaceSupport) override;
+    virtual HRESULT STDMETHODCALLTYPE SetColorSpace1 (DXGI_COLOR_SPACE_TYPE ColorSpace) override;
+    virtual HRESULT STDMETHODCALLTYPE ResizeBuffers1 (UINT BufferCount, UINT Width, UINT Height,
+        DXGI_FORMAT Format, UINT SwapChainFlags, const UINT *pCreationNodeMask,
         IUnknown *const *ppPresentQueue) override;
 #pragma endregion
 #pragma region IDXGISwapChain4
-    virtual HRESULT STDMETHODCALLTYPE SetHDRMetaData(DXGI_HDR_METADATA_TYPE Type, UINT Size,
-        _In_reads_opt_(Size) void *pMetaData) override;
+    virtual HRESULT STDMETHODCALLTYPE SetHDRMetaData (
+        DXGI_HDR_METADATA_TYPE Type, UINT Size, _In_reads_opt_ (Size) void *pMetaData) override;
 #pragma endregion
 
 private:
-    enum D3DVersion { D3DVersion_11 = 11, D3DVersion_12 = 12, D3DVersion_Undefined };
-    enum SwapChainVersion { SWAPCHAIN_0, SWAPCHAIN_1, SWAPCHAIN_2, SWAPCHAIN_3, SWAPCHAIN_4 };
+    enum D3DVersion
+    {
+        D3DVersion_11 = 11,
+        D3DVersion_12 = 12,
+        D3DVersion_Undefined
+    };
+    enum SwapChainVersion
+    {
+        SWAPCHAIN_0,
+        SWAPCHAIN_1,
+        SWAPCHAIN_2,
+        SWAPCHAIN_3,
+        SWAPCHAIN_4
+    };
 
-    DXGISwapChain(const DXGISwapChain &) = delete;
-    DXGISwapChain &operator=(const DXGISwapChain &) = delete;
+    DXGISwapChain (const DXGISwapChain &) = delete;
+    DXGISwapChain &operator= (const DXGISwapChain &) = delete;
 
     IDXGISwapChain *swapChain_ = nullptr;
 

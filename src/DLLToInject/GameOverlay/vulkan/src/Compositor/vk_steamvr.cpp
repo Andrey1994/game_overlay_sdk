@@ -1,11 +1,11 @@
 #include <wrl.h>
 
-#include "vk_steamvr.h"
 #include "d3d/steamvr.h"
 #include "hook_manager.hpp"
+#include "vk_steamvr.h"
 
-#include "Utility/MessageLog.h"
 #include "Utility/FileDirectory.h"
+#include "Utility/MessageLog.h"
 
 
 std::unique_ptr<CompositorOverlay::SteamVR_Vk> g_SteamVRVk;
@@ -17,9 +17,9 @@ namespace CompositorOverlay
         device_ = device;
     }
 
-    void SteamVR_Vk::Init (VkLayerDispatchTable* pTable,
-        const VkPhysicalDeviceMemoryProperties& physicalDeviceMemoryProperties,
-        VkFormat format, VkImageUsageFlags usage)
+    void SteamVR_Vk::Init (VkLayerDispatchTable *pTable,
+        const VkPhysicalDeviceMemoryProperties &physicalDeviceMemoryProperties, VkFormat format,
+        VkImageUsageFlags usage)
     {
         if (initialized_)
             return;
@@ -29,14 +29,15 @@ namespace CompositorOverlay
         images_.resize (imageCount_);
         pTable->GetSwapchainImagesKHR (device_, swapchain_, &imageCount_, images_.data ());
 
-        VkExtent2D extent = { screenWidth_, screenHeight_ };
+        VkExtent2D extent = {screenWidth_, screenHeight_};
 
         initialized_ = renderer_->OnInitCompositor (device_, pTable, physicalDeviceMemoryProperties,
             format, extent, usage, imageCount_, images_.data ());
 
         // init ivroverlay
         overlay_ = CreateVROverlay ();
-        vr::EVROverlayError error = overlay_->CreateOverlay ("OCAT Overlay", "SteamVR", &overlayHandle_);
+        vr::EVROverlayError error =
+            overlay_->CreateOverlay ("OCAT Overlay", "SteamVR", &overlayHandle_);
 
         if (error != vr::VROverlayError_None)
         {
@@ -55,21 +56,21 @@ namespace CompositorOverlay
         overlay_->SetOverlayTransformAbsolute (overlayHandle_, trackingOrigin, &hmd);
     }
 
-    void SteamVR_Vk::Render (const vr::Texture_t *pTexture,
-        VkLayerDispatchTable* pTable,
-        PFN_vkSetDeviceLoaderData setDeviceLoaderDataFuncPtr,
-        VkQueue queue, uint32_t queueFamilyIndex, VkQueueFlags queueFlags)
+    void SteamVR_Vk::Render (const vr::Texture_t *pTexture, VkLayerDispatchTable *pTable,
+        PFN_vkSetDeviceLoaderData setDeviceLoaderDataFuncPtr, VkQueue queue,
+        uint32_t queueFamilyIndex, VkQueueFlags queueFlags)
     {
-        renderer_->OnSubmitFrameCompositor (pTable, setDeviceLoaderDataFuncPtr, queue, queueFamilyIndex,
-            queueFlags, currentIndex_);
+        renderer_->OnSubmitFrameCompositor (
+            pTable, setDeviceLoaderDataFuncPtr, queue, queueFamilyIndex, queueFlags, currentIndex_);
 
         vr::Texture_t overlayTexture = *pTexture;
-        vr::VRVulkanTextureData_t overlayTextureData = *static_cast<vr::VRVulkanTextureData_t*> (pTexture->handle);
+        vr::VRVulkanTextureData_t overlayTextureData =
+            *static_cast<vr::VRVulkanTextureData_t *> (pTexture->handle);
         overlayTextureData.m_nWidth = screenWidth_;
         overlayTextureData.m_nHeight = screenHeight_;
         overlayTextureData.m_nImage = (uint64_t)images_[currentIndex_];
         overlayTextureData.m_nFormat = VK_FORMAT_B8G8R8A8_UNORM;
-        overlayTexture.handle = reinterpret_cast<void*> (&overlayTextureData);
+        overlayTexture.handle = reinterpret_cast<void *> (&overlayTextureData);
 
         overlay_->ClearOverlayTexture (overlayHandle_);
         overlay_->SetOverlayTexture (overlayHandle_, &overlayTexture);
@@ -77,7 +78,7 @@ namespace CompositorOverlay
         currentIndex_ ^= 1;
     }
 
-    void SteamVR_Vk::DestroyRenderer (VkDevice device, VkLayerDispatchTable* pTable)
+    void SteamVR_Vk::DestroyRenderer (VkDevice device, VkLayerDispatchTable *pTable)
     {
         if (device == device_)
             renderer_->OnDestroyCompositor (pTable);

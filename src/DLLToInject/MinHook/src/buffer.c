@@ -27,23 +27,23 @@
  */
 
 #include <windows.h>
+
 #include "buffer.h"
 
- // Size of each memory block. (= page size of VirtualAlloc)
+// Size of each memory block. (= page size of VirtualAlloc)
 #define MEMORY_BLOCK_SIZE 0x1000
 
 // Max range for seeking a memory block. (= 1024MB)
 #define MAX_MEMORY_RANGE 0x40000000
 
 // Memory protection flags to check the executable address.
-#define PAGE_EXECUTE_FLAGS \
+#define PAGE_EXECUTE_FLAGS                                                                         \
     (PAGE_EXECUTE | PAGE_EXECUTE_READ | PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_WRITECOPY)
 
 // Memory slot.
 typedef struct _MEMORY_SLOT
 {
-    union
-    {
+    union {
         struct _MEMORY_SLOT *pNext;
         UINT8 buffer[MEMORY_SLOT_SIZE];
     };
@@ -53,7 +53,7 @@ typedef struct _MEMORY_SLOT
 typedef struct _MEMORY_BLOCK
 {
     struct _MEMORY_BLOCK *pNext;
-    PMEMORY_SLOT pFree;         // First element of the free slot list.
+    PMEMORY_SLOT pFree; // First element of the free slot list.
     UINT usedCount;
 } MEMORY_BLOCK, *PMEMORY_BLOCK;
 
@@ -246,7 +246,7 @@ static PMEMORY_BLOCK GetMemoryBlock (LPVOID pOrigin)
 //-------------------------------------------------------------------------
 LPVOID AllocateBuffer (LPVOID pOrigin)
 {
-    PMEMORY_SLOT  pSlot;
+    PMEMORY_SLOT pSlot;
     PMEMORY_BLOCK pBlock = GetMemoryBlock (pOrigin);
     if (pBlock == NULL)
         return NULL;

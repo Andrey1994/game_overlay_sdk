@@ -6,48 +6,61 @@
 
 // just forward the API call
 
-OVR_PUBLIC_FUNCTION(ovrResult) ovr_GetTextureSwapChainLength(ovrSession session,
-    ovrTextureSwapChain chain, int* out_Length);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_GetTextureSwapChainLength (ovrSession session, ovrTextureSwapChain chain, int *out_Length);
 
-OVR_PUBLIC_FUNCTION(ovrResult) ovr_GetTextureSwapChainCurrentIndex(ovrSession session,
-    ovrTextureSwapChain chain, int* out_Index);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_GetTextureSwapChainCurrentIndex (ovrSession session, ovrTextureSwapChain chain, int *out_Index);
 
-OVR_PUBLIC_FUNCTION(ovrResult) ovr_CommitTextureSwapChain(ovrSession session,
-    ovrTextureSwapChain chain);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_CommitTextureSwapChain (ovrSession session, ovrTextureSwapChain chain);
 
-OVR_PUBLIC_FUNCTION(void) ovr_DestroyTextureSwapChain(ovrSession session, ovrTextureSwapChain chain);
+OVR_PUBLIC_FUNCTION (void)
+ovr_DestroyTextureSwapChain (ovrSession session, ovrTextureSwapChain chain);
 
 // D3D specific functions
 
-OVR_PUBLIC_FUNCTION(void) ovr_Destroy(ovrSession session);
+OVR_PUBLIC_FUNCTION (void) ovr_Destroy (ovrSession session);
 
-OVR_PUBLIC_FUNCTION(ovrResult) ovr_CreateTextureSwapChainDX(ovrSession session,
-    IUnknown* d3dPtr, const ovrTextureSwapChainDesc* desc, ovrTextureSwapChain* out_TextureSwapChain);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_CreateTextureSwapChainDX (ovrSession session, IUnknown *d3dPtr,
+    const ovrTextureSwapChainDesc *desc, ovrTextureSwapChain *out_TextureSwapChain);
 
-OVR_PUBLIC_FUNCTION(ovrResult) ovr_GetTextureSwapChainBufferDX(ovrSession session,
-    ovrTextureSwapChain chain, int index, IID iid, void** out_Buffer);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_GetTextureSwapChainBufferDX (
+    ovrSession session, ovrTextureSwapChain chain, int index, IID iid, void **out_Buffer);
 
-OVR_PUBLIC_FUNCTION(ovrResult) ovr_EndFrame(ovrSession session, long long frameIndex,
-    const ovrViewScaleDesc* viewScaleDesc, ovrLayerHeader const* const* layerPtrList,
-    unsigned int layerCount);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_EndFrame (ovrSession session, long long frameIndex, const ovrViewScaleDesc *viewScaleDesc,
+    ovrLayerHeader const *const *layerPtrList, unsigned int layerCount);
 
 
-namespace CompositorOverlay {
-    class Oculus_D3D {
+namespace CompositorOverlay
+{
+    class Oculus_D3D
+    {
     public:
         // called in dxgi.cpp - D3D11Device could be set during a hook of
         // hook_ovr_CreateTextureSwapChainDX, but for D3D12CommandQueue
         // it apparently seems safest to use the one which is in charge of the dxgi swapchain
-        void SetDevice(IUnknown* device);
+        void SetDevice (IUnknown *device);
 
-        bool Init(ovrSession session);
-        bool Render(ovrSession session);
+        bool Init (ovrSession session);
+        bool Render (ovrSession session);
 
-        ovrTextureSwapChain GetSwapChain() { return swapchain_; }
-        ovrRecti GetViewport();
+        ovrTextureSwapChain GetSwapChain ()
+        {
+            return swapchain_;
+        }
+        ovrRecti GetViewport ();
 
     private:
-        enum D3DVersion { D3DVersion_11 = 11, D3DVersion_12 = 12, D3DVersion_Undefined };
+        enum D3DVersion
+        {
+            D3DVersion_11 = 11,
+            D3DVersion_12 = 12,
+            D3DVersion_Undefined
+        };
 
         const uint32_t screenWidth_ = 256;
         const uint32_t screenHeight_ = 180;
@@ -64,7 +77,7 @@ namespace CompositorOverlay {
         Microsoft::WRL::ComPtr<ID3D11Device> d3d11Device_;
         std::vector<Microsoft::WRL::ComPtr<ID3D11RenderTargetView>> d3d11RenderTargets_;
 
-        //D3D12
+        // D3D12
         Microsoft::WRL::ComPtr<ID3D12CommandQueue> d3d12Commandqueue_;
         Microsoft::WRL::ComPtr<ID3D12Device> d3d12Device_;
         Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> d3d12RenderTargetHeap_;
@@ -72,8 +85,8 @@ namespace CompositorOverlay {
         UINT d3d12RtvHeapDescriptorSize_;
         int bufferCount_ = 0;
 
-        bool CreateD3D11RenderTargets(ovrSession session);
-        bool CreateD3D12RenderTargets(ovrSession session);
+        bool CreateD3D11RenderTargets (ovrSession session);
+        bool CreateD3D12RenderTargets (ovrSession session);
     };
 }
 

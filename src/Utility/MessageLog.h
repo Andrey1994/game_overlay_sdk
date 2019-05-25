@@ -22,37 +22,39 @@
 
 #pragma once
 
-#include <windows.h>
 #include <fstream>
 #include <memory>
+#include <set>
 #include <sstream>
 #include <string>
-#include <set>
+#include <windows.h>
 
-class MessageLog {
+class MessageLog
+{
 public:
+    MessageLog ();
+    ~MessageLog ();
 
+    void Start (
+        const std::wstring &logFilePath, const std::wstring &caller, bool overwrite = false);
 
-    MessageLog();
-    ~MessageLog();
+    void LogError (const std::string &category, const std::string &message, DWORD errorCode = 0);
+    void LogError (const std::string &category, const std::wstring &message, DWORD errorCode = 0);
+    void LogWarning (const std::string &category, const std::string &message, DWORD errorCode = 0);
+    void LogWarning (const std::string &category, const std::wstring &message, DWORD errorCode = 0);
+    void LogInfo (const std::string &category, const std::string &message, DWORD errorCode = 0);
+    void LogInfo (const std::string &category, const std::wstring &message, DWORD errorCode = 0);
+    void LogVerbose (const std::string &category, const std::string &message, DWORD errorCode = 0);
+    void LogVerbose (const std::string &category, const std::wstring &message, DWORD errorCode = 0);
 
-    void Start(const std::wstring& logFilePath, const std::wstring& caller, bool overwrite = false);
+    void LogOS ();
 
-    void LogError(const std::string& category, const std::string& message, DWORD errorCode = 0);
-    void LogError(const std::string& category, const std::wstring& message, DWORD errorCode = 0);
-    void LogWarning(const std::string& category, const std::string& message, DWORD errorCode = 0);
-    void LogWarning(const std::string& category, const std::wstring& message, DWORD errorCode = 0);
-    void LogInfo(const std::string& category, const std::string& message, DWORD errorCode = 0);
-    void LogInfo(const std::string& category, const std::wstring& message, DWORD errorCode = 0);
-    void LogVerbose(const std::string& category, const std::string& message, DWORD errorCode = 0);
-    void LogVerbose(const std::string& category, const std::wstring& message, DWORD errorCode = 0);
-
-    void LogOS();
-
-    void SetVersion(const std::string& version) { version_ = version; }
+    void SetVersion (const std::string &version)
+    {
+        version_ = version;
+    }
 
 private:
-
     enum class LogLevel
     {
         Error,
@@ -61,13 +63,14 @@ private:
         Verbose,
     };
 
-    const std::wstring logLevelNames_[4] = { L"ERROR", L"WARNING", L"INFO", L"VERBOSE" };
+    const std::wstring logLevelNames_[4] = {L"ERROR", L"WARNING", L"INFO", L"VERBOSE"};
 
-    void SetCurrentTime();
-    std::wstring CreateLogMessage(LogLevel logLevel, const std::wstring & category, const std::wstring & message, DWORD errorCode);
-    void Log(LogLevel logLevel, const std::string& category, const std::string& message,
+    void SetCurrentTime ();
+    std::wstring CreateLogMessage (LogLevel logLevel, const std::wstring &category,
+        const std::wstring &message, DWORD errorCode);
+    void Log (LogLevel logLevel, const std::string &category, const std::string &message,
         DWORD errorCode = 0);
-    void Log(LogLevel logLevel, const std::string& category, const std::wstring& message,
+    void Log (LogLevel logLevel, const std::string &category, const std::wstring &message,
         DWORD errorCode = 0);
 
     std::wofstream outFile_;

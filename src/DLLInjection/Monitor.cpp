@@ -190,11 +190,13 @@ void Monitor::Callback (int pid, char *pName)
         {
             if (!this->CheckTargetProcessAlive ())
             {
-                Monitor::monitorLogger->info ("Previous process was terminated running callback for the new one");
+                Monitor::monitorLogger->info (
+                    "Previous process was terminated running callback for the new one");
             }
             else
             {
-                Monitor::monitorLogger->warn ("Only single process is allowed, dont injectdll to new process");
+                Monitor::monitorLogger->warn (
+                    "Only single process is allowed, dont injectdll to new process");
                 return;
             }
         }

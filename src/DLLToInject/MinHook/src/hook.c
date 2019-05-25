@@ -27,59 +27,60 @@
  */
 
 #include <windows.h>
-#include <tlhelp32.h>
+
 #include <limits.h>
+#include <tlhelp32.h>
 
 #include "../include/MinHook.h"
 #include "buffer.h"
 #include "trampoline.h"
 
 #ifndef ARRAYSIZE
-#define ARRAYSIZE(A) (sizeof(A)/sizeof((A)[0]))
+#define ARRAYSIZE(A) (sizeof (A) / sizeof ((A)[0]))
 #endif
 
- // Initial capacity of the HOOK_ENTRY buffer.
-#define INITIAL_HOOK_CAPACITY   32
+// Initial capacity of the HOOK_ENTRY buffer.
+#define INITIAL_HOOK_CAPACITY 32
 
 // Initial capacity of the thread IDs buffer.
 #define INITIAL_THREAD_CAPACITY 128
 
 // Special hook position values.
 #define INVALID_HOOK_POS UINT_MAX
-#define ALL_HOOKS_POS    UINT_MAX
+#define ALL_HOOKS_POS UINT_MAX
 
 // Freeze() action argument defines.
-#define ACTION_DISABLE      0
-#define ACTION_ENABLE       1
+#define ACTION_DISABLE 0
+#define ACTION_ENABLE 1
 #define ACTION_APPLY_QUEUED 2
 
 // Thread access rights for suspending/resuming threads.
-#define THREAD_ACCESS \
+#define THREAD_ACCESS                                                                              \
     (THREAD_SUSPEND_RESUME | THREAD_GET_CONTEXT | THREAD_QUERY_INFORMATION | THREAD_SET_CONTEXT)
 
 // Hook information.
 typedef struct _HOOK_ENTRY
 {
-    LPVOID pTarget;             // Address of the target function.
-    LPVOID pDetour;             // Address of the detour or relay function.
-    LPVOID pTrampoline;         // Address of the trampoline function.
-    UINT8  backup[8];           // Original prologue of the target function.
+    LPVOID pTarget;     // Address of the target function.
+    LPVOID pDetour;     // Address of the detour or relay function.
+    LPVOID pTrampoline; // Address of the trampoline function.
+    UINT8 backup[8];    // Original prologue of the target function.
 
-    UINT8  patchAbove : 1;     // Uses the hot patch area.
-    UINT8  isEnabled : 1;     // Enabled.
-    UINT8  queueEnable : 1;     // Queued for enabling/disabling when != isEnabled.
+    UINT8 patchAbove : 1;  // Uses the hot patch area.
+    UINT8 isEnabled : 1;   // Enabled.
+    UINT8 queueEnable : 1; // Queued for enabling/disabling when != isEnabled.
 
-    UINT   nIP : 4;             // Count of the instruction boundaries.
-    UINT8  oldIPs[8];           // Instruction boundaries of the target function.
-    UINT8  newIPs[8];           // Instruction boundaries of the trampoline function.
+    UINT nIP : 4;    // Count of the instruction boundaries.
+    UINT8 oldIPs[8]; // Instruction boundaries of the target function.
+    UINT8 newIPs[8]; // Instruction boundaries of the trampoline function.
 } HOOK_ENTRY, *PHOOK_ENTRY;
 
 // Suspended threads for Freeze()/Unfreeze().
 typedef struct _FROZEN_THREADS
 {
-    LPDWORD pItems;         // Data heap
-    UINT    capacity;       // Size of allocated data heap, items
-    UINT    size;           // Actual number of data items
+    LPDWORD pItems; // Data heap
+    UINT capacity;  // Size of allocated data heap, items
+    UINT size;      // Actual number of data items
 } FROZEN_THREADS, *PFROZEN_THREADS;
 
 //-------------------------------------------------------------------------
@@ -95,9 +96,9 @@ HANDLE g_hHeap = NULL;
 // Hook entries.
 struct
 {
-    PHOOK_ENTRY pItems;     // Data heap
-    UINT        capacity;   // Size of allocated data heap, items
-    UINT        size;       // Actual number of data items
+    PHOOK_ENTRY pItems; // Data heap
+    UINT capacity;      // Size of allocated data heap, items
+    UINT size;          // Actual number of data items
 } g_hooks;
 
 //-------------------------------------------------------------------------
@@ -120,8 +121,8 @@ static PHOOK_ENTRY AddHookEntry ()
     if (g_hooks.pItems == NULL)
     {
         g_hooks.capacity = INITIAL_HOOK_CAPACITY;
-        g_hooks.pItems = (PHOOK_ENTRY)HeapAlloc (
-            g_hHeap, 0, g_hooks.capacity * sizeof (HOOK_ENTRY));
+        g_hooks.pItems =
+            (PHOOK_ENTRY)HeapAlloc (g_hHeap, 0, g_hooks.capacity * sizeof (HOOK_ENTRY));
         if (g_hooks.pItems == NULL)
             return NULL;
     }
@@ -205,7 +206,7 @@ static void ProcessThreadIPs (HANDLE hThread, UINT pos, UINT action)
 #if defined(_M_X64) || defined(__x86_64__)
     DWORD64 *pIP = &c.Rip;
 #else
-    DWORD   *pIP = &c.Eip;
+    DWORD *pIP = &c.Eip;
 #endif
     UINT count;
 
@@ -226,22 +227,22 @@ static void ProcessThreadIPs (HANDLE hThread, UINT pos, UINT action)
     for (; pos < count; ++pos)
     {
         PHOOK_ENTRY pHook = &g_hooks.pItems[pos];
-        BOOL        enable;
-        DWORD_PTR   ip;
+        BOOL enable;
+        DWORD_PTR ip;
 
         switch (action)
         {
-        case ACTION_DISABLE:
-            enable = FALSE;
-            break;
+            case ACTION_DISABLE:
+                enable = FALSE;
+                break;
 
-        case ACTION_ENABLE:
-            enable = TRUE;
-            break;
+            case ACTION_ENABLE:
+                enable = TRUE;
+                break;
 
-        default: // ACTION_APPLY_QUEUED
-            enable = pHook->queueEnable;
-            break;
+            default: // ACTION_APPLY_QUEUED
+                enable = pHook->queueEnable;
+                break;
         }
         if (pHook->isEnabled == enable)
             continue;
@@ -271,22 +272,23 @@ static VOID EnumerateThreads (PFROZEN_THREADS pThreads)
         {
             do
             {
-                if (te.dwSize >= (FIELD_OFFSET (THREADENTRY32, th32OwnerProcessID) + sizeof (DWORD))
-                    && te.th32OwnerProcessID == GetCurrentProcessId ()
-                    && te.th32ThreadID != GetCurrentThreadId ())
+                if (te.dwSize >=
+                        (FIELD_OFFSET (THREADENTRY32, th32OwnerProcessID) + sizeof (DWORD)) &&
+                    te.th32OwnerProcessID == GetCurrentProcessId () &&
+                    te.th32ThreadID != GetCurrentThreadId ())
                 {
                     if (pThreads->pItems == NULL)
                     {
                         pThreads->capacity = INITIAL_THREAD_CAPACITY;
-                        pThreads->pItems
-                            = (LPDWORD)HeapAlloc (g_hHeap, 0, pThreads->capacity * sizeof (DWORD));
+                        pThreads->pItems =
+                            (LPDWORD)HeapAlloc (g_hHeap, 0, pThreads->capacity * sizeof (DWORD));
                         if (pThreads->pItems == NULL)
                             break;
                     }
                     else if (pThreads->size >= pThreads->capacity)
                     {
-                        LPDWORD p = (LPDWORD)HeapReAlloc (
-                            g_hHeap, 0, pThreads->pItems, (pThreads->capacity * 2) * sizeof (DWORD));
+                        LPDWORD p = (LPDWORD)HeapReAlloc (g_hHeap, 0, pThreads->pItems,
+                            (pThreads->capacity * 2) * sizeof (DWORD));
                         if (p == NULL)
                             break;
 
@@ -351,7 +353,7 @@ static VOID Unfreeze (PFROZEN_THREADS pThreads)
 static MH_STATUS EnableHookLL (UINT pos, BOOL enable)
 {
     PHOOK_ENTRY pHook = &g_hooks.pItems[pos];
-    DWORD  oldProtect;
+    DWORD oldProtect;
     SIZE_T patchSize = sizeof (JMP_REL);
     LPBYTE pPatchTarget = (LPBYTE)pHook->pTarget;
 
@@ -368,13 +370,13 @@ static MH_STATUS EnableHookLL (UINT pos, BOOL enable)
     {
         PJMP_REL pJmp = (PJMP_REL)pPatchTarget;
         pJmp->opcode = 0xE9;
-        pJmp->operand = (UINT32)((LPBYTE)pHook->pDetour - (pPatchTarget + sizeof (JMP_REL)));
+        pJmp->operand = (UINT32) ((LPBYTE)pHook->pDetour - (pPatchTarget + sizeof (JMP_REL)));
 
         if (pHook->patchAbove)
         {
             PJMP_REL_SHORT pShortJmp = (PJMP_REL_SHORT)pHook->pTarget;
             pShortJmp->opcode = 0xEB;
-            pShortJmp->operand = (UINT8)(0 - (sizeof (JMP_REL_SHORT) + sizeof (JMP_REL)));
+            pShortJmp->operand = (UINT8) (0 - (sizeof (JMP_REL_SHORT) + sizeof (JMP_REL)));
         }
     }
     else
@@ -576,9 +578,7 @@ MH_STATUS WINAPI MH_CreateHook (LPVOID pTarget, LPVOID pDetour, LPVOID *ppOrigin
 
                             if (ct.patchAbove)
                             {
-                                memcpy (
-                                    pHook->backup,
-                                    (LPBYTE)pTarget - sizeof (JMP_REL),
+                                memcpy (pHook->backup, (LPBYTE)pTarget - sizeof (JMP_REL),
                                     sizeof (JMP_REL) + sizeof (JMP_REL_SHORT));
                             }
                             else
@@ -832,11 +832,10 @@ MH_STATUS WINAPI MH_ApplyQueued (VOID)
 
 //-------------------------------------------------------------------------
 MH_STATUS WINAPI MH_CreateHookApiEx (
-    LPCWSTR pszModule, LPCSTR pszProcName, LPVOID pDetour,
-    LPVOID *ppOriginal, LPVOID *ppTarget)
+    LPCWSTR pszModule, LPCSTR pszProcName, LPVOID pDetour, LPVOID *ppOriginal, LPVOID *ppTarget)
 {
     HMODULE hModule;
-    LPVOID  pTarget;
+    LPVOID pTarget;
 
     hModule = GetModuleHandleW (pszModule);
     if (hModule == NULL)
@@ -860,27 +859,28 @@ MH_STATUS WINAPI MH_CreateHookApi (
 }
 
 //-------------------------------------------------------------------------
-const char * WINAPI MH_StatusToString (MH_STATUS status)
+const char *WINAPI MH_StatusToString (MH_STATUS status)
 {
-#define MH_ST2STR(x)    \
-    case x:             \
+#define MH_ST2STR(x)                                                                               \
+    case x:                                                                                        \
         return #x;
 
-    switch (status) {
+    switch (status)
+    {
         MH_ST2STR (MH_UNKNOWN)
-            MH_ST2STR (MH_OK)
-            MH_ST2STR (MH_ERROR_ALREADY_INITIALIZED)
-            MH_ST2STR (MH_ERROR_NOT_INITIALIZED)
-            MH_ST2STR (MH_ERROR_ALREADY_CREATED)
-            MH_ST2STR (MH_ERROR_NOT_CREATED)
-            MH_ST2STR (MH_ERROR_ENABLED)
-            MH_ST2STR (MH_ERROR_DISABLED)
-            MH_ST2STR (MH_ERROR_NOT_EXECUTABLE)
-            MH_ST2STR (MH_ERROR_UNSUPPORTED_FUNCTION)
-            MH_ST2STR (MH_ERROR_MEMORY_ALLOC)
-            MH_ST2STR (MH_ERROR_MEMORY_PROTECT)
-            MH_ST2STR (MH_ERROR_MODULE_NOT_FOUND)
-            MH_ST2STR (MH_ERROR_FUNCTION_NOT_FOUND)
+        MH_ST2STR (MH_OK)
+        MH_ST2STR (MH_ERROR_ALREADY_INITIALIZED)
+        MH_ST2STR (MH_ERROR_NOT_INITIALIZED)
+        MH_ST2STR (MH_ERROR_ALREADY_CREATED)
+        MH_ST2STR (MH_ERROR_NOT_CREATED)
+        MH_ST2STR (MH_ERROR_ENABLED)
+        MH_ST2STR (MH_ERROR_DISABLED)
+        MH_ST2STR (MH_ERROR_NOT_EXECUTABLE)
+        MH_ST2STR (MH_ERROR_UNSUPPORTED_FUNCTION)
+        MH_ST2STR (MH_ERROR_MEMORY_ALLOC)
+        MH_ST2STR (MH_ERROR_MEMORY_PROTECT)
+        MH_ST2STR (MH_ERROR_MODULE_NOT_FOUND)
+        MH_ST2STR (MH_ERROR_FUNCTION_NOT_FOUND)
     }
 
 #undef MH_ST2STR

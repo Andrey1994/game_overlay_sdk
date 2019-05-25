@@ -34,26 +34,26 @@ enum class DirectoryType
 class FileDirectory
 {
 public:
-    FileDirectory();
-    ~FileDirectory();
+    FileDirectory ();
+    ~FileDirectory ();
 
     // This method has to be called, before using the directory.
     // Don't proceed, if this method returns false, as the file directory will not be usable.
-    bool Initialize();
-    const std::wstring& GetDirectory(DirectoryType type);
-    const std::wstring& GetFolder(DirectoryType type);
+    bool Initialize ();
+    const std::wstring &GetDirectory (DirectoryType type);
+    const std::wstring &GetFolder (DirectoryType type);
 
 private:
     struct Directory
     {
         std::wstring dirW;
-        Directory();
-        Directory(const std::wstring& directory);
+        Directory ();
+        Directory (const std::wstring &directory);
     };
 
-    bool FindDocumentsDir();
-    bool CreateDir(const std::wstring& dir, DirectoryType type);
-    void LogFileDirectory(const std::wstring& value, const std::wstring& message);
+    bool FindDocumentsDir ();
+    bool CreateDir (const std::wstring &dir, DirectoryType type);
+    void LogFileDirectory (const std::wstring &value, const std::wstring &message);
 
     bool initialized_;
     std::unordered_map<DirectoryType, Directory> directories_;
@@ -61,4 +61,3 @@ private:
 };
 
 extern FileDirectory g_fileDirectory;
-

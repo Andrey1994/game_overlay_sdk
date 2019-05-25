@@ -26,7 +26,8 @@
 #include <vk_dispatch_table_helper.h>
 #include <vulkan/vulkan.h>
 
-struct OverlayImageData {
+struct OverlayImageData
+{
     VkBuffer overlayHostBuffer;
     VkDeviceMemory overlayHostMemory;
     VkBuffer overlayBuffer;
@@ -39,7 +40,7 @@ struct OverlayImageData {
     VkDescriptorSet descriptorSet;
     bool valid;
 
-    bool CopyBuffer(VkDevice device, VkDeviceSize size, VkLayerDispatchTable* pTable,
-        PFN_vkSetDeviceLoaderData setDeviceLoaderDataFuncPtr,
-        VkCommandPool commandPool, VkQueue queue);
+    bool CopyBuffer (VkDevice device, VkDeviceSize size, VkLayerDispatchTable *pTable,
+        PFN_vkSetDeviceLoaderData setDeviceLoaderDataFuncPtr, VkCommandPool commandPool,
+        VkQueue queue);
 };

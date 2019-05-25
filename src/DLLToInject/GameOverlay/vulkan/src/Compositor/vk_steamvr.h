@@ -1,6 +1,6 @@
 #pragma once
-#include <openvr.h>
 #include <memory>
+#include <openvr.h>
 
 #include "../Rendering.h"
 
@@ -9,27 +9,35 @@ namespace CompositorOverlay
     class SteamVR_Vk
     {
     public:
-        void Init(VkLayerDispatchTable* pTable,
-            const VkPhysicalDeviceMemoryProperties& physicalDeviceMemoryProperties,
-            VkFormat format, VkImageUsageFlags usage);
-        void Render(const vr::Texture_t *pTexture,
-            VkLayerDispatchTable* pTable,
-            PFN_vkSetDeviceLoaderData setDeviceLoaderDataFuncPtr,
-            VkQueue queue, uint32_t queueFamilyIndex, VkQueueFlags queueFlags);
+        void Init (VkLayerDispatchTable *pTable,
+            const VkPhysicalDeviceMemoryProperties &physicalDeviceMemoryProperties, VkFormat format,
+            VkImageUsageFlags usage);
+        void Render (const vr::Texture_t *pTexture, VkLayerDispatchTable *pTable,
+            PFN_vkSetDeviceLoaderData setDeviceLoaderDataFuncPtr, VkQueue queue,
+            uint32_t queueFamilyIndex, VkQueueFlags queueFlags);
 
-        void DestroyRenderer(VkDevice device, VkLayerDispatchTable* pTable);
+        void DestroyRenderer (VkDevice device, VkLayerDispatchTable *pTable);
 
-        void SetDevice(VkDevice device);
-        VkDevice GetDevice() { return device_; }
-        VkSwapchainKHR* GetSwapchain() { return &swapchain_; }
+        void SetDevice (VkDevice device);
+        VkDevice GetDevice ()
+        {
+            return device_;
+        }
+        VkSwapchainKHR *GetSwapchain ()
+        {
+            return &swapchain_;
+        }
 
-        bool IsInitialized() { return initialized_; }
+        bool IsInitialized ()
+        {
+            return initialized_;
+        }
 
     private:
         const uint32_t screenWidth_ = 256;
         const uint32_t screenHeight_ = 180;
 
-        vr::IVROverlay* overlay_;
+        vr::IVROverlay *overlay_;
         vr::VROverlayHandle_t overlayHandle_;
 
         std::unique_ptr<Rendering> renderer_;

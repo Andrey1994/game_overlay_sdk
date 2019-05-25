@@ -24,10 +24,10 @@
 
 #include <d2d1.h>
 #include <dwrite.h>
+#include <string>
 #include <vulkan/vulkan.h>
 #include <wincodec.h>
 #include <wrl.h>
-#include <string>
 
 #include "../Recording/RecordingState.h"
 #include "TextMessage.h"
@@ -36,15 +36,15 @@
 class OverlayBitmap final
 {
 public:
-    OverlayBitmap(const OverlayBitmap&) = delete;
-    OverlayBitmap& operator=(const OverlayBitmap&) = delete;
+    OverlayBitmap (const OverlayBitmap &) = delete;
+    OverlayBitmap &operator= (const OverlayBitmap &) = delete;
 
     struct RawData
     {
-        unsigned char* dataPtr = nullptr;
+        unsigned char *dataPtr = nullptr;
         UINT size = 0;
 
-        RawData();
+        RawData ();
     };
 
     struct Position
@@ -60,23 +60,23 @@ public:
         Vulkan
     };
 
-    OverlayBitmap();
-    ~OverlayBitmap();
+    OverlayBitmap ();
+    ~OverlayBitmap ();
 
-    bool Init(int screenWidth, int screenHeight, API api);
-    void Resize(int screenWidth, int screenHeight);
-    void DrawOverlay();
+    bool Init (int screenWidth, int screenHeight, API api);
+    void Resize (int screenWidth, int screenHeight);
+    void DrawOverlay ();
 
     // Locks the bitmap data and returns a pointer to it, UnlockBitmapData needs to be called
     // afterwards
-    RawData GetBitmapDataRead();
-    void UnlockBitmapData();
+    RawData GetBitmapDataRead ();
+    void UnlockBitmapData ();
 
-    int GetFullWidth() const;
-    int GetFullHeight() const;
-    Position GetScreenPos() const;
-    const D2D1_RECT_F& GetCopyArea() const;
-    VkFormat GetVKFormat() const;
+    int GetFullWidth () const;
+    int GetFullHeight () const;
+    Position GetScreenPos () const;
+    const D2D1_RECT_F &GetCopyArea () const;
+    VkFormat GetVKFormat () const;
 
 private:
     struct Area
@@ -87,24 +87,24 @@ private:
 
     enum class Alignment
     {
-        UpperLeft, // = 0
+        UpperLeft,  // = 0
         UpperRight, // = 1
-        LowerLeft, // = 2
-        LowerRight // = 3
+        LowerLeft,  // = 2
+        LowerRight  // = 3
     };
 
-    void CalcSize(int screenWidth, int screenHeight);
-    bool InitFactories();
-    bool InitBitmap();
-    bool InitText();
-    void UpdateScreenPosition();
+    void CalcSize (int screenWidth, int screenHeight);
+    bool InitFactories ();
+    bool InitBitmap ();
+    bool InitText ();
+    void UpdateScreenPosition ();
 
-    void Update();
-    void StartRendering();
-    void DrawMessage();
-    void FinishRendering();
+    void Update ();
+    void StartRendering ();
+    void DrawMessage ();
+    void FinishRendering ();
 
-    IDWriteTextFormat* CreateTextFormat(float size, DWRITE_TEXT_ALIGNMENT textAlignment,
+    IDWriteTextFormat *CreateTextFormat (float size, DWRITE_TEXT_ALIGNMENT textAlignment,
         DWRITE_PARAGRAPH_ALIGNMENT paragraphAlignment);
 
     static const D2D1_COLOR_F clearColor_;

@@ -27,44 +27,48 @@
 
 #include <d3d12.h>
 #include <dxgi1_4.h>
-#include <wrl.h>
 #include <vector>
+#include <wrl.h>
 
-#include "Rendering/OverlayBitmap.h"
 #include "Rendering/ConstantBuffer.h"
+#include "Rendering/OverlayBitmap.h"
 
-namespace GameOverlay {
+namespace GameOverlay
+{
 
     class d3d12_renderer
     {
     public:
-        d3d12_renderer(ID3D12CommandQueue *commandqueue, IDXGISwapChain3 *swapchain);
-        d3d12_renderer(ID3D12CommandQueue *commandqueue,
+        d3d12_renderer (ID3D12CommandQueue *commandqueue, IDXGISwapChain3 *swapchain);
+        d3d12_renderer (ID3D12CommandQueue *commandqueue,
             Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> renderTargetHeap,
             std::vector<Microsoft::WRL::ComPtr<ID3D12Resource>> renderTargets,
             UINT rtvHeapDescriptorSize, int bufferCount, int backBufferWidth, int backBufferHeight);
-        ~d3d12_renderer();
+        ~d3d12_renderer ();
 
-        bool on_present();
-        bool on_present(int backBufferIndex);
+        bool on_present ();
+        bool on_present (int backBufferIndex);
 
-        D3D12_VIEWPORT GetViewport() { return viewPort_; }
+        D3D12_VIEWPORT GetViewport ()
+        {
+            return viewPort_;
+        }
 
     private:
-        bool CreateCMDList();
-        bool CreateRenderTargets();
-        bool CreateFrameFences();
-        bool CreateRootSignature();
-        bool CreatePipelineStateObject();
-        bool CreateOverlayTextures();
-        bool CreateConstantBuffer();
-        void UpdateConstantBuffer(const ConstantBuffer & constantBuffer);
+        bool CreateCMDList ();
+        bool CreateRenderTargets ();
+        bool CreateFrameFences ();
+        bool CreateRootSignature ();
+        bool CreatePipelineStateObject ();
+        bool CreateOverlayTextures ();
+        bool CreateConstantBuffer ();
+        void UpdateConstantBuffer (const ConstantBuffer &constantBuffer);
 
-        void UpdateOverlayTexture();
-        void UpdateOverlayPosition();
-        void DrawOverlay(int currentIndex);
+        void UpdateOverlayTexture ();
+        void UpdateOverlayPosition ();
+        void DrawOverlay (int currentIndex);
 
-        void WaitForCompletion();
+        void WaitForCompletion ();
 
         std::unique_ptr<OverlayBitmap> overlayBitmap_;
         Microsoft::WRL::ComPtr<ID3D12Device> device_;

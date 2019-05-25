@@ -11,7 +11,7 @@
 /// Conventional string-ification macro.
 #if !defined(OVR_STRINGIZE)
 #define OVR_STRINGIZEIMPL(x) #x
-#define OVR_STRINGIZE(x) OVR_STRINGIZEIMPL(x)
+#define OVR_STRINGIZE(x) OVR_STRINGIZEIMPL (x)
 #endif
 
 // Master version numbers
@@ -37,13 +37,13 @@
 
 /// "Major.Minor.Patch"
 #if !defined(OVR_VERSION_STRING)
-#define OVR_VERSION_STRING OVR_STRINGIZE(OVR_MAJOR_VERSION.OVR_MINOR_VERSION.OVR_PATCH_VERSION)
+#define OVR_VERSION_STRING OVR_STRINGIZE (OVR_MAJOR_VERSION.OVR_MINOR_VERSION.OVR_PATCH_VERSION)
 #endif
 
 /// "Major.Minor.Patch.Build"
 #if !defined(OVR_DETAILED_VERSION_STRING)
-#define OVR_DETAILED_VERSION_STRING \
-  OVR_STRINGIZE(OVR_MAJOR_VERSION.OVR_MINOR_VERSION.OVR_PATCH_VERSION.OVR_BUILD_NUMBER)
+#define OVR_DETAILED_VERSION_STRING                                                                \
+    OVR_STRINGIZE (OVR_MAJOR_VERSION.OVR_MINOR_VERSION.OVR_PATCH_VERSION.OVR_BUILD_NUMBER)
 #endif
 
 /// \brief file description for version info

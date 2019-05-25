@@ -22,19 +22,21 @@
 
 #pragma once
 
-#include <windows.h>
 #include <thread>
+#include <windows.h>
 
-namespace GameOverlay {
-    class OverlayThread {
+namespace GameOverlay
+{
+    class OverlayThread
+    {
     public:
-        ~OverlayThread();
+        ~OverlayThread ();
 
-        void Stop();
-        void Start();
+        void Stop ();
+        void Start ();
 
     private:
-        void ThreadProc();
+        void ThreadProc ();
         std::thread overlayThread_;
         volatile bool quit_ = false;
     };

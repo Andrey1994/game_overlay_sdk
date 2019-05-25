@@ -57,9 +57,8 @@ class OverlayMessage
 {
 public:
     // Send a message to the frontend window.
-    static bool PostFrontendMessage(HWND window, OverlayMessageType type, LPARAM message);
+    static bool PostFrontendMessage (HWND window, OverlayMessageType type, LPARAM message);
     // Send a message to a specific overlay thread.
-    static bool PostOverlayMessage(DWORD threadID, OverlayMessageType type, LPARAM message);
+    static bool PostOverlayMessage (DWORD threadID, OverlayMessageType type, LPARAM message);
     static const unsigned int overlayMessageType = WM_APP + 1;
 };
-

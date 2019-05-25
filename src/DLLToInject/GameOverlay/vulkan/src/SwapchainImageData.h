@@ -26,7 +26,8 @@
 #include <vulkan/vk_layer.h>
 #include <vulkan/vulkan.h>
 
-struct SwapchainImageData {
+struct SwapchainImageData
+{
     VkImage image;
     VkImageView view;
     VkFramebuffer framebuffer;

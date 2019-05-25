@@ -22,26 +22,28 @@
 
 #pragma once
 
-#include <windows.h>
 #include <string>
+#include <windows.h>
 
-class VK_Environment {
+class VK_Environment
+{
 public:
-    void SetVKEnvironment(const std::wstring& dllDirectory);
-    void ResetVKEnvironment();
+    void SetVKEnvironment (const std::wstring &dllDirectory);
+    void ResetVKEnvironment ();
 
 private:
     // Updates the environment variable with value or sets a new one if not existing
     // Returns the original value of the environment variable
-    const std::wstring WriteEnvironmentVariable(const std::wstring& variableName,
-        const std::wstring& value, bool append);
-    void LogEnvironmentVariables();
+    const std::wstring WriteEnvironmentVariable (
+        const std::wstring &variableName, const std::wstring &value, bool append);
+    void LogEnvironmentVariables ();
 
     // Saves the value of the environmentVariable inside currValue
-    static DWORD ReadEnvironmentVariable(const std::wstring& variableName,
-        std::wstring& currValue);
+    static DWORD ReadEnvironmentVariable (
+        const std::wstring &variableName, std::wstring &currValue);
 
-    struct EnvironmentValues {
+    struct EnvironmentValues
+    {
         std::wstring path;
         std::wstring layers;
         std::wstring ocatVulkan;

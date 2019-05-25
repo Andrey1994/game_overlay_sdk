@@ -30,7 +30,8 @@
 
 #include "SwapchainImageMapping.h"
 
-struct SwapchainQueueMapping {
+struct SwapchainQueueMapping
+{
     VkQueue queue;
     int32_t isGraphicsQueue;
     VkCommandPool commandPool;

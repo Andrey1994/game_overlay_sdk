@@ -23,47 +23,52 @@
 #include "OverlayImageData.h"
 #include "Utility/MessageLog.h"
 
-bool OverlayImageData::CopyBuffer (VkDevice device, VkDeviceSize size,
-    VkLayerDispatchTable * pTable, PFN_vkSetDeviceLoaderData setDeviceLoaderDataFuncPtr,
-    VkCommandPool commandPool, VkQueue queue)
+bool OverlayImageData::CopyBuffer (VkDevice device, VkDeviceSize size, VkLayerDispatchTable *pTable,
+    PFN_vkSetDeviceLoaderData setDeviceLoaderDataFuncPtr, VkCommandPool commandPool, VkQueue queue)
 {
     if (commandBuffer[commandBufferIndex] != VK_NULL_HANDLE)
     {
 #if _DEBUG
-        pTable->WaitForFences (device, 1, &commandBufferFence[commandBufferIndex], VK_TRUE, UINT64_MAX);
+        pTable->WaitForFences (
+            device, 1, &commandBufferFence[commandBufferIndex], VK_TRUE, UINT64_MAX);
         pTable->ResetFences (device, 1, &commandBufferFence[commandBufferIndex]);
 #endif
         pTable->FreeCommandBuffers (device, commandPool, 1, &commandBuffer[commandBufferIndex]);
     }
 
-    VkCommandBufferAllocateInfo cmdBufferAllocateInfo = { VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO };
+    VkCommandBufferAllocateInfo cmdBufferAllocateInfo = {
+        VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO};
     cmdBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     cmdBufferAllocateInfo.commandPool = commandPool;
     cmdBufferAllocateInfo.commandBufferCount = 1;
 
-    VkResult result = pTable->AllocateCommandBuffers (device, &cmdBufferAllocateInfo, &commandBuffer[commandBufferIndex]);
+    VkResult result = pTable->AllocateCommandBuffers (
+        device, &cmdBufferAllocateInfo, &commandBuffer[commandBufferIndex]);
     if (result != VK_SUCCESS)
     {
         return false;
     }
 
-    VkDevice cmdBuf = static_cast<VkDevice>(static_cast<void*>(commandBuffer[commandBufferIndex]));
+    VkDevice cmdBuf =
+        static_cast<VkDevice> (static_cast<void *> (commandBuffer[commandBufferIndex]));
     setDeviceLoaderDataFuncPtr (device, cmdBuf);
 
-    VkCommandBufferBeginInfo cmdBufferBeginInfo = { VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO };
+    VkCommandBufferBeginInfo cmdBufferBeginInfo = {VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
     cmdBufferBeginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 
     result = pTable->BeginCommandBuffer (commandBuffer[commandBufferIndex], &cmdBufferBeginInfo);
     if (result != VK_SUCCESS)
     {
-        g_messageLog.LogError ("CopyBuffer", "Failed to begin command buffer." + std::to_string (static_cast<int>(result)));
+        g_messageLog.LogError ("CopyBuffer",
+            "Failed to begin command buffer." + std::to_string (static_cast<int> (result)));
         pTable->FreeCommandBuffers (device, commandPool, 1, &commandBuffer[commandBufferIndex]);
         return false;
     }
 
     VkBufferCopy bufferCopy = {};
     bufferCopy.size = size;
-    pTable->CmdCopyBuffer (commandBuffer[commandBufferIndex], overlayHostBuffer, overlayBuffer, 1, &bufferCopy);
+    pTable->CmdCopyBuffer (
+        commandBuffer[commandBufferIndex], overlayHostBuffer, overlayBuffer, 1, &bufferCopy);
 
     result = pTable->EndCommandBuffer (commandBuffer[commandBufferIndex]);
     if (result != VK_SUCCESS)
@@ -72,7 +77,7 @@ bool OverlayImageData::CopyBuffer (VkDevice device, VkDeviceSize size,
         return false;
     }
 
-    VkSubmitInfo submitInfo = { VK_STRUCTURE_TYPE_SUBMIT_INFO };
+    VkSubmitInfo submitInfo = {VK_STRUCTURE_TYPE_SUBMIT_INFO};
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &commandBuffer[commandBufferIndex];
     submitInfo.signalSemaphoreCount = 1;

@@ -23,11 +23,11 @@
 
 #pragma once
 
-#include <string>
 #include <fstream>
+#include <string>
 
-bool FileExists(const std::string& filePath);
-bool FileExists(const std::wstring& filePath);
+bool FileExists (const std::string &filePath);
+bool FileExists (const std::wstring &filePath);
 
-std::wstring GetDirFromPathSlashes(const std::wstring& input);
-std::wstring GetDirFomPathSlashesRemoved(const std::wstring& path);
+std::wstring GetDirFromPathSlashes (const std::wstring &input);
+std::wstring GetDirFomPathSlashesRemoved (const std::wstring &path);

@@ -22,23 +22,25 @@
 
 #pragma once
 
-#include <windows.h>
 #include <string>
+#include <windows.h>
 
-class Hook {
+class Hook
+{
 public:
-    struct HookInfo {
+    struct HookInfo
+    {
         std::wstring libName;
         std::string hookFunction;
         DWORD threadID = 0;
         int hookID;
     };
 
-    Hook();
-    ~Hook();
+    Hook ();
+    ~Hook ();
 
-    bool Activate(const HookInfo& info);
-    void Deactivate();
+    bool Activate (const HookInfo &info);
+    void Deactivate ();
 
 private:
     HHOOK hook_ = nullptr;

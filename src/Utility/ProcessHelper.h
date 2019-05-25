@@ -24,37 +24,44 @@
 #pragma once
 
 #include <windows.h>
+
+#include <psapi.h>
 #include <string>
 #include <vector>
-#include <psapi.h>
 
 // Searches for process with name in all current processes
 // Returns 0 if nothing was found
-DWORD GetProcessIDFromName(const std::string& name);
-HANDLE GetProcessHandleFromID(DWORD id, DWORD access);
+DWORD GetProcessIDFromName (const std::string &name);
+HANDLE GetProcessHandleFromID (DWORD id, DWORD access);
 
-HWND GetWindowHandleFromProcessID(DWORD id);
+HWND GetWindowHandleFromProcessID (DWORD id);
 
 // Returns <unknown> if name of process for this id could not be retrieved or
 // unable to access because system process
-std::wstring GetProcessNameFromID(DWORD id);
-std::wstring GetProcessNameFromHandle(HANDLE handle);
+std::wstring GetProcessNameFromID (DWORD id);
+std::wstring GetProcessNameFromHandle (HANDLE handle);
 
-std::wstring GetCurrentProcessDirectory();
-std::wstring GetAbsolutePath(const std::wstring& relativePath);
+std::wstring GetCurrentProcessDirectory ();
+std::wstring GetAbsolutePath (const std::wstring &relativePath);
 
-enum class ProcessArchitecture { x86, x64, undefined };
+enum class ProcessArchitecture
+{
+    x86,
+    x64,
+    undefined
+};
 
-ProcessArchitecture GetProcessArchitecture(DWORD processID);
+ProcessArchitecture GetProcessArchitecture (DWORD processID);
 
-std::wstring GetWindowTitle(HWND window);
-std::wstring GetWindowClassName(HWND window);
+std::wstring GetWindowTitle (HWND window);
+std::wstring GetWindowClassName (HWND window);
 
-std::string GetSystemErrorMessage(DWORD errorCode);
-std::wstring GetSystemErrorMessageW(DWORD errorCode);
+std::string GetSystemErrorMessage (DWORD errorCode);
+std::wstring GetSystemErrorMessageW (DWORD errorCode);
 
-HWND FindOcatWindowHandle();
+HWND FindOcatWindowHandle ();
 
-LONG GetStringRegKey(HKEY hKey, const std::wstring &strValueName, std::wstring &strValue, const std::wstring &strDefaultValue);
+LONG GetStringRegKey (HKEY hKey, const std::wstring &strValueName, std::wstring &strValue,
+    const std::wstring &strDefaultValue);
 
-std::vector<std::wstring> GetLoadedModuleNames();
+std::vector<std::wstring> GetLoadedModuleNames ();

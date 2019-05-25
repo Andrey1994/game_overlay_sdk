@@ -12,8 +12,8 @@
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
-#include <windows.h>
 #include "OVR_CAPI.h"
+#include <windows.h>
 #define OVR_AUDIO_MAX_DEVICE_STR_SIZE 128
 
 #if !defined(OVR_EXPORTING_CAPI)
@@ -26,7 +26,7 @@
 /// \return Returns an ovrResult indicating success or failure. In the case of failure, use
 ///         ovr_GetLastErrorInfo to get more information.
 ///
-OVR_PUBLIC_FUNCTION(ovrResult) ovr_GetAudioDeviceOutWaveId(UINT* deviceOutId);
+OVR_PUBLIC_FUNCTION (ovrResult) ovr_GetAudioDeviceOutWaveId (UINT *deviceOutId);
 
 /// Gets the ID of the preferred VR audio input device.
 ///
@@ -36,7 +36,7 @@ OVR_PUBLIC_FUNCTION(ovrResult) ovr_GetAudioDeviceOutWaveId(UINT* deviceOutId);
 /// \return Returns an ovrResult indicating success or failure. In the case of failure, use
 ///         ovr_GetLastErrorInfo to get more information.
 ///
-OVR_PUBLIC_FUNCTION(ovrResult) ovr_GetAudioDeviceInWaveId(UINT* deviceInId);
+OVR_PUBLIC_FUNCTION (ovrResult) ovr_GetAudioDeviceInWaveId (UINT *deviceInId);
 
 /// Gets the GUID of the preferred VR audio device as a string.
 ///
@@ -45,8 +45,8 @@ OVR_PUBLIC_FUNCTION(ovrResult) ovr_GetAudioDeviceInWaveId(UINT* deviceInId);
 /// \return Returns an ovrResult indicating success or failure. In the case of failure, use
 ///         ovr_GetLastErrorInfo to get more information.
 ///
-OVR_PUBLIC_FUNCTION(ovrResult)
-ovr_GetAudioDeviceOutGuidStr(WCHAR deviceOutStrBuffer[OVR_AUDIO_MAX_DEVICE_STR_SIZE]);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_GetAudioDeviceOutGuidStr (WCHAR deviceOutStrBuffer[OVR_AUDIO_MAX_DEVICE_STR_SIZE]);
 
 /// Gets the GUID of the preferred VR audio device.
 ///
@@ -56,7 +56,7 @@ ovr_GetAudioDeviceOutGuidStr(WCHAR deviceOutStrBuffer[OVR_AUDIO_MAX_DEVICE_STR_S
 /// \return Returns an ovrResult indicating success or failure. In the case of failure, use
 ///         ovr_GetLastErrorInfo to get more information.
 ///
-OVR_PUBLIC_FUNCTION(ovrResult) ovr_GetAudioDeviceOutGuid(GUID* deviceOutGuid);
+OVR_PUBLIC_FUNCTION (ovrResult) ovr_GetAudioDeviceOutGuid (GUID *deviceOutGuid);
 
 /// Gets the GUID of the preferred VR microphone device as a string.
 ///
@@ -65,8 +65,8 @@ OVR_PUBLIC_FUNCTION(ovrResult) ovr_GetAudioDeviceOutGuid(GUID* deviceOutGuid);
 /// \return Returns an ovrResult indicating success or failure. In the case of failure, use
 ///         ovr_GetLastErrorInfo to get more information.
 ///
-OVR_PUBLIC_FUNCTION(ovrResult)
-ovr_GetAudioDeviceInGuidStr(WCHAR deviceInStrBuffer[OVR_AUDIO_MAX_DEVICE_STR_SIZE]);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_GetAudioDeviceInGuidStr (WCHAR deviceInStrBuffer[OVR_AUDIO_MAX_DEVICE_STR_SIZE]);
 
 /// Gets the GUID of the preferred VR microphone device.
 ///
@@ -76,7 +76,7 @@ ovr_GetAudioDeviceInGuidStr(WCHAR deviceInStrBuffer[OVR_AUDIO_MAX_DEVICE_STR_SIZ
 /// \return Returns an ovrResult indicating success or failure. In the case of failure, use
 ///         ovr_GetLastErrorInfo to get more information.
 ///
-OVR_PUBLIC_FUNCTION(ovrResult) ovr_GetAudioDeviceInGuid(GUID* deviceInGuid);
+OVR_PUBLIC_FUNCTION (ovrResult) ovr_GetAudioDeviceInGuid (GUID *deviceInGuid);
 
 #endif // !defined(OVR_EXPORTING_CAPI)
 

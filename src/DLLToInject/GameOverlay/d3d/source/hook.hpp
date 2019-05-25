@@ -25,10 +25,13 @@
 
 #pragma once
 
-namespace GameOverlay {
-    struct hook {
+namespace GameOverlay
+{
+    struct hook
+    {
         typedef void *address;
-        enum class status {
+        enum class status
+        {
             unknown = -1,
             success,
             not_executable = 7,
@@ -37,47 +40,49 @@ namespace GameOverlay {
             memory_protection_failure,
         };
 
-        hook();
-        hook(address target, address replacement);
+        hook ();
+        hook (address target, address replacement);
 
         /// <summary>
         /// Return whether the hook is valid.
         /// </summary>
-        bool valid() const;
+        bool valid () const;
         /// <summary>
         /// Return whether the hook is currently enabled.
         /// </summary>
-        bool enabled() const;
+        bool enabled () const;
         /// <summary>
         /// Return whether the hook is currently installed.
         /// </summary>
-        bool installed() const;
+        bool installed () const;
         /// <summary>
         /// Return whether the hook is not currently installed.
         /// </summary>
-        bool uninstalled() const { return !installed(); }
+        bool uninstalled () const
+        {
+            return !installed ();
+        }
         /// <summary>
         /// Enable or disable the hook.
         /// </summary>
         /// <param name="enable">Boolean indicating if hook should be enabled or disabled.</param>
-        bool enable(bool enable = true) const;
+        bool enable (bool enable = true) const;
         /// <summary>
         /// Install the hook.
         /// </summary>
-        status install();
+        status install ();
         /// <summary>
         /// Uninstall the hook.
         /// </summary>
-        status uninstall();
+        status uninstall ();
 
         /// <summary>
         /// Return the trampoline function address of the hook.
         /// </summary>
-        address call() const;
-        template <typename T>
-        inline T call() const
+        address call () const;
+        template <typename T> inline T call () const
         {
-            return reinterpret_cast<T>(call());
+            return reinterpret_cast<T> (call ());
         }
 
         address target, replacement, trampoline;

@@ -23,20 +23,20 @@
 // OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <windows.h>
-#include <appmodel.h>
+#include "Overlay/OverlayMessage.h"
+#include "Overlay/VK_Environment.h"
 #include "Recording/Capturing.h"
 #include "Utility/Constants.h"
 #include "Utility/FileDirectory.h"
 #include "Utility/MessageLog.h"
 #include "Utility/ProcessHelper.h"
-#include "Overlay/VK_Environment.h"
-#include "hook_manager.hpp"
-#include "Overlay/OverlayMessage.h"
 #include "Utility/StringUtils.h"
+#include "hook_manager.hpp"
+#include <appmodel.h>
+#include <windows.h>
 
-#include <psapi.h>
 #include <assert.h>
+#include <psapi.h>
 
 #pragma data_seg("SHARED")
 HWND sharedFrontendWindow = NULL;
@@ -48,12 +48,12 @@ HHOOK g_hook = NULL;
 bool g_uwpApp = false;
 
 extern "C" __declspec(dllexport) LRESULT CALLBACK
-GlobalHookProc (int code, WPARAM wParam, LPARAM lParam)
+    GlobalHookProc (int code, WPARAM wParam, LPARAM lParam)
 {
     return CallNextHookEx (NULL, code, wParam, lParam);
 }
 
-typedef LONG (WINAPI *PGetPackageFamilyName) (HANDLE, UINT32*, PWSTR);
+typedef LONG (WINAPI *PGetPackageFamilyName) (HANDLE, UINT32 *, PWSTR);
 
 bool UWPApp ()
 {
@@ -62,7 +62,8 @@ bool UWPApp ()
     {
         UINT32 length = 0;
 
-        PGetPackageFamilyName packageFamilyName = reinterpret_cast<PGetPackageFamilyName>(GetProcAddress (GetModuleHandle (L"kernel32.dll"), "GetPackageFamilyName"));
+        PGetPackageFamilyName packageFamilyName = reinterpret_cast<PGetPackageFamilyName> (
+            GetProcAddress (GetModuleHandle (L"kernel32.dll"), "GetPackageFamilyName"));
         if (packageFamilyName == NULL)
         {
             return false;
@@ -114,65 +115,66 @@ BOOL APIENTRY DllMain (HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
     UNREFERENCED_PARAMETER (lpReserved);
     switch (fdwReason)
     {
-    case DLL_PROCESS_ATTACH:
-    {
-        // unicode!!
-        wchar_t buffer[4096];
-        GetModuleFileName (NULL, buffer, 4096);
-        std::wstring moduleName (buffer);
-        std::string moduleNameStr = ConvertUTF16StringToUTF8String (moduleName);
-        std::string::size_type pos = moduleNameStr.find_last_of ("\\/");
-        VK_Environment vkEnv;
-        vkEnv.SetVKEnvironment (ConvertUTF8StringToUTF16String (moduleNameStr.substr (0, pos)));
-
-        g_module_handle = hModule;
-        DisableThreadLibraryCalls (hModule);
-
-        // Register modules for hooking
-        wchar_t system_path_buffer[MAX_PATH];
-        GetSystemDirectoryW (system_path_buffer, MAX_PATH);
-        const std::wstring system_path (system_path_buffer);
-
-        InitLogging ();
-        SendDllStateMessage (OverlayMessageType::AttachDll);
-
-        // DXGI
-        GetSystemDirectoryW (system_path_buffer, MAX_PATH);
-        if (!GameOverlay::register_module (system_path + L"\\dxgi.dll"))
+        case DLL_PROCESS_ATTACH:
         {
-            g_messageLog.LogError ("GameOverlay", "Failed to register module for DXGI");
-        }
+            // unicode!!
+            wchar_t buffer[4096];
+            GetModuleFileName (NULL, buffer, 4096);
+            std::wstring moduleName (buffer);
+            std::string moduleNameStr = ConvertUTF16StringToUTF8String (moduleName);
+            std::string::size_type pos = moduleNameStr.find_last_of ("\\/");
+            VK_Environment vkEnv;
+            vkEnv.SetVKEnvironment (ConvertUTF8StringToUTF16String (moduleNameStr.substr (0, pos)));
 
-        // D3D12
-        GameOverlay::register_additional_module (L"d3d12.dll");
+            g_module_handle = hModule;
+            DisableThreadLibraryCalls (hModule);
 
-        // Oculus Compositor
+            // Register modules for hooking
+            wchar_t system_path_buffer[MAX_PATH];
+            GetSystemDirectoryW (system_path_buffer, MAX_PATH);
+            const std::wstring system_path (system_path_buffer);
+
+            InitLogging ();
+            SendDllStateMessage (OverlayMessageType::AttachDll);
+
+            // DXGI
+            GetSystemDirectoryW (system_path_buffer, MAX_PATH);
+            if (!GameOverlay::register_module (system_path + L"\\dxgi.dll"))
+            {
+                g_messageLog.LogError ("GameOverlay", "Failed to register module for DXGI");
+            }
+
+            // D3D12
+            GameOverlay::register_additional_module (L"d3d12.dll");
+
+            // Oculus Compositor
 #if _WIN64
-        GameOverlay::register_additional_module (L"LibOVRRT64_1.dll");
+            GameOverlay::register_additional_module (L"LibOVRRT64_1.dll");
 #else
-        GameOverlay::register_additional_module (L"LibOVRRT32_1.dll");
+            GameOverlay::register_additional_module (L"LibOVRRT32_1.dll");
 #endif
 
-        // SteamVR Compositor
-        GameOverlay::register_additional_module (L"openvr_api.dll");
-        break;
-    }
-    case DLL_PROCESS_DETACH:
-    {
-        if (lpReserved == NULL)
-        {
-            g_messageLog.LogInfo ("GameOverlay", L"Detach because DLL load failed or FreeLibrary called");
+            // SteamVR Compositor
+            GameOverlay::register_additional_module (L"openvr_api.dll");
+            break;
         }
-        else
+        case DLL_PROCESS_DETACH:
         {
-            g_messageLog.LogInfo ("GameOverlay", L"Detach because process is terminating");
-        }
+            if (lpReserved == NULL)
+            {
+                g_messageLog.LogInfo (
+                    "GameOverlay", L"Detach because DLL load failed or FreeLibrary called");
+            }
+            else
+            {
+                g_messageLog.LogInfo ("GameOverlay", L"Detach because process is terminating");
+            }
 
-        // Uninstall and clean up all hooks before unloading
-        SendDllStateMessage (OverlayMessageType::DetachDll);
-        GameOverlay::uninstall_hook ();
-        break;
-    }
+            // Uninstall and clean up all hooks before unloading
+            SendDllStateMessage (OverlayMessageType::DetachDll);
+            GameOverlay::uninstall_hook ();
+            break;
+        }
     }
 
     return TRUE;

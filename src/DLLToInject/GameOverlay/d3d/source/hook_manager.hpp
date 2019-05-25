@@ -25,20 +25,21 @@
 
 #pragma once
 
-#include <windows.h>
-#include <string>
 #include "hook.hpp"
+#include <string>
+#include <windows.h>
 
-#define VTABLE(object) (*reinterpret_cast<GameOverlay::hook::address **>(object))
+#define VTABLE(object) (*reinterpret_cast<GameOverlay::hook::address **> (object))
 
-namespace GameOverlay {
+namespace GameOverlay
+{
     /// <summary>
     /// Install hook for the specified target function.
     /// </summary>
     /// <param name="target">The address of the target function.</param>
     /// <param name="replacement">The address of the hook function.</param>
     /// <returns>The status of the hook installation.</returns>
-    bool install_hook(hook::address target, hook::address replacement);
+    bool install_hook (hook::address target, hook::address replacement);
     /// <summary>
     /// Install hook for the specified virtual function table entry.
     /// </summary>
@@ -47,31 +48,32 @@ namespace GameOverlay {
     /// <param name="offset">The index of the target function in the virtual function table.</param>
     /// <param name="replacement">The address of the hook function.</param>
     /// <returns>The status of the hook installation.</returns>
-    bool install_hook(hook::address vtable[], unsigned int offset, hook::address replacement);
-    __declspec(dllexport) bool replace_vtable_hook(hook::address vtable[], unsigned int offset, hook::address replacement);
+    bool install_hook (hook::address vtable[], unsigned int offset, hook::address replacement);
+    __declspec(dllexport) bool replace_vtable_hook (
+        hook::address vtable[], unsigned int offset, hook::address replacement);
     /// <summary>
     /// Uninstall all previously installed hooks.
     /// </summary>
-    void uninstall_hook();
+    void uninstall_hook ();
     /// <summary>
     /// Register the matching exports in the specified module and install or delay their hooking.
     /// </summary>
     /// <param name="path">The file path to the target module.</param>
-    bool register_module(const std::wstring &path);
-    void register_additional_module(const std::wstring &module_name);
-    __declspec(dllexport) void add_function_hooks(const std::wstring &module_name, const HMODULE replacement_module);
-    void HookAllModules();
+    bool register_module (const std::wstring &path);
+    void register_additional_module (const std::wstring &module_name);
+    __declspec(dllexport) void add_function_hooks (
+        const std::wstring &module_name, const HMODULE replacement_module);
+    void HookAllModules ();
 
     /// <summary>
     /// Find the original/trampoline function for the specified hook.
     /// </summary>
-    /// <param name="replacement">The address of the hook function which was previously used to install
-    /// a hook.</param>
-    /// <returns>The address of original/trampoline function.</returns>
-    __declspec(dllexport) hook::address find_hook_trampoline(hook::address replacement);
-    template <typename T>
-    inline T find_hook_trampoline(T replacement)
+    /// <param name="replacement">The address of the hook function which was previously used to
+    /// install a hook.</param> <returns>The address of original/trampoline function.</returns>
+    __declspec(dllexport) hook::address find_hook_trampoline (hook::address replacement);
+    template <typename T> inline T find_hook_trampoline (T replacement)
     {
-        return reinterpret_cast<T>(find_hook_trampoline(reinterpret_cast<hook::address>(replacement)));
+        return reinterpret_cast<T> (
+            find_hook_trampoline (reinterpret_cast<hook::address> (replacement)));
     }
 }

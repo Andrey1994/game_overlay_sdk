@@ -22,14 +22,15 @@
 
 #include "OverlayThread.h"
 #include "../Overlay/OverlayMessage.h"
+#include "RecordingState.h"
 #include "Utility/Constants.h"
-#include "Utility/StringUtils.h"
 #include "Utility/MessageLog.h"
 #include "Utility/ProcessHelper.h"
-#include "RecordingState.h"
+#include "Utility/StringUtils.h"
 
 
-namespace GameOverlay {
+namespace GameOverlay
+{
 
     HWND g_windowHandle = NULL;
 
@@ -40,7 +41,7 @@ namespace GameOverlay {
 
     void OverlayThread::Stop ()
     {
-        HANDLE thread = reinterpret_cast<HANDLE>(overlayThread_.native_handle ());
+        HANDLE thread = reinterpret_cast<HANDLE> (overlayThread_.native_handle ());
         if (thread)
         {
             const auto threadID = GetThreadId (thread);
@@ -56,17 +57,14 @@ namespace GameOverlay {
     {
         g_messageLog.LogInfo ("OverlayThread", "Start overlay thread ");
         quit_ = false;
-        overlayThread_ = std::thread ([this] {this->ThreadProc (); });
+        overlayThread_ = std::thread ([this] { this->ThreadProc (); });
     }
 
     void OverlayThread::ThreadProc ()
     {
         RecordingState::GetInstance ().Start ();
-        HANDLE mapFile = OpenFileMapping (
-            FILE_MAP_ALL_ACCESS,
-            FALSE,
-            TEXT ("Global\\GameOverlayMap")
-        );
+        HANDLE mapFile =
+            OpenFileMapping (FILE_MAP_ALL_ACCESS, FALSE, TEXT ("Global\\GameOverlayMap"));
         if (mapFile == NULL)
         {
             g_messageLog.LogError ("OverlayThread", "Failed to open file mapping", GetLastError ());
@@ -76,13 +74,7 @@ namespace GameOverlay {
         {
             if (mapFile)
             {
-                char *buf = (char *)MapViewOfFile (
-                    mapFile,
-                    FILE_MAP_ALL_ACCESS,
-                    0,
-                    0,
-                    4096
-                );
+                char *buf = (char *)MapViewOfFile (mapFile, FILE_MAP_ALL_ACCESS, 0, 0, 4096);
                 if (buf)
                 {
                     RecordingState::GetInstance ().SetOverlayMessage (buf);

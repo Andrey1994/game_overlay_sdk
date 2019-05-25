@@ -21,12 +21,13 @@
 //
 
 #pragma once
-#include <windows.h>
 #include <map>
+#include <windows.h>
 
-namespace GameOverlay {
-    void InitLogging(const std::string& callerName);
-    void InitCapturing();
+namespace GameOverlay
+{
+    void InitLogging (const std::string &callerName);
+    void InitCapturing ();
 
     extern const std::wstring g_overlayLibName;
 }

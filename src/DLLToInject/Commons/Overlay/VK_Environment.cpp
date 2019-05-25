@@ -25,7 +25,8 @@
 
 #include <cstdlib>
 
-namespace {
+namespace
+{
     const wchar_t g_vkEnvPath[] = L"VK_LAYER_PATH";
     const wchar_t g_vkEnvLayers[] = L"VK_INSTANCE_LAYERS";
     const wchar_t g_vkLayerValue32[] = L"VK_LAYER_OCAT_overlay32";
@@ -34,7 +35,7 @@ namespace {
     const wchar_t g_vkEnvOcatEnabled[] = L"1";
 }
 
-void VK_Environment::SetVKEnvironment (const std::wstring& dllDirectory)
+void VK_Environment::SetVKEnvironment (const std::wstring &dllDirectory)
 {
     const auto dir = dllDirectory.substr (0, dllDirectory.find_last_of ('\\'));
     originalEnvironment_.path = WriteEnvironmentVariable (g_vkEnvPath, dir, true);
@@ -43,7 +44,8 @@ void VK_Environment::SetVKEnvironment (const std::wstring& dllDirectory)
 #else
     originalEnvironment_.layers = WriteEnvironmentVariable (g_vkEnvLayers, g_vkLayerValue32, true);
 #endif
-    originalEnvironment_.ocatVulkan = WriteEnvironmentVariable (g_vkEnvOcat, g_vkEnvOcatEnabled, true);
+    originalEnvironment_.ocatVulkan =
+        WriteEnvironmentVariable (g_vkEnvOcat, g_vkEnvOcatEnabled, true);
     changed_ = true;
 }
 
@@ -58,8 +60,8 @@ void VK_Environment::ResetVKEnvironment ()
     changed_ = false;
 }
 
-const std::wstring VK_Environment::WriteEnvironmentVariable (const std::wstring& variableName,
-    const std::wstring& value, bool append)
+const std::wstring VK_Environment::WriteEnvironmentVariable (
+    const std::wstring &variableName, const std::wstring &value, bool append)
 {
     std::wstring currVariableValue;
     std::wstring newVariableValue;
@@ -79,8 +81,8 @@ const std::wstring VK_Environment::WriteEnvironmentVariable (const std::wstring&
         const auto error = _wputenv_s (variableName.c_str (), newVariableValue.c_str ());
         if (error)
         {
-            g_messageLog.LogError ("Overlay",
-                L"Failed setting environment variable " + variableName, error);
+            g_messageLog.LogError (
+                "Overlay", L"Failed setting environment variable " + variableName, error);
         }
         else
         {
@@ -90,8 +92,7 @@ const std::wstring VK_Environment::WriteEnvironmentVariable (const std::wstring&
     }
     else
     {
-        g_messageLog.LogWarning ("Overlay",
-            L"Failed getting environment variable", result);
+        g_messageLog.LogWarning ("Overlay", L"Failed getting environment variable", result);
     }
 
     return currVariableValue;
@@ -103,18 +104,18 @@ void VK_Environment::LogEnvironmentVariables ()
     LPTSTR lpszVariable = (LPTSTR)currEnv;
 
     std::wstring value;
-    while (*lpszVariable) {
+    while (*lpszVariable)
+    {
         value += std::wstring (lpszVariable) + L'\n';
         lpszVariable += lstrlen (lpszVariable) + 1;
     }
     FreeEnvironmentStrings (currEnv);
 
-    g_messageLog.LogVerbose ("Overlay",
-        L"Environment variables " + value);
+    g_messageLog.LogVerbose ("Overlay", L"Environment variables " + value);
 }
 
-DWORD VK_Environment::ReadEnvironmentVariable (const std::wstring& variableName,
-    std::wstring& currValue)
+DWORD VK_Environment::ReadEnvironmentVariable (
+    const std::wstring &variableName, std::wstring &currValue)
 {
     currValue.clear ();
     DWORD bufferSize = GetEnvironmentVariable (variableName.c_str (), nullptr, 0);
@@ -127,8 +128,7 @@ DWORD VK_Environment::ReadEnvironmentVariable (const std::wstring& variableName,
     // if the buffer is empty
     if (bufferSize == 1)
     {
-        g_messageLog.LogWarning ("Overlay",
-            L"Environment variable is empty.");
+        g_messageLog.LogWarning ("Overlay", L"Environment variable is empty.");
         return ERROR_ENVVAR_NOT_FOUND;
     }
 
@@ -137,8 +137,8 @@ DWORD VK_Environment::ReadEnvironmentVariable (const std::wstring& variableName,
     if (!bufferSize)
     {
         const auto error = GetLastError ();
-        g_messageLog.LogWarning ("Overlay",
-            L"Failed to retrieve buffer size " + std::to_wstring (bufferSize), error);
+        g_messageLog.LogWarning (
+            "Overlay", L"Failed to retrieve buffer size " + std::to_wstring (bufferSize), error);
         return error;
     }
 

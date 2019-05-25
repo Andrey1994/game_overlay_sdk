@@ -32,35 +32,36 @@ enum class TextureState
     Stop
 };
 
-class RecordingState final {
+class RecordingState final
+{
 public:
-    static RecordingState& GetInstance();
-    RecordingState(RecordingState const&) = delete;
-    void operator=(RecordingState const&) = delete;
+    static RecordingState &GetInstance ();
+    RecordingState (RecordingState const &) = delete;
+    void operator= (RecordingState const &) = delete;
 
-    bool Started();
-    bool Stopped();
-    bool IsOverlayShowing();
-    bool IsGraphOverlayShowing();
-    bool IsBarOverlayShowing();
-    void Start();
-    void Stop();
+    bool Started ();
+    bool Stopped ();
+    bool IsOverlayShowing ();
+    bool IsGraphOverlayShowing ();
+    bool IsBarOverlayShowing ();
+    void Start ();
+    void Stop ();
 
-    TextureState Update();
-    void SetDisplayTimes(float start, float end);
-    void SetRecordingTime(float time);
-    void HideOverlay();
-    void ShowOverlay();
-    void HideGraphOverlay();
-    void ShowGraphOverlay();
-    void HideBarOverlay();
-    void ShowBarOverlay();
+    TextureState Update ();
+    void SetDisplayTimes (float start, float end);
+    void SetRecordingTime (float time);
+    void HideOverlay ();
+    void ShowOverlay ();
+    void HideGraphOverlay ();
+    void ShowGraphOverlay ();
+    void HideBarOverlay ();
+    void ShowBarOverlay ();
 
-    char* GetOverlayMessage();
-    void SetOverlayMessage(char *message);
+    char *GetOverlayMessage ();
+    void SetOverlayMessage (char *message);
 
 private:
-    RecordingState();
+    RecordingState ();
 
     bool recording_ = false;
     bool stateChanged_ = false;

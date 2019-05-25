@@ -24,31 +24,32 @@
 
 #include <d2d1.h>
 #include <dwrite.h>
-#include <wincodec.h>
-#include <wrl.h>
 #include <string>
 #include <vector>
+#include <wincodec.h>
+#include <wrl.h>
 
 #include "Utility/MessageLog.h"
 
-class TextMessage final {
+class TextMessage final
+{
 public:
-    TextMessage(ID2D1RenderTarget* renderTarget, const D2D1_COLOR_F& textColor,
-        const D2D1_COLOR_F& numberColor);
-    ~TextMessage();
+    TextMessage (ID2D1RenderTarget *renderTarget, const D2D1_COLOR_F &textColor,
+        const D2D1_COLOR_F &numberColor);
+    ~TextMessage ();
 
-    TextMessage(const TextMessage&) = delete;
-    TextMessage& operator=(const TextMessage&) = delete;
+    TextMessage (const TextMessage &) = delete;
+    TextMessage &operator= (const TextMessage &) = delete;
 
-    void SetArea(float x, float y, float width, float height);
+    void SetArea (float x, float y, float width, float height);
 
-    void WriteMessage(const std::wstring& msg);
-    void WriteMessage(float value, const std::wstring& msg, int precision);
-    void WriteMessage(int value, const std::wstring& msg);
-    void WriteMessage(const std::wstring& msgA, const std::wstring& msgB);
+    void WriteMessage (const std::wstring &msg);
+    void WriteMessage (float value, const std::wstring &msg, int precision);
+    void WriteMessage (int value, const std::wstring &msg);
+    void WriteMessage (const std::wstring &msgA, const std::wstring &msgB);
 
-    void SetText(IDWriteFactory* writeFactory, IDWriteTextFormat* textFormat);
-    void Draw(ID2D1RenderTarget* renderTarget);
+    void SetText (IDWriteFactory *writeFactory, IDWriteTextFormat *textFormat);
+    void Draw (ID2D1RenderTarget *renderTarget);
 
 private:
     Microsoft::WRL::ComPtr<IDWriteTextLayout> textLayout_;

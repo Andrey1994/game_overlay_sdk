@@ -22,17 +22,18 @@
 
 #include "Capturing.h"
 
-#include <tlhelp32.h>
 #include <thread>
+#include <tlhelp32.h>
 
 #include "OverlayThread.h"
-#include "Utility/MessageLog.h"
-#include "Utility/ProcessHelper.h"
 #include "RecordingState.h"
 #include "Utility/FileDirectory.h"
+#include "Utility/MessageLog.h"
+#include "Utility/ProcessHelper.h"
 #include "Utility/StringUtils.h"
 
-namespace GameOverlay {
+namespace GameOverlay
+{
     OverlayThread g_overlayThread;
 
 #if _WIN64
@@ -41,7 +42,7 @@ namespace GameOverlay {
     const std::wstring g_overlayLibName = L"GameOverlay32.dll";
 #endif
 
-    void InitLogging (const std::string& callerName)
+    void InitLogging (const std::string &callerName)
     {
         g_messageLog.Start (g_fileDirectory.GetDirectory (DirectoryType::Log) + L"GameOverlayLog",
             ConvertUTF8StringToUTF16String (callerName));
@@ -50,7 +51,8 @@ namespace GameOverlay {
     void InitCapturing ()
     {
         static bool initialized = false;
-        if (!initialized) {
+        if (!initialized)
+        {
             g_overlayThread.Start ();
             initialized = true;
         }

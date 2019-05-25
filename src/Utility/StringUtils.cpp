@@ -25,7 +25,7 @@
 #include <codecvt>
 #include <sstream>
 
-std::vector<std::string> Split (const std::string& text, const char delimiter)
+std::vector<std::string> Split (const std::string &text, const char delimiter)
 {
     std::vector<std::string> result;
     size_t position = 0;
@@ -40,10 +40,10 @@ std::vector<std::string> Split (const std::string& text, const char delimiter)
     return result;
 }
 
-std::wstring Join (const std::vector<std::wstring>& elements, const wchar_t delimiter)
+std::wstring Join (const std::vector<std::wstring> &elements, const wchar_t delimiter)
 {
     std::wstringstream stream;
-    for (const auto& element : elements)
+    for (const auto &element : elements)
     {
         stream << element << delimiter;
     }
@@ -51,14 +51,14 @@ std::wstring Join (const std::vector<std::wstring>& elements, const wchar_t deli
 }
 
 
-std::wstring ConvertUTF8StringToUTF16String (const std::string& input)
+std::wstring ConvertUTF8StringToUTF16String (const std::string &input)
 {
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
     std::wstring result = converter.from_bytes (input);
     return result;
 }
 
-std::string ConvertUTF16StringToUTF8String (const std::wstring& input)
+std::string ConvertUTF16StringToUTF8String (const std::wstring &input)
 {
     std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;
     std::string result = converter.to_bytes (input);

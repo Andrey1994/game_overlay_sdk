@@ -23,11 +23,11 @@
 
 #include "DXGIWrapper.h"
 
-#include <sstream> //for std::stringstream 
+#include <sstream> //for std::stringstream
 #include <string>  //for std::string
 
 
-HRESULT WrappedIUnknown::QueryInterface (REFIID riid, void ** ppvObject)
+HRESULT WrappedIUnknown::QueryInterface (REFIID riid, void **ppvObject)
 {
     if (riid == __uuidof(IDXGIAdapter))
     {
@@ -37,22 +37,26 @@ HRESULT WrappedIUnknown::QueryInterface (REFIID riid, void ** ppvObject)
     else if (riid == __uuidof(IDXGIAdapter1))
     {
         Log ("Queried IDXGIAdapter1");
-        return QueryWrappedInterface<WrappedIDXGIAdapter1, IDXGIAdapter1> (unknown_, riid, ppvObject);
+        return QueryWrappedInterface<WrappedIDXGIAdapter1, IDXGIAdapter1> (
+            unknown_, riid, ppvObject);
     }
     else if (riid == __uuidof(IDXGIAdapter2))
     {
         Log ("Queried IDXGIAdapter2");
-        return QueryWrappedInterface<WrappedIDXGIAdapter2, IDXGIAdapter2> (unknown_, riid, ppvObject);
+        return QueryWrappedInterface<WrappedIDXGIAdapter2, IDXGIAdapter2> (
+            unknown_, riid, ppvObject);
     }
     else if (riid == __uuidof(IDXGIAdapter3))
     {
         Log ("Queried IDXGIAdapter3");
-        return QueryWrappedInterface<WrappedIDXGIAdapter3, IDXGIAdapter3> (unknown_, riid, ppvObject);
+        return QueryWrappedInterface<WrappedIDXGIAdapter3, IDXGIAdapter3> (
+            unknown_, riid, ppvObject);
     }
     else if (riid == __uuidof(IDXGIAdapter4))
     {
         Log ("Queried IDXGIAdapter4");
-        return QueryWrappedInterface<WrappedIDXGIAdapter4, IDXGIAdapter4> (unknown_, riid, ppvObject);
+        return QueryWrappedInterface<WrappedIDXGIAdapter4, IDXGIAdapter4> (
+            unknown_, riid, ppvObject);
     }
     else if (riid == __uuidof(IDXGIFactory))
     {
@@ -62,52 +66,62 @@ HRESULT WrappedIUnknown::QueryInterface (REFIID riid, void ** ppvObject)
     else if (riid == __uuidof(IDXGIFactory1))
     {
         Log ("Queried IDXGIFactory1");
-        return QueryWrappedInterface<WrappedIDXGIFactory1, IDXGIFactory1> (unknown_, riid, ppvObject);
+        return QueryWrappedInterface<WrappedIDXGIFactory1, IDXGIFactory1> (
+            unknown_, riid, ppvObject);
     }
     else if (riid == __uuidof(IDXGIFactory2))
     {
         Log ("Queried IDXGIFactory2");
-        return QueryWrappedInterface<WrappedIDXGIFactory2, IDXGIFactory2> (unknown_, riid, ppvObject);
+        return QueryWrappedInterface<WrappedIDXGIFactory2, IDXGIFactory2> (
+            unknown_, riid, ppvObject);
     }
     else if (riid == __uuidof(IDXGIFactory3))
     {
         Log ("Queried IDXGIFactory3");
-        return QueryWrappedInterface<WrappedIDXGIFactory3, IDXGIFactory3> (unknown_, riid, ppvObject);
+        return QueryWrappedInterface<WrappedIDXGIFactory3, IDXGIFactory3> (
+            unknown_, riid, ppvObject);
     }
     else if (riid == __uuidof(IDXGIFactory4))
     {
         Log ("Queried IDXGIFactory4");
-        return QueryWrappedInterface<WrappedIDXGIFactory4, IDXGIFactory4> (unknown_, riid, ppvObject);
+        return QueryWrappedInterface<WrappedIDXGIFactory4, IDXGIFactory4> (
+            unknown_, riid, ppvObject);
     }
     else if (riid == __uuidof(IDXGIFactory5))
     {
         Log ("Queried IDXGIFactory5");
-        return QueryWrappedInterface<WrappedIDXGIFactory5, IDXGIFactory5> (unknown_, riid, ppvObject);
+        return QueryWrappedInterface<WrappedIDXGIFactory5, IDXGIFactory5> (
+            unknown_, riid, ppvObject);
     }
     else if (riid == __uuidof(IDXGISwapChain))
     {
         Log ("Queried IDXGISwapChain");
-        return QueryWrappedInterface<WrappedIDXGISwapChain, IDXGISwapChain> (unknown_, riid, ppvObject);
+        return QueryWrappedInterface<WrappedIDXGISwapChain, IDXGISwapChain> (
+            unknown_, riid, ppvObject);
     }
     else if (riid == __uuidof(IDXGISwapChain1))
     {
         Log ("Queried IDXGISwapChain1");
-        return QueryWrappedInterface<WrappedIDXGISwapChain1, IDXGISwapChain1> (unknown_, riid, ppvObject);
+        return QueryWrappedInterface<WrappedIDXGISwapChain1, IDXGISwapChain1> (
+            unknown_, riid, ppvObject);
     }
     else if (riid == __uuidof(IDXGISwapChain2))
     {
         Log ("Queried IDXGISwapChain2");
-        return QueryWrappedInterface<WrappedIDXGISwapChain2, IDXGISwapChain2> (unknown_, riid, ppvObject);
+        return QueryWrappedInterface<WrappedIDXGISwapChain2, IDXGISwapChain2> (
+            unknown_, riid, ppvObject);
     }
     else if (riid == __uuidof(IDXGISwapChain3))
     {
         Log ("Queried IDXGISwapChain3");
-        return QueryWrappedInterface<WrappedIDXGISwapChain3, IDXGISwapChain3> (unknown_, riid, ppvObject);
+        return QueryWrappedInterface<WrappedIDXGISwapChain3, IDXGISwapChain3> (
+            unknown_, riid, ppvObject);
     }
     else if (riid == __uuidof(IDXGISwapChain4))
     {
         Log ("Queried IDXGISwapChain4");
-        return QueryWrappedInterface<WrappedIDXGISwapChain4, IDXGISwapChain4> (unknown_, riid, ppvObject);
+        return QueryWrappedInterface<WrappedIDXGISwapChain4, IDXGISwapChain4> (
+            unknown_, riid, ppvObject);
     }
     // Log non wrapped interfaces
     else if (riid == __uuidof(IDXGIDecodeSwapChain))
@@ -217,84 +231,99 @@ ULONG WrappedIUnknown::Release (void)
     return unknown_->Release ();
 }
 
-WrappedIDXGIObject::WrappedIDXGIObject (const std::string & name, IDXGIObject * object)
-    : WrappedIUnknown (name, object) {}
+WrappedIDXGIObject::WrappedIDXGIObject (const std::string &name, IDXGIObject *object)
+    : WrappedIUnknown (name, object)
+{
+}
 
-HRESULT WrappedIDXGIObject::SetPrivateData (REFGUID Name, UINT DataSize, const void * pData)
+HRESULT WrappedIDXGIObject::SetPrivateData (REFGUID Name, UINT DataSize, const void *pData)
 {
     Log ("SetPrivateData");
     return Get<IDXGIObject> ()->SetPrivateData (Name, DataSize, pData);
 }
 
-HRESULT WrappedIDXGIObject::SetPrivateDataInterface (REFGUID Name, const IUnknown * pUnknown)
+HRESULT WrappedIDXGIObject::SetPrivateDataInterface (REFGUID Name, const IUnknown *pUnknown)
 {
     Log ("SetPrivateDataInterface");
     return Get<IDXGIObject> ()->SetPrivateDataInterface (Name, pUnknown);
 }
 
-HRESULT WrappedIDXGIObject::GetPrivateData (REFGUID Name, UINT * pDataSize, void * pData)
+HRESULT WrappedIDXGIObject::GetPrivateData (REFGUID Name, UINT *pDataSize, void *pData)
 {
     Log ("GetPrivateData");
     return Get<IDXGIObject> ()->GetPrivateData (Name, pDataSize, pData);
 }
 
-HRESULT WrappedIDXGIObject::GetParent (REFIID riid, void ** ppParent)
+HRESULT WrappedIDXGIObject::GetParent (REFIID riid, void **ppParent)
 {
     Log ("GetParent");
     return Get<IDXGIObject> ()->GetParent (riid, ppParent);
 }
 
-WrappedIDXGIAdapter::WrappedIDXGIAdapter (IDXGIAdapter * adapter)
-    : WrappedIDXGIObject ("WrappedIDXGIAdapter", adapter) {}
+WrappedIDXGIAdapter::WrappedIDXGIAdapter (IDXGIAdapter *adapter)
+    : WrappedIDXGIObject ("WrappedIDXGIAdapter", adapter)
+{
+}
 
-WrappedIDXGIAdapter::WrappedIDXGIAdapter (const std::string & name, IDXGIAdapter * adapter)
-    : WrappedIDXGIObject (name, adapter) {}
+WrappedIDXGIAdapter::WrappedIDXGIAdapter (const std::string &name, IDXGIAdapter *adapter)
+    : WrappedIDXGIObject (name, adapter)
+{
+}
 
-HRESULT WrappedIDXGIAdapter::EnumOutputs (UINT Output, IDXGIOutput ** ppOutput)
+HRESULT WrappedIDXGIAdapter::EnumOutputs (UINT Output, IDXGIOutput **ppOutput)
 {
     Log ("EnumOutputs");
     return Get<IDXGIAdapter> ()->EnumOutputs (Output, ppOutput);
 }
 
-HRESULT WrappedIDXGIAdapter::GetDesc (DXGI_ADAPTER_DESC * pDesc)
+HRESULT WrappedIDXGIAdapter::GetDesc (DXGI_ADAPTER_DESC *pDesc)
 {
     Log ("GetDesc");
     return Get<IDXGIAdapter> ()->GetDesc (pDesc);
 }
 
-HRESULT WrappedIDXGIAdapter::CheckInterfaceSupport (REFGUID InterfaceName, LARGE_INTEGER * pUMDVersion)
+HRESULT WrappedIDXGIAdapter::CheckInterfaceSupport (
+    REFGUID InterfaceName, LARGE_INTEGER *pUMDVersion)
 {
     Log ("CheckInterfaceSupport");
     return Get<IDXGIAdapter> ()->CheckInterfaceSupport (InterfaceName, pUMDVersion);
 }
 
-WrappedIDXGIAdapter1::WrappedIDXGIAdapter1 (IDXGIAdapter1 * adapter)
-    : WrappedIDXGIAdapter ("WrappedIDXGIAdapter1", adapter) {}
+WrappedIDXGIAdapter1::WrappedIDXGIAdapter1 (IDXGIAdapter1 *adapter)
+    : WrappedIDXGIAdapter ("WrappedIDXGIAdapter1", adapter)
+{
+}
 
-WrappedIDXGIAdapter1::WrappedIDXGIAdapter1 (const std::string & name, IDXGIAdapter1 * adapter)
-    : WrappedIDXGIAdapter (name, adapter) {}
+WrappedIDXGIAdapter1::WrappedIDXGIAdapter1 (const std::string &name, IDXGIAdapter1 *adapter)
+    : WrappedIDXGIAdapter (name, adapter)
+{
+}
 
-HRESULT WrappedIDXGIAdapter1::GetDesc1 (DXGI_ADAPTER_DESC1 * pDesc)
+HRESULT WrappedIDXGIAdapter1::GetDesc1 (DXGI_ADAPTER_DESC1 *pDesc)
 {
     Log ("GetDesc1");
     return Get<IDXGIAdapter1> ()->GetDesc1 (pDesc);
 }
 
-WrappedIDXGIFactory::WrappedIDXGIFactory (IDXGIFactory * factory)
-    : WrappedIDXGIObject ("WrappedIDXGIFactory", factory) {}
+WrappedIDXGIFactory::WrappedIDXGIFactory (IDXGIFactory *factory)
+    : WrappedIDXGIObject ("WrappedIDXGIFactory", factory)
+{
+}
 
-WrappedIDXGIFactory::WrappedIDXGIFactory (const std::string & name, IDXGIFactory * factory)
-    : WrappedIDXGIObject (name, factory) {}
+WrappedIDXGIFactory::WrappedIDXGIFactory (const std::string &name, IDXGIFactory *factory)
+    : WrappedIDXGIObject (name, factory)
+{
+}
 
-HRESULT WrappedIDXGIFactory::EnumAdapters (UINT Adapter, IDXGIAdapter ** ppAdapter)
+HRESULT WrappedIDXGIFactory::EnumAdapters (UINT Adapter, IDXGIAdapter **ppAdapter)
 {
     Log ("EnumAdapters");
-    IDXGIAdapter* adapter;
+    IDXGIAdapter *adapter;
     HRESULT hr = Get<IDXGIFactory> ()->EnumAdapters (Adapter, &adapter);
     if (SUCCEEDED (hr))
     {
-        WrappedIDXGIAdapter* wrappedAdapter = new WrappedIDXGIAdapter (adapter);
-        *ppAdapter = (IDXGIAdapter*)wrappedAdapter;
+        WrappedIDXGIAdapter *wrappedAdapter = new WrappedIDXGIAdapter (adapter);
+        *ppAdapter = (IDXGIAdapter *)wrappedAdapter;
     }
     return hr;
 }
@@ -305,46 +334,51 @@ HRESULT WrappedIDXGIFactory::MakeWindowAssociation (HWND WindowHandle, UINT Flag
     return Get<IDXGIFactory> ()->MakeWindowAssociation (WindowHandle, Flags);
 }
 
-HRESULT WrappedIDXGIFactory::GetWindowAssociation (HWND * pWindowHandle)
+HRESULT WrappedIDXGIFactory::GetWindowAssociation (HWND *pWindowHandle)
 {
     Log ("GetWindowAssociation");
     return Get<IDXGIFactory> ()->GetWindowAssociation (pWindowHandle);
 }
 
-HRESULT WrappedIDXGIFactory::CreateSwapChain (IUnknown * pDevice, DXGI_SWAP_CHAIN_DESC * pDesc, IDXGISwapChain ** ppSwapChain)
+HRESULT WrappedIDXGIFactory::CreateSwapChain (
+    IUnknown *pDevice, DXGI_SWAP_CHAIN_DESC *pDesc, IDXGISwapChain **ppSwapChain)
 {
     Log ("CreateSwapChain");
     return Get<IDXGIFactory> ()->CreateSwapChain (pDevice, pDesc, ppSwapChain);
 }
 
-HRESULT WrappedIDXGIFactory::CreateSoftwareAdapter (HMODULE Module, IDXGIAdapter ** ppAdapter)
+HRESULT WrappedIDXGIFactory::CreateSoftwareAdapter (HMODULE Module, IDXGIAdapter **ppAdapter)
 {
     Log ("CreateSoftwareAdapter");
-    IDXGIAdapter* adapter;
+    IDXGIAdapter *adapter;
     HRESULT hr = Get<IDXGIFactory> ()->CreateSoftwareAdapter (Module, &adapter);
     if (SUCCEEDED (hr))
     {
-        WrappedIDXGIAdapter* wrappedAdapter = new WrappedIDXGIAdapter (adapter);
-        *ppAdapter = (IDXGIAdapter*)wrappedAdapter;
+        WrappedIDXGIAdapter *wrappedAdapter = new WrappedIDXGIAdapter (adapter);
+        *ppAdapter = (IDXGIAdapter *)wrappedAdapter;
     }
     return hr;
 }
 
-WrappedIDXGIFactory1::WrappedIDXGIFactory1 (IDXGIFactory1 * factory)
-    : WrappedIDXGIFactory ("WrappedIDXGIFactory1", factory) {}
+WrappedIDXGIFactory1::WrappedIDXGIFactory1 (IDXGIFactory1 *factory)
+    : WrappedIDXGIFactory ("WrappedIDXGIFactory1", factory)
+{
+}
 
-WrappedIDXGIFactory1::WrappedIDXGIFactory1 (const std::string & name, IDXGIFactory1 * factory)
-    : WrappedIDXGIFactory (name, factory) {}
+WrappedIDXGIFactory1::WrappedIDXGIFactory1 (const std::string &name, IDXGIFactory1 *factory)
+    : WrappedIDXGIFactory (name, factory)
+{
+}
 
-HRESULT WrappedIDXGIFactory1::EnumAdapters1 (UINT Adapter, IDXGIAdapter1 ** ppAdapter)
+HRESULT WrappedIDXGIFactory1::EnumAdapters1 (UINT Adapter, IDXGIAdapter1 **ppAdapter)
 {
     Log ("EnumAdapters1");
-    IDXGIAdapter1* adapter;
+    IDXGIAdapter1 *adapter;
     HRESULT hr = Get<IDXGIFactory1> ()->EnumAdapters1 (Adapter, &adapter);
     if (SUCCEEDED (hr))
     {
-        WrappedIDXGIAdapter1* wrappedAdapter = new WrappedIDXGIAdapter1 (adapter);
-        *ppAdapter = (IDXGIAdapter1*)wrappedAdapter;
+        WrappedIDXGIAdapter1 *wrappedAdapter = new WrappedIDXGIAdapter1 (adapter);
+        *ppAdapter = (IDXGIAdapter1 *)wrappedAdapter;
     }
     return hr;
 }
@@ -355,11 +389,15 @@ BOOL WrappedIDXGIFactory1::IsCurrent (void)
     return Get<IDXGIFactory1> ()->IsCurrent ();
 }
 
-WrappedIDXGIFactory2::WrappedIDXGIFactory2 (IDXGIFactory2 * factory)
-    : WrappedIDXGIFactory1 ("WrappedIDXGIFactory2", factory) {}
+WrappedIDXGIFactory2::WrappedIDXGIFactory2 (IDXGIFactory2 *factory)
+    : WrappedIDXGIFactory1 ("WrappedIDXGIFactory2", factory)
+{
+}
 
-WrappedIDXGIFactory2::WrappedIDXGIFactory2 (const std::string & name, IDXGIFactory2 * factory)
-    : WrappedIDXGIFactory1 (name, factory) {}
+WrappedIDXGIFactory2::WrappedIDXGIFactory2 (const std::string &name, IDXGIFactory2 *factory)
+    : WrappedIDXGIFactory1 (name, factory)
+{
+}
 
 BOOL WrappedIDXGIFactory2::IsWindowedStereoEnabled (void)
 {
@@ -367,31 +405,38 @@ BOOL WrappedIDXGIFactory2::IsWindowedStereoEnabled (void)
     return Get<IDXGIFactory2> ()->IsWindowedStereoEnabled ();
 }
 
-HRESULT WrappedIDXGIFactory2::CreateSwapChainForHwnd (IUnknown * pDevice, HWND hWnd, const DXGI_SWAP_CHAIN_DESC1 * pDesc, const DXGI_SWAP_CHAIN_FULLSCREEN_DESC * pFullscreenDesc, IDXGIOutput * pRestrictToOutput, IDXGISwapChain1 ** ppSwapChain)
+HRESULT WrappedIDXGIFactory2::CreateSwapChainForHwnd (IUnknown *pDevice, HWND hWnd,
+    const DXGI_SWAP_CHAIN_DESC1 *pDesc, const DXGI_SWAP_CHAIN_FULLSCREEN_DESC *pFullscreenDesc,
+    IDXGIOutput *pRestrictToOutput, IDXGISwapChain1 **ppSwapChain)
 {
     Log ("CreateSwapChainForHwnd");
-    return Get<IDXGIFactory2> ()->CreateSwapChainForHwnd (pDevice, hWnd, pDesc, pFullscreenDesc, pRestrictToOutput, ppSwapChain);
+    return Get<IDXGIFactory2> ()->CreateSwapChainForHwnd (
+        pDevice, hWnd, pDesc, pFullscreenDesc, pRestrictToOutput, ppSwapChain);
 }
 
-HRESULT WrappedIDXGIFactory2::CreateSwapChainForCoreWindow (IUnknown * pDevice, IUnknown * pWindow, const DXGI_SWAP_CHAIN_DESC1 * pDesc, IDXGIOutput * pRestrictToOutput, IDXGISwapChain1 ** ppSwapChain)
+HRESULT WrappedIDXGIFactory2::CreateSwapChainForCoreWindow (IUnknown *pDevice, IUnknown *pWindow,
+    const DXGI_SWAP_CHAIN_DESC1 *pDesc, IDXGIOutput *pRestrictToOutput,
+    IDXGISwapChain1 **ppSwapChain)
 {
     Log ("CreateSwapChainForCoreWindow");
-    return Get<IDXGIFactory2> ()->CreateSwapChainForCoreWindow (pDevice, pWindow, pDesc, pRestrictToOutput, ppSwapChain);
+    return Get<IDXGIFactory2> ()->CreateSwapChainForCoreWindow (
+        pDevice, pWindow, pDesc, pRestrictToOutput, ppSwapChain);
 }
 
-HRESULT WrappedIDXGIFactory2::GetSharedResourceAdapterLuid (HANDLE hResource, LUID * pLuid)
+HRESULT WrappedIDXGIFactory2::GetSharedResourceAdapterLuid (HANDLE hResource, LUID *pLuid)
 {
     Log ("GetSharedResourceAdapterLuid");
     return Get<IDXGIFactory2> ()->GetSharedResourceAdapterLuid (hResource, pLuid);
 }
 
-HRESULT WrappedIDXGIFactory2::RegisterStereoStatusWindow (HWND WindowHandle, UINT wMsg, DWORD * pdwCookie)
+HRESULT WrappedIDXGIFactory2::RegisterStereoStatusWindow (
+    HWND WindowHandle, UINT wMsg, DWORD *pdwCookie)
 {
     Log ("RegisterStereoStatusWindow");
     return Get<IDXGIFactory2> ()->RegisterStereoStatusWindow (WindowHandle, wMsg, pdwCookie);
 }
 
-HRESULT WrappedIDXGIFactory2::RegisterStereoStatusEvent (HANDLE hEvent, DWORD * pdwCookie)
+HRESULT WrappedIDXGIFactory2::RegisterStereoStatusEvent (HANDLE hEvent, DWORD *pdwCookie)
 {
     Log ("RegisterStereoStatusEvent");
     return Get<IDXGIFactory2> ()->RegisterStereoStatusEvent (hEvent, pdwCookie);
@@ -403,13 +448,14 @@ void WrappedIDXGIFactory2::UnregisterStereoStatus (DWORD dwCookie)
     Get<IDXGIFactory2> ()->UnregisterStereoStatus (dwCookie);
 }
 
-HRESULT WrappedIDXGIFactory2::RegisterOcclusionStatusWindow (HWND WindowHandle, UINT wMsg, DWORD * pdwCookie)
+HRESULT WrappedIDXGIFactory2::RegisterOcclusionStatusWindow (
+    HWND WindowHandle, UINT wMsg, DWORD *pdwCookie)
 {
     Log ("RegisterOcclusionStatusWindow");
     return Get<IDXGIFactory2> ()->RegisterOcclusionStatusWindow (WindowHandle, wMsg, pdwCookie);
 }
 
-HRESULT WrappedIDXGIFactory2::RegisterOcclusionStatusEvent (HANDLE hEvent, DWORD * pdwCookie)
+HRESULT WrappedIDXGIFactory2::RegisterOcclusionStatusEvent (HANDLE hEvent, DWORD *pdwCookie)
 {
     Log ("RegisterOcclusionStatusEvent");
     return Get<IDXGIFactory2> ()->RegisterOcclusionStatusEvent (hEvent, pdwCookie);
@@ -421,19 +467,22 @@ void WrappedIDXGIFactory2::UnregisterOcclusionStatus (DWORD dwCookie)
     Get<IDXGIFactory2> ()->UnregisterOcclusionStatus (dwCookie);
 }
 
-HRESULT WrappedIDXGIFactory2::CreateSwapChainForComposition (IUnknown * pDevice, const DXGI_SWAP_CHAIN_DESC1 * pDesc, IDXGIOutput * pRestrictToOutput, IDXGISwapChain1 ** ppSwapChain)
+HRESULT WrappedIDXGIFactory2::CreateSwapChainForComposition (IUnknown *pDevice,
+    const DXGI_SWAP_CHAIN_DESC1 *pDesc, IDXGIOutput *pRestrictToOutput,
+    IDXGISwapChain1 **ppSwapChain)
 {
     Log ("CreateSwapChainForComposition");
-    return Get<IDXGIFactory2> ()->CreateSwapChainForComposition (pDevice, pDesc, pRestrictToOutput, ppSwapChain);
+    return Get<IDXGIFactory2> ()->CreateSwapChainForComposition (
+        pDevice, pDesc, pRestrictToOutput, ppSwapChain);
 }
 
-WrappedIUnknown::WrappedIUnknown (const std::string & name, IUnknown * unknown)
+WrappedIUnknown::WrappedIUnknown (const std::string &name, IUnknown *unknown)
     : name_ (name), unknown_ (unknown)
 {
     LogWrapped (unknown);
 }
 
-void WrappedIUnknown::LogUUID (REFIID riid, const std::wstring& message)
+void WrappedIUnknown::LogUUID (REFIID riid, const std::wstring &message)
 {
     LPWSTR str;
     HRESULT riidHR = StringFromIID (riid, &str);
@@ -444,37 +493,41 @@ void WrappedIUnknown::LogUUID (REFIID riid, const std::wstring& message)
     }
 }
 
-void WrappedIUnknown::LogWrapped (IUnknown * unknown)
+void WrappedIUnknown::LogWrapped (IUnknown *unknown)
 {
-    const void * address = static_cast<const void*>(unknown);
+    const void *address = static_cast<const void *> (unknown);
     std::stringstream stream;
     stream << "Wrapped around [" << address << "]";
     Log (stream.str ());
 }
 
-void WrappedIUnknown::Log (const std::string & message)
+void WrappedIUnknown::Log (const std::string &message)
 {
     // For debugging purposes to distinguish different objects
-    const void * address = static_cast<const void*>(this);
+    const void *address = static_cast<const void *> (this);
     std::stringstream stream;
     stream << "[" << address << "] -> " << message;
     g_messageLog.LogInfo (name_, stream.str ());
 }
 
-void WrappedIUnknown::Log (const std::wstring & message)
+void WrappedIUnknown::Log (const std::wstring &message)
 {
     // For debugging purposes to distinguish different objects
-    const void * address = static_cast<const void*>(this);
+    const void *address = static_cast<const void *> (this);
     std::wstringstream stream;
     stream << "[" << address << "] -> " << message;
     g_messageLog.LogInfo (name_, stream.str ());
 }
 
-WrappedIDXGIFactory3::WrappedIDXGIFactory3 (IDXGIFactory3 * factory)
-    : WrappedIDXGIFactory2 ("WrappedIDXGIFactory3", factory) {}
+WrappedIDXGIFactory3::WrappedIDXGIFactory3 (IDXGIFactory3 *factory)
+    : WrappedIDXGIFactory2 ("WrappedIDXGIFactory3", factory)
+{
+}
 
-WrappedIDXGIFactory3::WrappedIDXGIFactory3 (const std::string & name, IDXGIFactory3 * factory)
-    : WrappedIDXGIFactory2 (name, factory) {}
+WrappedIDXGIFactory3::WrappedIDXGIFactory3 (const std::string &name, IDXGIFactory3 *factory)
+    : WrappedIDXGIFactory2 (name, factory)
+{
+}
 
 UINT WrappedIDXGIFactory3::GetCreationFlags ()
 {
@@ -482,76 +535,102 @@ UINT WrappedIDXGIFactory3::GetCreationFlags ()
     return Get<IDXGIFactory3> ()->GetCreationFlags ();
 }
 
-WrappedIDXGIFactory4::WrappedIDXGIFactory4 (IDXGIFactory4 * factory)
-    : WrappedIDXGIFactory3 ("WrappedIDXGIFactory4", factory) {}
+WrappedIDXGIFactory4::WrappedIDXGIFactory4 (IDXGIFactory4 *factory)
+    : WrappedIDXGIFactory3 ("WrappedIDXGIFactory4", factory)
+{
+}
 
-WrappedIDXGIFactory4::WrappedIDXGIFactory4 (const std::string & name, IDXGIFactory4 * factory)
-    : WrappedIDXGIFactory3 (name, factory) {}
+WrappedIDXGIFactory4::WrappedIDXGIFactory4 (const std::string &name, IDXGIFactory4 *factory)
+    : WrappedIDXGIFactory3 (name, factory)
+{
+}
 
-HRESULT WrappedIDXGIFactory4::EnumAdapterByLuid (LUID AdapterLuid, REFIID riid, void ** ppvAdapter)
+HRESULT WrappedIDXGIFactory4::EnumAdapterByLuid (LUID AdapterLuid, REFIID riid, void **ppvAdapter)
 {
     Log ("EnumAdapterByLuid");
     return Get<IDXGIFactory4> ()->EnumAdapterByLuid (AdapterLuid, riid, ppvAdapter);
 }
 
-HRESULT WrappedIDXGIFactory4::EnumWarpAdapter (REFIID riid, void ** ppvAdapter)
+HRESULT WrappedIDXGIFactory4::EnumWarpAdapter (REFIID riid, void **ppvAdapter)
 {
     Log ("EnumWarpAdapter");
     return Get<IDXGIFactory4> ()->EnumWarpAdapter (riid, ppvAdapter);
 }
 
-WrappedIDXGIFactory5::WrappedIDXGIFactory5 (IDXGIFactory5 * factory)
-    : WrappedIDXGIFactory4 ("WrappedIDXGIFactory5", factory) {}
-
-WrappedIDXGIFactory5::WrappedIDXGIFactory5 (const std::string & name, IDXGIFactory5 * factory)
-    : WrappedIDXGIFactory4 (name, factory) {}
-
-HRESULT WrappedIDXGIFactory5::CheckFeatureSupport (DXGI_FEATURE Feature, void * pFeatureSupportData, UINT FeatureSupportDataSize)
+WrappedIDXGIFactory5::WrappedIDXGIFactory5 (IDXGIFactory5 *factory)
+    : WrappedIDXGIFactory4 ("WrappedIDXGIFactory5", factory)
 {
-    Log ("CheckFeatureSupport");
-    return Get<IDXGIFactory5> ()->CheckFeatureSupport (Feature, pFeatureSupportData, FeatureSupportDataSize);
 }
 
-WrappedIDXGIAdapter2::WrappedIDXGIAdapter2 (IDXGIAdapter2 * adapter)
-    : WrappedIDXGIAdapter1 ("WrappedIDXGIAdapter2", adapter) {}
+WrappedIDXGIFactory5::WrappedIDXGIFactory5 (const std::string &name, IDXGIFactory5 *factory)
+    : WrappedIDXGIFactory4 (name, factory)
+{
+}
 
-WrappedIDXGIAdapter2::WrappedIDXGIAdapter2 (const std::string & name, IDXGIAdapter2 * adapter)
-    : WrappedIDXGIAdapter1 (name, adapter) {}
+HRESULT WrappedIDXGIFactory5::CheckFeatureSupport (
+    DXGI_FEATURE Feature, void *pFeatureSupportData, UINT FeatureSupportDataSize)
+{
+    Log ("CheckFeatureSupport");
+    return Get<IDXGIFactory5> ()->CheckFeatureSupport (
+        Feature, pFeatureSupportData, FeatureSupportDataSize);
+}
 
-HRESULT WrappedIDXGIAdapter2::GetDesc2 (DXGI_ADAPTER_DESC2 * pDesc)
+WrappedIDXGIAdapter2::WrappedIDXGIAdapter2 (IDXGIAdapter2 *adapter)
+    : WrappedIDXGIAdapter1 ("WrappedIDXGIAdapter2", adapter)
+{
+}
+
+WrappedIDXGIAdapter2::WrappedIDXGIAdapter2 (const std::string &name, IDXGIAdapter2 *adapter)
+    : WrappedIDXGIAdapter1 (name, adapter)
+{
+}
+
+HRESULT WrappedIDXGIAdapter2::GetDesc2 (DXGI_ADAPTER_DESC2 *pDesc)
 {
     Log ("GetDesc2");
     return Get<IDXGIAdapter2> ()->GetDesc2 (pDesc);
 }
 
-WrappedIDXGIAdapter3::WrappedIDXGIAdapter3 (IDXGIAdapter3 * adapter)
-    : WrappedIDXGIAdapter2 ("WrappedIDXGIAdapter3", adapter) {}
+WrappedIDXGIAdapter3::WrappedIDXGIAdapter3 (IDXGIAdapter3 *adapter)
+    : WrappedIDXGIAdapter2 ("WrappedIDXGIAdapter3", adapter)
+{
+}
 
-WrappedIDXGIAdapter3::WrappedIDXGIAdapter3 (const std::string & name, IDXGIAdapter3 * adapter)
-    : WrappedIDXGIAdapter2 (name, adapter) {}
+WrappedIDXGIAdapter3::WrappedIDXGIAdapter3 (const std::string &name, IDXGIAdapter3 *adapter)
+    : WrappedIDXGIAdapter2 (name, adapter)
+{
+}
 
-HRESULT WrappedIDXGIAdapter3::QueryVideoMemoryInfo (UINT NodeIndex, DXGI_MEMORY_SEGMENT_GROUP MemorySegmentGroup, DXGI_QUERY_VIDEO_MEMORY_INFO * pVideoMemoryInfo)
+HRESULT WrappedIDXGIAdapter3::QueryVideoMemoryInfo (UINT NodeIndex,
+    DXGI_MEMORY_SEGMENT_GROUP MemorySegmentGroup, DXGI_QUERY_VIDEO_MEMORY_INFO *pVideoMemoryInfo)
 {
     Log ("QueryVideoMemoryInfo");
-    return Get<IDXGIAdapter3> ()->QueryVideoMemoryInfo (NodeIndex, MemorySegmentGroup, pVideoMemoryInfo);
+    return Get<IDXGIAdapter3> ()->QueryVideoMemoryInfo (
+        NodeIndex, MemorySegmentGroup, pVideoMemoryInfo);
 }
 
-HRESULT WrappedIDXGIAdapter3::RegisterHardwareContentProtectionTeardownStatusEvent (HANDLE hEvent, DWORD * pdwCookie)
+HRESULT WrappedIDXGIAdapter3::RegisterHardwareContentProtectionTeardownStatusEvent (
+    HANDLE hEvent, DWORD *pdwCookie)
 {
     Log ("RegisterHardwareContentProtectionTeardownStatusEvent");
-    return Get<IDXGIAdapter3> ()->RegisterHardwareContentProtectionTeardownStatusEvent (hEvent, pdwCookie);
+    return Get<IDXGIAdapter3> ()->RegisterHardwareContentProtectionTeardownStatusEvent (
+        hEvent, pdwCookie);
 }
 
-HRESULT WrappedIDXGIAdapter3::RegisterVideoMemoryBudgetChangeNotificationEvent (HANDLE hEvent, DWORD * pdwCookie)
+HRESULT WrappedIDXGIAdapter3::RegisterVideoMemoryBudgetChangeNotificationEvent (
+    HANDLE hEvent, DWORD *pdwCookie)
 {
     Log ("RegisterVideoMemoryBudgetChangeNotificationEvent");
-    return Get<IDXGIAdapter3> ()->RegisterVideoMemoryBudgetChangeNotificationEvent (hEvent, pdwCookie);
+    return Get<IDXGIAdapter3> ()->RegisterVideoMemoryBudgetChangeNotificationEvent (
+        hEvent, pdwCookie);
 }
 
-HRESULT WrappedIDXGIAdapter3::SetVideoMemoryReservation (UINT NodeIndex, DXGI_MEMORY_SEGMENT_GROUP MemorySegmentGroup, UINT64 Reservation)
+HRESULT WrappedIDXGIAdapter3::SetVideoMemoryReservation (
+    UINT NodeIndex, DXGI_MEMORY_SEGMENT_GROUP MemorySegmentGroup, UINT64 Reservation)
 {
     Log ("SetVideoMemoryReservation");
-    return Get<IDXGIAdapter3> ()->SetVideoMemoryReservation (NodeIndex, MemorySegmentGroup, Reservation);
+    return Get<IDXGIAdapter3> ()->SetVideoMemoryReservation (
+        NodeIndex, MemorySegmentGroup, Reservation);
 }
 
 void WrappedIDXGIAdapter3::UnregisterHardwareContentProtectionTeardownStatus (DWORD dwCookie)
@@ -566,32 +645,43 @@ void WrappedIDXGIAdapter3::UnregisterVideoMemoryBudgetChangeNotification (DWORD 
     return Get<IDXGIAdapter3> ()->UnregisterVideoMemoryBudgetChangeNotification (dwCookie);
 }
 
-WrappedIDXGIAdapter4::WrappedIDXGIAdapter4 (IDXGIAdapter4 * adapter)
-    : WrappedIDXGIAdapter3 ("WrappedIDXGIAdapter4", adapter) {}
+WrappedIDXGIAdapter4::WrappedIDXGIAdapter4 (IDXGIAdapter4 *adapter)
+    : WrappedIDXGIAdapter3 ("WrappedIDXGIAdapter4", adapter)
+{
+}
 
-WrappedIDXGIAdapter4::WrappedIDXGIAdapter4 (const std::string & name, IDXGIAdapter4 * adapter)
-    : WrappedIDXGIAdapter3 (name, adapter) {}
+WrappedIDXGIAdapter4::WrappedIDXGIAdapter4 (const std::string &name, IDXGIAdapter4 *adapter)
+    : WrappedIDXGIAdapter3 (name, adapter)
+{
+}
 
-HRESULT WrappedIDXGIAdapter4::GetDesc3 (DXGI_ADAPTER_DESC3 * pDesc)
+HRESULT WrappedIDXGIAdapter4::GetDesc3 (DXGI_ADAPTER_DESC3 *pDesc)
 {
     Log ("GetDesc3");
     return Get<IDXGIAdapter4> ()->GetDesc3 (pDesc);
 }
 
-WrappedIDXGIDeviceSubObject::WrappedIDXGIDeviceSubObject (const std::string & name, IDXGIDeviceSubObject * object)
-    : WrappedIDXGIObject (name, object) {}
+WrappedIDXGIDeviceSubObject::WrappedIDXGIDeviceSubObject (
+    const std::string &name, IDXGIDeviceSubObject *object)
+    : WrappedIDXGIObject (name, object)
+{
+}
 
-HRESULT WrappedIDXGIDeviceSubObject::GetDevice (REFIID riid, void ** ppDevice)
+HRESULT WrappedIDXGIDeviceSubObject::GetDevice (REFIID riid, void **ppDevice)
 {
     Log ("GetDevice");
     return Get<IDXGIDeviceSubObject> ()->GetDevice (riid, ppDevice);
 }
 
-WrappedIDXGISwapChain::WrappedIDXGISwapChain (IDXGISwapChain * swapchain)
-    : WrappedIDXGIDeviceSubObject ("WrappedIDXGISwapChain", swapchain) {}
+WrappedIDXGISwapChain::WrappedIDXGISwapChain (IDXGISwapChain *swapchain)
+    : WrappedIDXGIDeviceSubObject ("WrappedIDXGISwapChain", swapchain)
+{
+}
 
-WrappedIDXGISwapChain::WrappedIDXGISwapChain (const std::string & name, IDXGISwapChain * swapchain)
-    : WrappedIDXGIDeviceSubObject (name, swapchain) {}
+WrappedIDXGISwapChain::WrappedIDXGISwapChain (const std::string &name, IDXGISwapChain *swapchain)
+    : WrappedIDXGIDeviceSubObject (name, swapchain)
+{
+}
 
 HRESULT WrappedIDXGISwapChain::Present (UINT SyncInterval, UINT Flags)
 {
@@ -599,91 +689,98 @@ HRESULT WrappedIDXGISwapChain::Present (UINT SyncInterval, UINT Flags)
     return Get<IDXGISwapChain> ()->Present (SyncInterval, Flags);
 }
 
-HRESULT WrappedIDXGISwapChain::GetBuffer (UINT Buffer, REFIID riid, void ** ppSurface)
+HRESULT WrappedIDXGISwapChain::GetBuffer (UINT Buffer, REFIID riid, void **ppSurface)
 {
     Log ("GetBuffer");
     return Get<IDXGISwapChain> ()->GetBuffer (Buffer, riid, ppSurface);
 }
 
-HRESULT WrappedIDXGISwapChain::SetFullscreenState (BOOL Fullscreen, IDXGIOutput * pTarget)
+HRESULT WrappedIDXGISwapChain::SetFullscreenState (BOOL Fullscreen, IDXGIOutput *pTarget)
 {
     Log ("SetFullscreenState");
     return Get<IDXGISwapChain> ()->SetFullscreenState (Fullscreen, pTarget);
 }
 
-HRESULT WrappedIDXGISwapChain::GetFullscreenState (BOOL * pFullscreen, IDXGIOutput ** ppTarget)
+HRESULT WrappedIDXGISwapChain::GetFullscreenState (BOOL *pFullscreen, IDXGIOutput **ppTarget)
 {
     Log ("GetFullscreenState");
     return Get<IDXGISwapChain> ()->GetFullscreenState (pFullscreen, ppTarget);
 }
 
-HRESULT WrappedIDXGISwapChain::GetDesc (DXGI_SWAP_CHAIN_DESC * pDesc)
+HRESULT WrappedIDXGISwapChain::GetDesc (DXGI_SWAP_CHAIN_DESC *pDesc)
 {
     Log ("GetDesc");
     return Get<IDXGISwapChain> ()->GetDesc (pDesc);
 }
 
-HRESULT WrappedIDXGISwapChain::ResizeBuffers (UINT BufferCount, UINT Width, UINT Height, DXGI_FORMAT NewFormat, UINT SwapChainFlags)
+HRESULT WrappedIDXGISwapChain::ResizeBuffers (
+    UINT BufferCount, UINT Width, UINT Height, DXGI_FORMAT NewFormat, UINT SwapChainFlags)
 {
     Log ("ResizeBuffers");
-    return Get<IDXGISwapChain> ()->ResizeBuffers (BufferCount, Width, Height, NewFormat, SwapChainFlags);
+    return Get<IDXGISwapChain> ()->ResizeBuffers (
+        BufferCount, Width, Height, NewFormat, SwapChainFlags);
 }
 
-HRESULT WrappedIDXGISwapChain::ResizeTarget (const DXGI_MODE_DESC * pNewTargetParameters)
+HRESULT WrappedIDXGISwapChain::ResizeTarget (const DXGI_MODE_DESC *pNewTargetParameters)
 {
     Log ("ResizeTarget");
     return Get<IDXGISwapChain> ()->ResizeTarget (pNewTargetParameters);
 }
 
-HRESULT WrappedIDXGISwapChain::GetContainingOutput (IDXGIOutput ** ppOutput)
+HRESULT WrappedIDXGISwapChain::GetContainingOutput (IDXGIOutput **ppOutput)
 {
     Log ("GetContainingOutput");
     return Get<IDXGISwapChain> ()->GetContainingOutput (ppOutput);
 }
 
-HRESULT WrappedIDXGISwapChain::GetFrameStatistics (DXGI_FRAME_STATISTICS * pStats)
+HRESULT WrappedIDXGISwapChain::GetFrameStatistics (DXGI_FRAME_STATISTICS *pStats)
 {
     Log ("GetFrameStatistics");
     return Get<IDXGISwapChain> ()->GetFrameStatistics (pStats);
 }
 
-HRESULT WrappedIDXGISwapChain::GetLastPresentCount (UINT * pLastPresentCount)
+HRESULT WrappedIDXGISwapChain::GetLastPresentCount (UINT *pLastPresentCount)
 {
     Log ("GetLastPresentCount");
     return Get<IDXGISwapChain> ()->GetLastPresentCount (pLastPresentCount);
 }
 
-WrappedIDXGISwapChain1::WrappedIDXGISwapChain1 (IDXGISwapChain1 * swapchain)
-    : WrappedIDXGISwapChain ("WrappedIDXGISwapChain1", swapchain) {}
+WrappedIDXGISwapChain1::WrappedIDXGISwapChain1 (IDXGISwapChain1 *swapchain)
+    : WrappedIDXGISwapChain ("WrappedIDXGISwapChain1", swapchain)
+{
+}
 
-WrappedIDXGISwapChain1::WrappedIDXGISwapChain1 (const std::string & name, IDXGISwapChain1 * swapchain)
-    : WrappedIDXGISwapChain (name, swapchain) {}
+WrappedIDXGISwapChain1::WrappedIDXGISwapChain1 (const std::string &name, IDXGISwapChain1 *swapchain)
+    : WrappedIDXGISwapChain (name, swapchain)
+{
+}
 
-HRESULT WrappedIDXGISwapChain1::GetDesc1 (DXGI_SWAP_CHAIN_DESC1 * pDesc)
+HRESULT WrappedIDXGISwapChain1::GetDesc1 (DXGI_SWAP_CHAIN_DESC1 *pDesc)
 {
     Log ("GetDesc1");
     return Get<IDXGISwapChain1> ()->GetDesc1 (pDesc);
 }
 
-HRESULT WrappedIDXGISwapChain1::GetFullscreenDesc (DXGI_SWAP_CHAIN_FULLSCREEN_DESC * pDesc)
+HRESULT WrappedIDXGISwapChain1::GetFullscreenDesc (DXGI_SWAP_CHAIN_FULLSCREEN_DESC *pDesc)
 {
     Log ("GetFullscreenDesc");
     return Get<IDXGISwapChain1> ()->GetFullscreenDesc (pDesc);
 }
 
-HRESULT WrappedIDXGISwapChain1::GetHwnd (HWND * pHwnd)
+HRESULT WrappedIDXGISwapChain1::GetHwnd (HWND *pHwnd)
 {
     Log ("GetHwnd");
     return Get<IDXGISwapChain1> ()->GetHwnd (pHwnd);
 }
 
-HRESULT WrappedIDXGISwapChain1::GetCoreWindow (REFIID refiid, void ** ppUnk)
+HRESULT WrappedIDXGISwapChain1::GetCoreWindow (REFIID refiid, void **ppUnk)
 {
     Log ("GetCoreWindow");
     return Get<IDXGISwapChain1> ()->GetCoreWindow (refiid, ppUnk);
 }
 
-HRESULT WrappedIDXGISwapChain1::Present1 (UINT SyncInterval, UINT PresentFlags, const DXGI_PRESENT_PARAMETERS * pPresentParameters)
+HRESULT WrappedIDXGISwapChain1::Present1 (
+    UINT SyncInterval, UINT PresentFlags, const DXGI_PRESENT_PARAMETERS *pPresentParameters)
 {
     Log ("Present1");
     return Get<IDXGISwapChain1> ()->Present1 (SyncInterval, PresentFlags, pPresentParameters);
@@ -695,19 +792,19 @@ BOOL WrappedIDXGISwapChain1::IsTemporaryMonoSupported (void)
     return Get<IDXGISwapChain1> ()->IsTemporaryMonoSupported ();
 }
 
-HRESULT WrappedIDXGISwapChain1::GetRestrictToOutput (IDXGIOutput ** ppRestrictToOutput)
+HRESULT WrappedIDXGISwapChain1::GetRestrictToOutput (IDXGIOutput **ppRestrictToOutput)
 {
     Log ("GetRestrictToOutput");
     return Get<IDXGISwapChain1> ()->GetRestrictToOutput (ppRestrictToOutput);
 }
 
-HRESULT WrappedIDXGISwapChain1::SetBackgroundColor (const DXGI_RGBA * pColor)
+HRESULT WrappedIDXGISwapChain1::SetBackgroundColor (const DXGI_RGBA *pColor)
 {
     Log ("SetBackgroundColor");
     return Get<IDXGISwapChain1> ()->SetBackgroundColor (pColor);
 }
 
-HRESULT WrappedIDXGISwapChain1::GetBackgroundColor (DXGI_RGBA * pColor)
+HRESULT WrappedIDXGISwapChain1::GetBackgroundColor (DXGI_RGBA *pColor)
 {
     Log ("GetBackgroundColor");
     return Get<IDXGISwapChain1> ()->GetBackgroundColor (pColor);
@@ -719,17 +816,21 @@ HRESULT WrappedIDXGISwapChain1::SetRotation (DXGI_MODE_ROTATION Rotation)
     return Get<IDXGISwapChain1> ()->SetRotation (Rotation);
 }
 
-HRESULT WrappedIDXGISwapChain1::GetRotation (DXGI_MODE_ROTATION * pRotation)
+HRESULT WrappedIDXGISwapChain1::GetRotation (DXGI_MODE_ROTATION *pRotation)
 {
     Log ("GetRotation");
     return Get<IDXGISwapChain1> ()->GetRotation (pRotation);
 }
 
-WrappedIDXGISwapChain2::WrappedIDXGISwapChain2 (IDXGISwapChain2 * swapchain)
-    : WrappedIDXGISwapChain1 ("WrappedIDXGISwapChain2", swapchain) {}
+WrappedIDXGISwapChain2::WrappedIDXGISwapChain2 (IDXGISwapChain2 *swapchain)
+    : WrappedIDXGISwapChain1 ("WrappedIDXGISwapChain2", swapchain)
+{
+}
 
-WrappedIDXGISwapChain2::WrappedIDXGISwapChain2 (const std::string & name, IDXGISwapChain2 * swapchain)
-    : WrappedIDXGISwapChain1 (name, swapchain) {}
+WrappedIDXGISwapChain2::WrappedIDXGISwapChain2 (const std::string &name, IDXGISwapChain2 *swapchain)
+    : WrappedIDXGISwapChain1 (name, swapchain)
+{
+}
 
 HRESULT WrappedIDXGISwapChain2::SetSourceSize (UINT Width, UINT Height)
 {
@@ -737,7 +838,7 @@ HRESULT WrappedIDXGISwapChain2::SetSourceSize (UINT Width, UINT Height)
     return Get<IDXGISwapChain2> ()->SetSourceSize (Width, Height);
 }
 
-HRESULT WrappedIDXGISwapChain2::GetSourceSize (UINT * pWidth, UINT * pHeight)
+HRESULT WrappedIDXGISwapChain2::GetSourceSize (UINT *pWidth, UINT *pHeight)
 {
     Log ("GetSourceSize");
     return Get<IDXGISwapChain2> ()->GetSourceSize (pWidth, pHeight);
@@ -749,7 +850,7 @@ HRESULT WrappedIDXGISwapChain2::SetMaximumFrameLatency (UINT MaxLatency)
     return Get<IDXGISwapChain2> ()->SetMaximumFrameLatency (MaxLatency);
 }
 
-HRESULT WrappedIDXGISwapChain2::GetMaximumFrameLatency (UINT * pMaxLatency)
+HRESULT WrappedIDXGISwapChain2::GetMaximumFrameLatency (UINT *pMaxLatency)
 {
     Log ("GetMaximumFrameLatency");
     return Get<IDXGISwapChain2> ()->GetMaximumFrameLatency (pMaxLatency);
@@ -761,23 +862,27 @@ HANDLE WrappedIDXGISwapChain2::GetFrameLatencyWaitableObject (void)
     return Get<IDXGISwapChain2> ()->GetFrameLatencyWaitableObject ();
 }
 
-HRESULT WrappedIDXGISwapChain2::SetMatrixTransform (const DXGI_MATRIX_3X2_F * pMatrix)
+HRESULT WrappedIDXGISwapChain2::SetMatrixTransform (const DXGI_MATRIX_3X2_F *pMatrix)
 {
     Log ("SetMatrixTransform");
     return Get<IDXGISwapChain2> ()->SetMatrixTransform (pMatrix);
 }
 
-HRESULT WrappedIDXGISwapChain2::GetMatrixTransform (DXGI_MATRIX_3X2_F * pMatrix)
+HRESULT WrappedIDXGISwapChain2::GetMatrixTransform (DXGI_MATRIX_3X2_F *pMatrix)
 {
     Log ("GetMatrixTransform");
     return Get<IDXGISwapChain2> ()->GetMatrixTransform (pMatrix);
 }
 
-WrappedIDXGISwapChain3::WrappedIDXGISwapChain3 (IDXGISwapChain3 * swapchain)
-    : WrappedIDXGISwapChain2 ("WrappedIDXGISwapChain3", swapchain) {}
+WrappedIDXGISwapChain3::WrappedIDXGISwapChain3 (IDXGISwapChain3 *swapchain)
+    : WrappedIDXGISwapChain2 ("WrappedIDXGISwapChain3", swapchain)
+{
+}
 
-WrappedIDXGISwapChain3::WrappedIDXGISwapChain3 (const std::string & name, IDXGISwapChain3 * swapchain)
-    : WrappedIDXGISwapChain2 (name, swapchain) {}
+WrappedIDXGISwapChain3::WrappedIDXGISwapChain3 (const std::string &name, IDXGISwapChain3 *swapchain)
+    : WrappedIDXGISwapChain2 (name, swapchain)
+{
+}
 
 UINT WrappedIDXGISwapChain3::GetCurrentBackBufferIndex (void)
 {
@@ -785,7 +890,8 @@ UINT WrappedIDXGISwapChain3::GetCurrentBackBufferIndex (void)
     return Get<IDXGISwapChain3> ()->GetCurrentBackBufferIndex ();
 }
 
-HRESULT WrappedIDXGISwapChain3::CheckColorSpaceSupport (DXGI_COLOR_SPACE_TYPE ColorSpace, UINT * pColorSpaceSupport)
+HRESULT WrappedIDXGISwapChain3::CheckColorSpaceSupport (
+    DXGI_COLOR_SPACE_TYPE ColorSpace, UINT *pColorSpaceSupport)
 {
     Log ("CheckColorSpaceSupport");
     return Get<IDXGISwapChain3> ()->CheckColorSpaceSupport (ColorSpace, pColorSpaceSupport);
@@ -797,19 +903,27 @@ HRESULT WrappedIDXGISwapChain3::SetColorSpace1 (DXGI_COLOR_SPACE_TYPE ColorSpace
     return Get<IDXGISwapChain3> ()->SetColorSpace1 (ColorSpace);
 }
 
-HRESULT WrappedIDXGISwapChain3::ResizeBuffers1 (UINT BufferCount, UINT Width, UINT Height, DXGI_FORMAT Format, UINT SwapChainFlags, const UINT * pCreationNodeMask, IUnknown * const * ppPresentQueue)
+HRESULT WrappedIDXGISwapChain3::ResizeBuffers1 (UINT BufferCount, UINT Width, UINT Height,
+    DXGI_FORMAT Format, UINT SwapChainFlags, const UINT *pCreationNodeMask,
+    IUnknown *const *ppPresentQueue)
 {
     Log ("ResizeBuffers1");
-    return Get<IDXGISwapChain3> ()->ResizeBuffers1 (BufferCount, Width, Height, Format, SwapChainFlags, pCreationNodeMask, ppPresentQueue);
+    return Get<IDXGISwapChain3> ()->ResizeBuffers1 (
+        BufferCount, Width, Height, Format, SwapChainFlags, pCreationNodeMask, ppPresentQueue);
 }
 
-WrappedIDXGISwapChain4::WrappedIDXGISwapChain4 (IDXGISwapChain4 * swapchain)
-    : WrappedIDXGISwapChain3 ("WrappedIDXGISwapChain4", swapchain) {}
+WrappedIDXGISwapChain4::WrappedIDXGISwapChain4 (IDXGISwapChain4 *swapchain)
+    : WrappedIDXGISwapChain3 ("WrappedIDXGISwapChain4", swapchain)
+{
+}
 
-WrappedIDXGISwapChain4::WrappedIDXGISwapChain4 (const std::string & name, IDXGISwapChain4 * swapchain)
-    : WrappedIDXGISwapChain3 (name, swapchain) {}
+WrappedIDXGISwapChain4::WrappedIDXGISwapChain4 (const std::string &name, IDXGISwapChain4 *swapchain)
+    : WrappedIDXGISwapChain3 (name, swapchain)
+{
+}
 
-HRESULT WrappedIDXGISwapChain4::SetHDRMetaData (DXGI_HDR_METADATA_TYPE Type, UINT Size, void * pMetaData)
+HRESULT WrappedIDXGISwapChain4::SetHDRMetaData (
+    DXGI_HDR_METADATA_TYPE Type, UINT Size, void *pMetaData)
 {
     Log ("SetHDRMetaData");
     return Get<IDXGISwapChain4> ()->SetHDRMetaData (Type, Size, pMetaData);

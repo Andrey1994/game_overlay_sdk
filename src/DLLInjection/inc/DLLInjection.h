@@ -37,35 +37,35 @@ typedef enum
 
 class DLLInjection
 {
-    public:
-        static std::shared_ptr<spdlog::logger> injectLogger;
-        static void SetLogLevel (int level);
+public:
+    static std::shared_ptr<spdlog::logger> injectLogger;
+    static void SetLogLevel (int level);
 
-        DLLInjection (int pid, int arch, char *dllPath);
-        ~DLLInjection ();
+    DLLInjection (int pid, int arch, char *dllPath);
+    ~DLLInjection ();
 
-        bool InjectDLL ();
-        bool FreeDLL ();
-        HANDLE GetTargetProcessHandle ();
+    bool InjectDLL ();
+    bool FreeDLL ();
+    HANDLE GetTargetProcessHandle ();
 
-        static const std::string dllNameX64;
-        static const std::string dllNameX32;
+    static const std::string dllNameX64;
+    static const std::string dllNameX32;
 
-    private:
-        int pid;
-        int arch;
-        std::wstring dllPath;
+private:
+    int pid;
+    int arch;
+    std::wstring dllPath;
 
-        size_t dllPathSize;
-        HANDLE processHandle;
-        void *remoteDLLAddress;
+    size_t dllPathSize;
+    HANDLE processHandle;
+    void *remoteDLLAddress;
 
-        bool GetProcessHandle ();
-        bool GetRemoteDLLAddress ();
-        bool ExecuteLoadLibrary ();
-        void *GetRemoteDLLModule ();
-        bool ExecuteFreeLibrary (void *dllModule);
-        bool ExecuteRemoteThread (const std::string &functionName, void *functionArguments);
+    bool GetProcessHandle ();
+    bool GetRemoteDLLAddress ();
+    bool ExecuteLoadLibrary ();
+    void *GetRemoteDLLModule ();
+    bool ExecuteFreeLibrary (void *dllModule);
+    bool ExecuteRemoteThread (const std::string &functionName, void *functionArguments);
 };
 
 #endif

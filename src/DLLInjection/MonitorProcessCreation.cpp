@@ -1,8 +1,8 @@
-#include <string.h>
 #include <mutex>
+#include <string.h>
 
-#include "MonitorProcessCreation.h"
 #include "Monitor.h"
+#include "MonitorProcessCreation.h"
 
 Monitor *monitor = NULL;
 std::mutex mutex;

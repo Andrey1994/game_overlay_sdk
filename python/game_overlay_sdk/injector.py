@@ -6,6 +6,7 @@ import pkg_resources
 import platform
 import struct
 import enum
+import logging
 
 
 class CustomExitCodes (enum.Enum):
@@ -89,6 +90,7 @@ class InjectorDLL (object):
 
 
 def start_monitor (process_name):
+    logging.warning ('For Steam Games ensure that there is steam_appid.txt file in \%SteamFolder\%\\steamapps\\common\\\%GameName\% with correct appid! You can get app_id here https://steamdb.info/search/')
     location = os.path.abspath (os.path.dirname (pkg_resources.resource_filename (__name__, os.path.join ('lib', 'GameOverlay64.dll'))))
     res = InjectorDLL.get_instance ().StartMonitor (process_name.encode (), location.encode ())
     if res != CustomExitCodes.STATUS_OK.value:
@@ -126,7 +128,19 @@ def send_message (message):
     if res != CustomExitCodes.STATUS_OK.value:
         raise InjectionError ('failed to send message', res)
 
-def run_process (exe_path, exe_args = ""):
+def write_app_id (file_path, app_id):
+    logging.info ('writing %s to %s' % (str (app_id), file_path))
+    with open (file_path, 'w') as f:
+        f.write (str(app_id))
+
+def run_process (exe_path, exe_args = "", steam_app_id = None):
+    if steam_app_id is None:
+        logging.warning ('For Steam Games ensure that there is steam_appid.txt file in \%SteamFolder\%\\steamapps\\common\\\%GameName\% with correct appid! You can get app_id here https://steamdb.info/search/')
+
+    game_dir = os.path.abspath (os.path.dirname (exe_path))
+    steam_app_id_file = os.path.join (game_dir, 'steam_appid.txt')
+    write_app_id (steam_app_id_file, steam_app_id)
+
     location = os.path.abspath (os.path.dirname (pkg_resources.resource_filename (__name__, os.path.join ('lib', 'GameOverlay64.dll'))))
     res = InjectorDLL.get_instance ().RunProcess (exe_path.encode (), exe_args.encode(), location.encode ())
     if res != CustomExitCodes.STATUS_OK.value:

@@ -31,7 +31,7 @@
 using Clock = std::chrono::high_resolution_clock;
 using fSeconds = std::chrono::duration<float>;
 
-RecordingState& RecordingState::GetInstance ()
+RecordingState &RecordingState::GetInstance ()
 {
     static RecordingState instance;
     return instance;
@@ -45,7 +45,8 @@ RecordingState::RecordingState ()
 
 bool RecordingState::Started ()
 {
-    if (stateChanged_ && recording_) {
+    if (stateChanged_ && recording_)
+    {
         stateChanged_ = false;
         return true;
     }
@@ -54,7 +55,8 @@ bool RecordingState::Started ()
 
 bool RecordingState::Stopped ()
 {
-    if (stateChanged_ && !recording_) {
+    if (stateChanged_ && !recording_)
+    {
         stateChanged_ = false;
         return true;
     }
@@ -79,19 +81,21 @@ bool RecordingState::IsBarOverlayShowing ()
 TextureState RecordingState::Update ()
 {
     const fSeconds duration = Clock::now () - currentStateStart_;
-    if (recording_) { // recording
-        if ((currentTextureState_ == TextureState::Start) && (duration.count () > startDisplayTime_))
+    if (recording_)
+    { // recording
+        if ((currentTextureState_ == TextureState::Start) &&
+            (duration.count () > startDisplayTime_))
         {
             currentTextureState_ = TextureState::Default;
         }
-        if (recordingTime_ > 0.0f && (duration.count () > recordingTime_)) {
+        if (recordingTime_ > 0.0f && (duration.count () > recordingTime_))
+        {
             Stop ();
         }
     }
     else // not recording
     {
-        if ((currentTextureState_ == TextureState::Stop) &&
-            (duration.count () > endDisplayTime_))
+        if ((currentTextureState_ == TextureState::Stop) && (duration.count () > endDisplayTime_))
         {
             currentTextureState_ = TextureState::Default;
         }
@@ -161,7 +165,7 @@ void RecordingState::SetOverlayMessage (char *message)
     strcpy ((char *)this->overlayMessage_, message);
 }
 
-char* RecordingState::GetOverlayMessage ()
+char *RecordingState::GetOverlayMessage ()
 {
     return (char *)this->overlayMessage_;
 }

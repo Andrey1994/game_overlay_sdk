@@ -24,18 +24,20 @@
 #include "Utility/ProcessHelper.h"
 #include "Utility/StringUtils.h"
 
-#include <windows.h>
 #include <chrono>
 #include <ctime>
 #include <iomanip>
+#include <windows.h>
 
 MessageLog g_messageLog;
 
 MessageLog::MessageLog ()
-    : filter_ ({ LogLevel::Error, LogLevel::Info, LogLevel::Warning }),
-    started_ (false), caller_ (L"")
+    : filter_ ({LogLevel::Error, LogLevel::Info, LogLevel::Warning})
+    , started_ (false)
+    , caller_ (L"")
 {
-    parentProcess_ = std::to_wstring (GetCurrentProcessId ()) + L" " + GetProcessNameFromHandle (GetCurrentProcess ());
+    parentProcess_ = std::to_wstring (GetCurrentProcessId ()) + L" " +
+        GetProcessNameFromHandle (GetCurrentProcess ());
 }
 
 MessageLog::~MessageLog ()
@@ -43,7 +45,7 @@ MessageLog::~MessageLog ()
     outFile_.close ();
 }
 
-void MessageLog::Start (const std::wstring& logFilePath, const std::wstring& caller, bool overwrite)
+void MessageLog::Start (const std::wstring &logFilePath, const std::wstring &caller, bool overwrite)
 {
     auto openMode = overwrite ? std::wofstream::out : std::wofstream::app;
     outFile_.open (logFilePath + L".txt", openMode);
@@ -57,55 +59,60 @@ void MessageLog::Start (const std::wstring& logFilePath, const std::wstring& cal
     LogInfo ("MessageLog", "Logging started");
 }
 
-void MessageLog::LogError (const std::string & category, const std::string & message, DWORD errorCode)
+void MessageLog::LogError (const std::string &category, const std::string &message, DWORD errorCode)
 {
     Log (LogLevel::Error, category, message, errorCode);
 }
 
-void MessageLog::LogError (const std::string & category, const std::wstring & message, DWORD errorCode)
+void MessageLog::LogError (
+    const std::string &category, const std::wstring &message, DWORD errorCode)
 {
     Log (LogLevel::Error, category, message, errorCode);
 }
 
-void MessageLog::LogWarning (const std::string & category, const std::string & message, DWORD errorCode)
+void MessageLog::LogWarning (
+    const std::string &category, const std::string &message, DWORD errorCode)
 {
     Log (LogLevel::Warning, category, message, errorCode);
 }
 
-void MessageLog::LogWarning (const std::string & category, const std::wstring & message, DWORD errorCode)
+void MessageLog::LogWarning (
+    const std::string &category, const std::wstring &message, DWORD errorCode)
 {
     Log (LogLevel::Warning, category, message, errorCode);
 }
 
-void MessageLog::LogInfo (const std::string & category, const std::string & message, DWORD errorCode)
+void MessageLog::LogInfo (const std::string &category, const std::string &message, DWORD errorCode)
 {
     Log (LogLevel::Info, category, message, errorCode);
 }
 
-void MessageLog::LogInfo (const std::string & category, const std::wstring & message, DWORD errorCode)
+void MessageLog::LogInfo (const std::string &category, const std::wstring &message, DWORD errorCode)
 {
     Log (LogLevel::Info, category, message, errorCode);
 }
 
-void MessageLog::LogVerbose (const std::string & category, const std::string & message, DWORD errorCode)
+void MessageLog::LogVerbose (
+    const std::string &category, const std::string &message, DWORD errorCode)
 {
     Log (LogLevel::Verbose, category, message, errorCode);
 }
 
-void MessageLog::LogVerbose (const std::string & category, const std::wstring & message, DWORD errorCode)
+void MessageLog::LogVerbose (
+    const std::string &category, const std::wstring &message, DWORD errorCode)
 {
     Log (LogLevel::Verbose, category, message, errorCode);
 }
 
-std::wstring MessageLog::CreateLogMessage (LogLevel logLevel, const std::wstring& category, const std::wstring& message,
-    DWORD errorCode)
+std::wstring MessageLog::CreateLogMessage (
+    LogLevel logLevel, const std::wstring &category, const std::wstring &message, DWORD errorCode)
 {
     SetCurrentTime ();
     std::wostringstream outstream;
     outstream << std::put_time (&currentTime_, L"%c") << "\t";
 
     outstream << std::left << std::setw (12) << std::setfill (L' ');
-    outstream << logLevelNames_[static_cast<int>(logLevel)];
+    outstream << logLevelNames_[static_cast<int> (logLevel)];
     if (!version_.empty ())
     {
         outstream << L"Version ";
@@ -122,19 +129,20 @@ std::wstring MessageLog::CreateLogMessage (LogLevel logLevel, const std::wstring
     if (errorCode)
     {
         auto systemErrorMessage = GetSystemErrorMessageW (errorCode);
-        outstream << " - " << " Error Code: " << errorCode << " (" << systemErrorMessage << ")";
+        outstream << " - "
+                  << " Error Code: " << errorCode << " (" << systemErrorMessage << ")";
     }
     return outstream.str ();
 }
 
-void MessageLog::Log (LogLevel logLevel, const std::string& category, const std::string& message,
-    DWORD errorCode)
+void MessageLog::Log (
+    LogLevel logLevel, const std::string &category, const std::string &message, DWORD errorCode)
 {
     Log (logLevel, category, ConvertUTF8StringToUTF16String (message), errorCode);
 }
 
-void MessageLog::Log (LogLevel logLevel, const std::string& category, const std::wstring& message,
-    DWORD errorCode)
+void MessageLog::Log (
+    LogLevel logLevel, const std::string &category, const std::wstring &message, DWORD errorCode)
 {
     // Filter the message
     if (filter_.find (logLevel) == filter_.end ())
@@ -142,7 +150,8 @@ void MessageLog::Log (LogLevel logLevel, const std::string& category, const std:
         return;
     }
 
-    const auto logMessage = CreateLogMessage (logLevel, ConvertUTF8StringToUTF16String (category), message, errorCode);
+    const auto logMessage =
+        CreateLogMessage (logLevel, ConvertUTF8StringToUTF16String (category), message, errorCode);
     if (started_ && outFile_.is_open ())
     {
         outFile_ << logMessage << std::endl;
@@ -154,42 +163,45 @@ void MessageLog::Log (LogLevel logLevel, const std::string& category, const std:
     OutputDebugString (debugOutput.c_str ());
 }
 
-typedef void(WINAPI* FGETSYSTEMINFO)(LPSYSTEM_INFO);
-typedef BOOL (WINAPI* FGETPRODUCTINFO)(DWORD, DWORD, DWORD, DWORD, PDWORD);
+typedef void(WINAPI *FGETSYSTEMINFO) (LPSYSTEM_INFO);
+typedef BOOL (WINAPI *FGETPRODUCTINFO) (DWORD, DWORD, DWORD, DWORD, PDWORD);
 void MessageLog::LogOS ()
 {
     SYSTEM_INFO systemInfo = {};
-    FGETSYSTEMINFO fGetSystemInfo = reinterpret_cast<FGETSYSTEMINFO>(
+    FGETSYSTEMINFO fGetSystemInfo = reinterpret_cast<FGETSYSTEMINFO> (
         GetProcAddress (GetModuleHandle (L"kernel32.dll"), "GetNativeSystemInfo"));
     if (fGetSystemInfo)
     {
         fGetSystemInfo (&systemInfo);
     }
-    else {
-        LogWarning ("MessageLog", "LogOS: Unable to get address for GetNativeSystemInfo using GetSystemInfo");
+    else
+    {
+        LogWarning ("MessageLog",
+            "LogOS: Unable to get address for GetNativeSystemInfo using GetSystemInfo");
         GetSystemInfo (&systemInfo);
     }
 
     std::string processorArchitecture = "Processor architecture: ";
-    switch (systemInfo.wProcessorArchitecture) {
-    case PROCESSOR_ARCHITECTURE_AMD64:
-        processorArchitecture += "x64";
-        break;
-    case PROCESSOR_ARCHITECTURE_INTEL:
-        processorArchitecture += "x86";
-        break;
-    case PROCESSOR_ARCHITECTURE_ARM:
-        processorArchitecture += "ARM";
-        break;
-    case PROCESSOR_ARCHITECTURE_IA64:
-        processorArchitecture += "Intel Itanium";
-        break;
-    default:
-        processorArchitecture += "Unknown";
-        break;
+    switch (systemInfo.wProcessorArchitecture)
+    {
+        case PROCESSOR_ARCHITECTURE_AMD64:
+            processorArchitecture += "x64";
+            break;
+        case PROCESSOR_ARCHITECTURE_INTEL:
+            processorArchitecture += "x86";
+            break;
+        case PROCESSOR_ARCHITECTURE_ARM:
+            processorArchitecture += "ARM";
+            break;
+        case PROCESSOR_ARCHITECTURE_IA64:
+            processorArchitecture += "Intel Itanium";
+            break;
+        default:
+            processorArchitecture += "Unknown";
+            break;
     }
 
-    FGETPRODUCTINFO fGetProductInfo = reinterpret_cast<FGETPRODUCTINFO>(
+    FGETPRODUCTINFO fGetProductInfo = reinterpret_cast<FGETPRODUCTINFO> (
         GetProcAddress (GetModuleHandle (L"kernel32.dll"), "GetProductInfo"));
     if (!fGetProductInfo)
     {
@@ -206,6 +218,7 @@ void MessageLog::LogOS ()
 
 void MessageLog::SetCurrentTime ()
 {
-    const std::time_t time = std::chrono::system_clock::to_time_t (std::chrono::system_clock::now ());
+    const std::time_t time =
+        std::chrono::system_clock::to_time_t (std::chrono::system_clock::now ());
     localtime_s (&currentTime_, &time);
 }

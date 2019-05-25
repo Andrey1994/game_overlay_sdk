@@ -26,81 +26,85 @@
 #include <shared_mutex>
 #include <unordered_map>
 
-template <typename Key, typename T>
-class HashMap {
+template <typename Key, typename T> class HashMap
+{
 public:
-    HashMap() {}
-    void Add(Key key, T value)
+    HashMap ()
     {
-        std::unique_lock<std::shared_mutex> lock(mutex_);
-        if (Find(key) != map_.end()) {
+    }
+    void Add (Key key, T value)
+    {
+        std::unique_lock<std::shared_mutex> lock (mutex_);
+        if (Find (key) != map_.end ())
+        {
             return;
         }
-        map_.push_back(std::make_pair(key, value));
+        map_.push_back (std::make_pair (key, value));
     }
 
-    void Remove(Key key)
+    void Remove (Key key)
     {
-        std::unique_lock<std::shared_mutex> lock(mutex_);
-        auto it = Find(key);
-        if (it != map_.end()) {
-            map_.erase(it);
+        std::unique_lock<std::shared_mutex> lock (mutex_);
+        auto it = Find (key);
+        if (it != map_.end ())
+        {
+            map_.erase (it);
         }
     }
 
-    bool Has(Key key) const
+    bool Has (Key key) const
     {
-        std::shared_lock<std::shared_mutex> lock(mutex_);
-        auto it = Find(key);
-        return it != map_.end();
+        std::shared_lock<std::shared_mutex> lock (mutex_);
+        auto it = Find (key);
+        return it != map_.end ();
     }
 
-    T Get(Key key) const
+    T Get (Key key) const
     {
-        std::shared_lock<std::shared_mutex> lock(mutex_);
-        auto it = Find(key);
-        if (it != map_.end()) {
+        std::shared_lock<std::shared_mutex> lock (mutex_);
+        auto it = Find (key);
+        if (it != map_.end ())
+        {
             return it->second;
         }
 
-        return T(0);
+        return T (0);
     }
 
-    template <class UnaryPredicate>
-    Key FindKey_if(UnaryPredicate pred)
+    template <class UnaryPredicate> Key FindKey_if (UnaryPredicate pred)
     {
-        std::shared_lock<std::shared_mutex> lock(mutex_);
-        auto it = std::find_if(map_.begin(), map_.end(), pred);
-        if (it != map_.end()) {
+        std::shared_lock<std::shared_mutex> lock (mutex_);
+        auto it = std::find_if (map_.begin (), map_.end (), pred);
+        if (it != map_.end ())
+        {
             return it->first;
         }
 
-        return Key(0);
+        return Key (0);
     }
 
-    template <class UnaryPredicate>
-    void RemoveKeys_if(UnaryPredicate pred)
+    template <class UnaryPredicate> void RemoveKeys_if (UnaryPredicate pred)
     {
-        if (map_.size() == 0)
+        if (map_.size () == 0)
         {
             return;
         }
 
-        std::unique_lock<std::shared_mutex> lock(mutex_);
-        map_.erase(std::remove_if(map_.begin(), map_.end(), pred));
+        std::unique_lock<std::shared_mutex> lock (mutex_);
+        map_.erase (std::remove_if (map_.begin (), map_.end (), pred));
     }
 
-    size_t GetSize() const
+    size_t GetSize () const
     {
-        std::shared_lock<std::shared_mutex> lock(mutex_);
-        return map_.size();
+        std::shared_lock<std::shared_mutex> lock (mutex_);
+        return map_.size ();
     }
 
 protected:
-    auto Find(Key key) const
+    auto Find (Key key) const
     {
-        return std::find_if(map_.begin(), map_.end(),
-            [&key](const std::pair<Key, T>& v) { return v.first == key; });
+        return std::find_if (map_.begin (), map_.end (),
+            [&key](const std::pair<Key, T> &v) { return v.first == key; });
     }
 
     mutable std::shared_mutex mutex_;

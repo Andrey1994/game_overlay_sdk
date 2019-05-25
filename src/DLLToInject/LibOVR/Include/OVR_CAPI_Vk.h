@@ -57,11 +57,9 @@
 ///         [...]
 ///     \endcode
 ///
-OVR_PUBLIC_FUNCTION(ovrResult)
-ovr_GetInstanceExtensionsVk(
-    ovrGraphicsLuid luid,
-    char* extensionNames,
-    uint32_t* inoutExtensionNamesSize);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_GetInstanceExtensionsVk (
+    ovrGraphicsLuid luid, char *extensionNames, uint32_t *inoutExtensionNamesSize);
 
 /// Get a list of Vulkan vkDevice extensions required for VR.
 ///
@@ -82,11 +80,9 @@ ovr_GetInstanceExtensionsVk(
 ///         the case that inoutExtensionNameSize didn't have enough space, in which case
 ///         inoutExtensionNameSize will return the required inoutExtensionNamesSize.
 ///
-OVR_PUBLIC_FUNCTION(ovrResult)
-ovr_GetDeviceExtensionsVk(
-    ovrGraphicsLuid luid,
-    char* extensionNames,
-    uint32_t* inoutExtensionNamesSize);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_GetDeviceExtensionsVk (
+    ovrGraphicsLuid luid, char *extensionNames, uint32_t *inoutExtensionNamesSize);
 
 /// Find VkPhysicalDevice matching ovrGraphicsLuid
 ///
@@ -104,12 +100,9 @@ ovr_GetDeviceExtensionsVk(
 /// of the returned objects. It is assumed the VkDevice created by the application will be for the
 /// returned physical device.
 ///
-OVR_PUBLIC_FUNCTION(ovrResult)
-ovr_GetSessionPhysicalDeviceVk(
-    ovrSession session,
-    ovrGraphicsLuid luid,
-    VkInstance instance,
-    VkPhysicalDevice* out_physicalDevice);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_GetSessionPhysicalDeviceVk (ovrSession session, ovrGraphicsLuid luid, VkInstance instance,
+    VkPhysicalDevice *out_physicalDevice);
 
 /// Select VkQueue to block on till rendering is complete
 ///
@@ -125,7 +118,7 @@ ovr_GetSessionPhysicalDeviceVk(
 /// ovr_SubmitFrame. An internally created VkFence object will be signalled by the completion
 /// of operations on queue and waited on to synchronize the VR compositor.
 ///
-OVR_PUBLIC_FUNCTION(ovrResult) ovr_SetSynchonizationQueueVk(ovrSession session, VkQueue queue);
+OVR_PUBLIC_FUNCTION (ovrResult) ovr_SetSynchonizationQueueVk (ovrSession session, VkQueue queue);
 
 /// Create Texture Swap Chain suitable for use with Vulkan
 ///
@@ -164,12 +157,9 @@ OVR_PUBLIC_FUNCTION(ovrResult) ovr_SetSynchonizationQueueVk(ovrSession session, 
 /// \see ovr_GetTextureSwapChainBufferVk
 /// \see ovr_DestroyTextureSwapChain
 ///
-OVR_PUBLIC_FUNCTION(ovrResult)
-ovr_CreateTextureSwapChainVk(
-    ovrSession session,
-    VkDevice device,
-    const ovrTextureSwapChainDesc* desc,
-    ovrTextureSwapChain* out_TextureSwapChain);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_CreateTextureSwapChainVk (ovrSession session, VkDevice device,
+    const ovrTextureSwapChainDesc *desc, ovrTextureSwapChain *out_TextureSwapChain);
 
 /// Get a specific VkImage within the chain
 ///
@@ -185,12 +175,9 @@ ovr_CreateTextureSwapChainVk(
 /// \return Returns an ovrResult indicating success or failure. In the case of failure, use
 ///         ovr_GetLastErrorInfo to get more information.
 ///
-OVR_PUBLIC_FUNCTION(ovrResult)
-ovr_GetTextureSwapChainBufferVk(
-    ovrSession session,
-    ovrTextureSwapChain chain,
-    int index,
-    VkImage* out_Image);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_GetTextureSwapChainBufferVk (
+    ovrSession session, ovrTextureSwapChain chain, int index, VkImage *out_Image);
 
 /// Create Mirror Texture which is auto-refreshed to mirror Rift contents produced by this
 /// application.
@@ -241,12 +228,9 @@ ovr_GetTextureSwapChainBufferVk(
 /// \see ovr_GetMirrorTextureBufferVk
 /// \see ovr_DestroyMirrorTexture
 ///
-OVR_PUBLIC_FUNCTION(ovrResult)
-ovr_CreateMirrorTextureWithOptionsVk(
-    ovrSession session,
-    VkDevice device,
-    const ovrMirrorTextureDesc* desc,
-    ovrMirrorTexture* out_MirrorTexture);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_CreateMirrorTextureWithOptionsVk (ovrSession session, VkDevice device,
+    const ovrMirrorTextureDesc *desc, ovrMirrorTexture *out_MirrorTexture);
 
 /// Get a the underlying mirror VkImage
 ///
@@ -269,11 +253,9 @@ ovr_CreateMirrorTextureWithOptionsVk(
 ///         vkQueuePresentKHR(queue, &presentInfo);
 ///     \endcode
 ///
-OVR_PUBLIC_FUNCTION(ovrResult)
-ovr_GetMirrorTextureBufferVk(
-    ovrSession session,
-    ovrMirrorTexture mirrorTexture,
-    VkImage* out_Image);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_GetMirrorTextureBufferVk (
+    ovrSession session, ovrMirrorTexture mirrorTexture, VkImage *out_Image);
 
 #endif // !defined(OVR_EXPORTING_CAPI)
 

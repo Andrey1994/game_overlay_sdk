@@ -42,11 +42,9 @@
 /// \see ovr_GetTextureSwapChainBufferGL
 /// \see ovr_DestroyTextureSwapChain
 ///
-OVR_PUBLIC_FUNCTION(ovrResult)
-ovr_CreateTextureSwapChainGL(
-    ovrSession session,
-    const ovrTextureSwapChainDesc* desc,
-    ovrTextureSwapChain* out_TextureSwapChain);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_CreateTextureSwapChainGL (ovrSession session, const ovrTextureSwapChainDesc *desc,
+    ovrTextureSwapChain *out_TextureSwapChain);
 
 /// Get a specific buffer within the chain as a GL texture name
 ///
@@ -63,12 +61,9 @@ ovr_CreateTextureSwapChainGL(
 /// \return Returns an ovrResult indicating success or failure.
 ///         In the case of failure, use ovr_GetLastErrorInfo to get more information.
 ///
-OVR_PUBLIC_FUNCTION(ovrResult)
-ovr_GetTextureSwapChainBufferGL(
-    ovrSession session,
-    ovrTextureSwapChain chain,
-    int index,
-    unsigned int* out_TexId);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_GetTextureSwapChainBufferGL (
+    ovrSession session, ovrTextureSwapChain chain, int index, unsigned int *out_TexId);
 
 /// Creates a Mirror Texture which is auto-refreshed to mirror Rift contents produced by this
 /// application.
@@ -97,11 +92,9 @@ ovr_GetTextureSwapChainBufferGL(
 /// \see ovr_GetMirrorTextureBufferGL
 /// \see ovr_DestroyMirrorTexture
 ///
-OVR_PUBLIC_FUNCTION(ovrResult)
-ovr_CreateMirrorTextureWithOptionsGL(
-    ovrSession session,
-    const ovrMirrorTextureDesc* desc,
-    ovrMirrorTexture* out_MirrorTexture);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_CreateMirrorTextureWithOptionsGL (
+    ovrSession session, const ovrMirrorTextureDesc *desc, ovrMirrorTexture *out_MirrorTexture);
 
 /// Deprecated. Use ovr_CreateMirrorTextureWithOptionsGL instead
 ///
@@ -110,11 +103,9 @@ ovr_CreateMirrorTextureWithOptionsGL(
 ///
 /// \see ovrMirrorOptions, ovr_CreateMirrorTextureWithOptionsGL
 ///
-OVR_PUBLIC_FUNCTION(ovrResult)
-ovr_CreateMirrorTextureGL(
-    ovrSession session,
-    const ovrMirrorTextureDesc* desc,
-    ovrMirrorTexture* out_MirrorTexture);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_CreateMirrorTextureGL (
+    ovrSession session, const ovrMirrorTextureDesc *desc, ovrMirrorTexture *out_MirrorTexture);
 
 /// Get a the underlying buffer as a GL texture name
 ///
@@ -126,11 +117,9 @@ ovr_CreateMirrorTextureGL(
 /// \return Returns an ovrResult indicating success or failure. In the case of failure, use
 ///         ovr_GetLastErrorInfo to get more information.
 ///
-OVR_PUBLIC_FUNCTION(ovrResult)
-ovr_GetMirrorTextureBufferGL(
-    ovrSession session,
-    ovrMirrorTexture mirrorTexture,
-    unsigned int* out_TexId);
+OVR_PUBLIC_FUNCTION (ovrResult)
+ovr_GetMirrorTextureBufferGL (
+    ovrSession session, ovrMirrorTexture mirrorTexture, unsigned int *out_TexId);
 
 #endif // !defined(OVR_EXPORTING_CAPI)
 

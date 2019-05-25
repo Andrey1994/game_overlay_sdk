@@ -26,7 +26,8 @@
 #include <vulkan/vk_layer.h>
 #include <vulkan/vulkan.h>
 
-struct SwapchainImageMapping {
+struct SwapchainImageMapping
+{
     uint32_t imageIndex;
     VkCommandBuffer commandBuffer[2];
     VkSemaphore semaphore;

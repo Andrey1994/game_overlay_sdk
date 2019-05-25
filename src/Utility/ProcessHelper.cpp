@@ -26,22 +26,21 @@
 #include "Utility/StringUtils.h"
 #include "Utility/Win32Handle.h"
 
-#include <psapi.h>
 #include <assert.h>
+#include <psapi.h>
 #include <vector>
 
-DWORD GetProcessIDFromName (const std::string& name)
+DWORD GetProcessIDFromName (const std::string &name)
 {
     std::vector<DWORD> processes (1024);
     DWORD processArraySize = 0;
 
-    const DWORD bufferSize = static_cast<DWORD>(processes.size () * sizeof (DWORD));
+    const DWORD bufferSize = static_cast<DWORD> (processes.size () * sizeof (DWORD));
 
     if (!EnumProcesses (processes.data (), bufferSize, &processArraySize))
     {
         g_messageLog.LogError ("ProcessHelper",
-            "GetProcessIDFromName - Error while enumerating processes ",
-            GetLastError ());
+            "GetProcessIDFromName - Error while enumerating processes ", GetLastError ());
         return 0;
     }
 
@@ -51,7 +50,8 @@ DWORD GetProcessIDFromName (const std::string& name)
         if (pID != 0 && (GetProcessNameFromID (pID).compare (processName) == 0))
         {
             g_messageLog.LogInfo ("ProcessHelper",
-                L"GetProcessIDFromName - Found process " + processName + L"PID" + std::to_wstring (pID));
+                L"GetProcessIDFromName - Found process " + processName + L"PID" +
+                    std::to_wstring (pID));
             return pID;
         }
     }
@@ -94,7 +94,8 @@ HWND GetWindowHandleFromProcessID (DWORD id)
 
 std::wstring GetProcessNameFromID (DWORD id)
 {
-    const HANDLE processHandle = OpenProcess (PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, id);
+    const HANDLE processHandle =
+        OpenProcess (PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, id);
     if (processHandle)
     {
         return GetProcessNameFromHandle (processHandle);
@@ -105,7 +106,8 @@ std::wstring GetProcessNameFromID (DWORD id)
         if (error != ERROR_ACCESS_DENIED)
         {
             g_messageLog.LogWarning ("ProcessHelper",
-                "GetProcessNameFromID - Failed opening process with id " + std::to_string (id), error);
+                "GetProcessNameFromID - Failed opening process with id " + std::to_string (id),
+                error);
         }
         return L"";
     }
@@ -122,13 +124,14 @@ std::wstring GetProcessNameFromHandle (HANDLE handle)
     {
         do
         {
-            assert (bufferSize <= (std::numeric_limits<DWORD>::max)());
+            assert (bufferSize <= (std::numeric_limits<DWORD>::max) ());
             buffer.resize (bufferSize);
-            nameLength = GetModuleBaseName (handle, module, &buffer[0], static_cast<DWORD>(buffer.size ()));
+            nameLength =
+                GetModuleBaseName (handle, module, &buffer[0], static_cast<DWORD> (buffer.size ()));
             if (!nameLength)
             {
-                g_messageLog.LogWarning ("ProcessHelper",
-                    "GetAbsolutePath - Unable to get name.", GetLastError ());
+                g_messageLog.LogWarning (
+                    "ProcessHelper", "GetAbsolutePath - Unable to get name.", GetLastError ());
                 return L"";
             }
             bufferSize *= 2;
@@ -157,22 +160,23 @@ std::wstring GetCurrentProcessDirectory ()
     return L"";
 }
 
-std::wstring GetAbsolutePath (const std::wstring& relativePath)
+std::wstring GetAbsolutePath (const std::wstring &relativePath)
 {
     size_t bufferSize = 1024;
     std::wstring absolutePath;
-    TCHAR* filePart = nullptr;
+    TCHAR *filePart = nullptr;
 
     DWORD pathLength = 0;
     do
     {
-        assert (bufferSize <= (std::numeric_limits<DWORD>::max)());
+        assert (bufferSize <= (std::numeric_limits<DWORD>::max) ());
         absolutePath.resize (bufferSize);
-        pathLength = GetFullPathName (relativePath.c_str (), static_cast<DWORD>(absolutePath.size ()),
-            &absolutePath[0], &filePart);
-        if (!pathLength) {
-            g_messageLog.LogWarning ("ProcessHelper",
-                "GetAbsolutePath - GetFullPathName failed.", GetLastError ());
+        pathLength = GetFullPathName (relativePath.c_str (),
+            static_cast<DWORD> (absolutePath.size ()), &absolutePath[0], &filePart);
+        if (!pathLength)
+        {
+            g_messageLog.LogWarning (
+                "ProcessHelper", "GetAbsolutePath - GetFullPathName failed.", GetLastError ());
             return L"";
         }
         bufferSize = pathLength;
@@ -189,7 +193,8 @@ std::wstring GetAbsolutePath (const std::wstring& relativePath)
 
 ProcessArchitecture GetProcessArchitecture (DWORD processID)
 {
-    const auto wow64FunctionAdress = GetProcAddress (GetModuleHandle (L"kernel32"), "IsWow64Process");
+    const auto wow64FunctionAdress =
+        GetProcAddress (GetModuleHandle (L"kernel32"), "IsWow64Process");
     if (!wow64FunctionAdress)
     {
         g_messageLog.LogError ("ProcessHelper",
@@ -205,9 +210,8 @@ ProcessArchitecture GetProcessArchitecture (DWORD processID)
     }
     if (!IsWow64Process (processHandle.Get (), &wow64Process))
     {
-        g_messageLog.LogError ("ProcessHelper",
-            "GetProcessArchitecture - IsWow64Process failed.",
-            GetLastError ());
+        g_messageLog.LogError (
+            "ProcessHelper", "GetProcessArchitecture - IsWow64Process failed.", GetLastError ());
         return ProcessArchitecture::undefined;
     }
 
@@ -221,13 +225,14 @@ std::wstring GetWindowTitle (HWND window)
     DWORD titleLength = 0;
     do
     {
-        if (bufferSize <= (std::numeric_limits<int>::max)())
+        if (bufferSize <= (std::numeric_limits<int>::max) ())
         {
             windowTitle.resize (bufferSize);
             titleLength = GetWindowText (window, &windowTitle[0], bufferSize);
-            if (!titleLength) {
-                g_messageLog.LogError ("ProcessHelper",
-                    "GetWindowTitle - GetWindowText failed.", GetLastError ());
+            if (!titleLength)
+            {
+                g_messageLog.LogError (
+                    "ProcessHelper", "GetWindowTitle - GetWindowText failed.", GetLastError ());
                 return L"";
             }
             bufferSize *= 2;
@@ -244,14 +249,14 @@ std::wstring GetWindowClassName (HWND window)
     DWORD classLength = 0;
     do
     {
-        if (bufferSize <= (std::numeric_limits<int>::max)())
+        if (bufferSize <= (std::numeric_limits<int>::max) ())
         {
             windowClassName.resize (bufferSize);
             classLength = GetClassName (window, &windowClassName[0], bufferSize);
             if (!classLength)
             {
-                g_messageLog.LogError ("ProcessHelper",
-                    "GetWindowClassName - GetClassName failed.", GetLastError ());
+                g_messageLog.LogError (
+                    "ProcessHelper", "GetWindowClassName - GetClassName failed.", GetLastError ());
                 return L"";
             }
             bufferSize *= 2;
@@ -265,10 +270,11 @@ std::wstring GetSystemErrorMessageW (DWORD errorCode)
 {
     // Get the corresponding system error code as string.
     LPWSTR errorMessageBuffer = nullptr;
-    size_t size = FormatMessage (FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+    size_t size = FormatMessage (
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
         NULL, errorCode, MAKELANGID (LANG_NEUTRAL, SUBLANG_DEFAULT), errorMessageBuffer, 0, NULL);
     std::wstring systemErrorMessage (errorMessageBuffer, size);
-    LocalFree (errorMessageBuffer); //Free the buffer.
+    LocalFree (errorMessageBuffer); // Free the buffer.
 
     if (systemErrorMessage.size () > 2) // Avoid unsigned overflow.
     {
@@ -289,21 +295,23 @@ HWND FindOcatWindowHandle ()
     if (!windowHandle)
     {
         // In case of getting this error message: Did the title of the OCAT window change?
-        g_messageLog.LogError ("ProcessHelper",
-            "Could not find OCAT window hProcess.", GetLastError ());
+        g_messageLog.LogError (
+            "ProcessHelper", "Could not find OCAT window hProcess.", GetLastError ());
         return NULL;
     }
     return windowHandle;
 }
 
 // https://stackoverflow.com/a/35717
-LONG GetStringRegKey (HKEY hKey, const std::wstring &strValueName, std::wstring &strValue, const std::wstring &strDefaultValue)
+LONG GetStringRegKey (HKEY hKey, const std::wstring &strValueName, std::wstring &strValue,
+    const std::wstring &strDefaultValue)
 {
     strValue = strDefaultValue;
     WCHAR szBuffer[512];
     DWORD dwBufferSize = sizeof (szBuffer);
     ULONG nError;
-    nError = RegQueryValueEx (hKey, strValueName.c_str (), 0, NULL, (LPBYTE)szBuffer, &dwBufferSize);
+    nError =
+        RegQueryValueEx (hKey, strValueName.c_str (), 0, NULL, (LPBYTE)szBuffer, &dwBufferSize);
     if (ERROR_SUCCESS == nError)
     {
         strValue = szBuffer;
@@ -324,8 +332,8 @@ std::vector<std::wstring> GetLoadedModuleNames ()
         {
             TCHAR szModName[MAX_PATH];
             // Get the full path to the module's file.
-            if (GetModuleFileNameEx (hProcess.Get (), hModules[i], szModName,
-                sizeof (szModName) / sizeof (TCHAR)))
+            if (GetModuleFileNameEx (
+                    hProcess.Get (), hModules[i], szModName, sizeof (szModName) / sizeof (TCHAR)))
             {
                 moduleNames.push_back (szModName);
             }
