@@ -288,20 +288,6 @@ std::string GetSystemErrorMessage (DWORD errorCode)
     return ConvertUTF16StringToUTF8String (GetSystemErrorMessageW (errorCode));
 }
 
-
-HWND FindOcatWindowHandle ()
-{
-    const auto windowHandle = FindWindow (NULL, L"OCAT");
-    if (!windowHandle)
-    {
-        // In case of getting this error message: Did the title of the OCAT window change?
-        g_messageLog.LogError (
-            "ProcessHelper", "Could not find OCAT window hProcess.", GetLastError ());
-        return NULL;
-    }
-    return windowHandle;
-}
-
 // https://stackoverflow.com/a/35717
 LONG GetStringRegKey (HKEY hKey, const std::wstring &strValueName, std::wstring &strValue,
     const std::wstring &strDefaultValue)

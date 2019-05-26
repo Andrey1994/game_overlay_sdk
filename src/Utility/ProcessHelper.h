@@ -59,8 +59,6 @@ std::wstring GetWindowClassName (HWND window);
 std::string GetSystemErrorMessage (DWORD errorCode);
 std::wstring GetSystemErrorMessageW (DWORD errorCode);
 
-HWND FindOcatWindowHandle ();
-
 LONG GetStringRegKey (HKEY hKey, const std::wstring &strValueName, std::wstring &strValue,
     const std::wstring &strDefaultValue);
 
