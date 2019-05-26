@@ -42,8 +42,6 @@ public:
     bool Started ();
     bool Stopped ();
     bool IsOverlayShowing ();
-    bool IsGraphOverlayShowing ();
-    bool IsBarOverlayShowing ();
     void Start ();
     void Stop ();
 
@@ -52,10 +50,6 @@ public:
     void SetRecordingTime (float time);
     void HideOverlay ();
     void ShowOverlay ();
-    void HideGraphOverlay ();
-    void ShowGraphOverlay ();
-    void HideBarOverlay ();
-    void ShowBarOverlay ();
 
     char *GetOverlayMessage ();
     void SetOverlayMessage (char *message);
@@ -66,8 +60,6 @@ private:
     bool recording_ = false;
     bool stateChanged_ = false;
     bool showOverlay_ = true;
-    bool showGraphOverlay_ = true;
-    bool showBarOverlay_ = false;
     float startDisplayTime_ = 1.0f;
     float endDisplayTime_ = 1.0f;
     float recordingTime_ = 0.0f;

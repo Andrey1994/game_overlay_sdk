@@ -21,7 +21,6 @@
 //
 
 #include "OverlayThread.h"
-#include "../Overlay/OverlayMessage.h"
 #include "RecordingState.h"
 #include "Utility/Constants.h"
 #include "Utility/MessageLog.h"

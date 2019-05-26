@@ -23,7 +23,13 @@
 // OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "Overlay/OverlayMessage.h"
+#include <windows.h>
+
+#include <appmodel.h>
+
+#include <assert.h>
+#include <psapi.h>
+
 #include "Overlay/VK_Environment.h"
 #include "Recording/Capturing.h"
 #include "Utility/Constants.h"
@@ -32,11 +38,6 @@
 #include "Utility/ProcessHelper.h"
 #include "Utility/StringUtils.h"
 #include "hook_manager.hpp"
-#include <appmodel.h>
-#include <windows.h>
-
-#include <assert.h>
-#include <psapi.h>
 
 #pragma data_seg("SHARED")
 HWND sharedFrontendWindow = NULL;
@@ -95,16 +96,6 @@ void InitLogging ()
     }
 }
 
-void SendDllStateMessage (OverlayMessageType messageType)
-{
-    if (sharedFrontendWindow == NULL)
-    {
-        sharedFrontendWindow = FindOcatWindowHandle ();
-    }
-
-    OverlayMessage::PostFrontendMessage (sharedFrontendWindow, messageType, GetCurrentProcessId ());
-}
-
 BOOL APIENTRY DllMain (HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
 {
     if (!g_fileDirectory.Initialize ())
@@ -135,7 +126,6 @@ BOOL APIENTRY DllMain (HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
             const std::wstring system_path (system_path_buffer);
 
             InitLogging ();
-            SendDllStateMessage (OverlayMessageType::AttachDll);
 
             // DXGI
             GetSystemDirectoryW (system_path_buffer, MAX_PATH);
@@ -171,7 +161,6 @@ BOOL APIENTRY DllMain (HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
             }
 
             // Uninstall and clean up all hooks before unloading
-            SendDllStateMessage (OverlayMessageType::DetachDll);
             GameOverlay::uninstall_hook ();
             break;
         }
