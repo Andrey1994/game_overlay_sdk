@@ -48,7 +48,7 @@ int RunProcess (char *exePath, char *args, char *dllLoc)
     return monitor->RunProcess (exePath, args, dllLoc);
 }
 
-int StopMonitor ()
+int ReleaseResources ()
 {
     std::lock_guard<std::mutex> lock (mutex);
     if (!monitor)
@@ -56,7 +56,7 @@ int StopMonitor ()
         Monitor::monitorLogger->error ("process monitor is not running");
         return PROCESS_MONITOR_IS_NOT_RUNNING_ERROR;
     }
-    int res = monitor->StopMonitor ();
+    int res = monitor->ReleaseResources ();
     delete monitor;
     monitor = NULL;
     return res;
@@ -95,7 +95,7 @@ BOOL WINAPI DllMain (HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)
         {
             if (monitor)
             {
-                monitor->StopMonitor ();
+                monitor->ReleaseResources ();
                 delete monitor;
                 monitor = NULL;
             }

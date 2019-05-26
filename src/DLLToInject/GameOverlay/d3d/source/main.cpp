@@ -98,17 +98,13 @@ void InitLogging ()
 
 BOOL APIENTRY DllMain (HMODULE hModule, DWORD fdwReason, LPVOID lpReserved)
 {
-    if (!g_fileDirectory.Initialize ())
-    {
-        return FALSE;
-    }
+    g_fileDirectory.Initialize ();
 
     UNREFERENCED_PARAMETER (lpReserved);
     switch (fdwReason)
     {
         case DLL_PROCESS_ATTACH:
         {
-            // unicode!!
             wchar_t buffer[4096];
             GetModuleFileName (NULL, buffer, 4096);
             std::wstring moduleName (buffer);

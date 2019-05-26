@@ -113,7 +113,7 @@ OverlayBitmap::~OverlayBitmap ()
 
 void OverlayBitmap::CalcSize (int screenWidth, int screenHeight)
 {
-    fullWidth_ = 256;
+    fullWidth_ = 512;
     fullHeight_ = lineHeight_ * 8;
     messageHeight_ = lineHeight_ * 3;
 

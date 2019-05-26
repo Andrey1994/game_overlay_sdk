@@ -158,7 +158,8 @@ bool DLLInjection::GetRemoteDLLAddress ()
         return false;
     }
 
-    DLLInjection::injectLogger->info ("acquired remote dll address for {}", this->pid);
+    DLLInjection::injectLogger->info (
+        "acquired remote dll address for {} address is {}", this->pid, this->remoteDLLAddress);
     return true;
 }
 
@@ -195,7 +196,7 @@ void *DLLInjection::GetRemoteDLLModule ()
             {
                 dllModule = moduleEntry.modBaseAddr;
                 DLLInjection::injectLogger->info (
-                    "found remote dll module for process {}", this->pid);
+                    "found remote dll module for process {} dllmodule is {}", this->pid, dllModule);
                 result = true;
                 break;
             }
@@ -203,7 +204,7 @@ void *DLLInjection::GetRemoteDLLModule ()
         }
         if (!newModule)
         {
-            DLLInjection::injectLogger->error ("unabke to find module in process {}", this->pid);
+            DLLInjection::injectLogger->error ("unable to find module in process {}", this->pid);
             result = false;
         }
     }

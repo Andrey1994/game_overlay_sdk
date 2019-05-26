@@ -48,7 +48,7 @@ def main ():
     thread.need_quit = True
     thread.join ()
 
-    game_overlay_sdk.injector.stop_monitor ()
+    game_overlay_sdk.injector.release_resources ()
 
 
 if __name__ == "__main__":

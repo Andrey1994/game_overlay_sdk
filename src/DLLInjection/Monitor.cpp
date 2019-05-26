@@ -34,7 +34,7 @@ Monitor::Monitor ()
 
 Monitor::~Monitor ()
 {
-    this->StopMonitor ();
+    this->ReleaseResources ();
 }
 
 void Monitor::SetLogLevel (int level)
@@ -51,6 +51,7 @@ void Monitor::SetLogLevel (int level)
 
 int Monitor::RunProcess (char *exePath, char *args, char *dllLoc)
 {
+    strcpy ((char *)this->dllLoc, dllLoc);
     int res = CreateDesktopProcess (exePath, args);
     if (res != STATUS_OK)
     {
@@ -115,9 +116,24 @@ int Monitor::CreateFileMap ()
     return STATUS_OK;
 }
 
-int Monitor::StopMonitor ()
+int Monitor::ReleaseResources ()
 {
-    Monitor::monitorLogger->trace ("stop monitorring");
+    int result = STATUS_OK;
+    if (this->CheckTargetProcessAlive ())
+    {
+        // this code looks good but there is no DLL_PROCESS_DETACH call in target process
+        int architecture = GetArchitecture (this->pid);
+        DLLInjection dllInjection (this->pid, architecture, (char *)this->dllLoc);
+        SuspendAllThreads (pid);
+        bool res = dllInjection.FreeDLL ();
+        if (!res)
+        {
+            Monitor::monitorLogger->error ("failed to free library");
+            result = GENERAL_ERROR;
+        }
+        ResumeAllThreads (pid);
+    }
+    Monitor::monitorLogger->trace ("releasing");
     if (this->thread)
     {
         if (this->stopEvent)
@@ -146,9 +162,10 @@ int Monitor::StopMonitor ()
         CloseHandle (this->mapFile);
         this->mapFile = NULL;
     }
+
     this->pid = 0;
     this->processHandle = NULL;
-    return STATUS_OK;
+    return result;
 }
 
 int Monitor::GetPid ()
@@ -160,7 +177,7 @@ int Monitor::SendMessageToOverlay (char *message)
 {
     if ((this->mapFile == NULL) || (this->pid == 0))
     {
-        Monitor::monitorLogger->error ("Overlay is not ready");
+        Monitor::monitorLogger->error ("No process to draw overlay");
         return TARGET_PROCESS_IS_NOT_CREATED_ERROR;
     }
     if (!CheckTargetProcessAlive ())
@@ -367,7 +384,6 @@ bool Monitor::CheckTargetProcessAlive ()
 {
     if (this->processHandle == NULL)
     {
-        Monitor::monitorLogger->info ("target process is not created yet");
         return false;
     }
     DWORD exitCode = 0;

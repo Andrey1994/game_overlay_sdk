@@ -17,7 +17,7 @@ public:
 
     int StartMonitor (char *processName, char *dllLoc);
     int RunProcess (char *exePath, char *args, char *dllLoc);
-    int StopMonitor ();
+    int ReleaseResources ();
     void Callback (int pid, char *pName);
     int GetPid ();
     int SendMessageToOverlay (char *message);

@@ -16,7 +16,7 @@ extern "C"
 {
     __declspec(dllexport) int SetLogLevel (int level);
     __declspec(dllexport) int StartMonitor (char *processName, char *dllPath);
-    __declspec(dllexport) int StopMonitor ();
+    __declspec(dllexport) int ReleaseResources ();
     __declspec(dllexport) int GetPid (int *pid);
     __declspec(dllexport) int SendMessageToOverlay (char *msg);
     __declspec(dllexport) int RunProcess (char *exePath, char *args, char *dllPath);

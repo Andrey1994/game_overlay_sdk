@@ -7,6 +7,8 @@ import platform
 import struct
 import enum
 import logging
+from collections import deque
+import sys
 
 
 class CustomExitCodes (enum.Enum):
@@ -54,9 +56,9 @@ class InjectorDLL (object):
         ]
 
         # stop monitorring
-        self.StopMonitor = self.lib.StopMonitor
-        self.StopMonitor.restype = ctypes.c_int
-        self.StopMonitor.argtypes = []
+        self.ReleaseResources = self.lib.ReleaseResources
+        self.ReleaseResources.restype = ctypes.c_int
+        self.ReleaseResources.argtypes = []
 
         # set log level
         self.SetLogLevel = self.lib.SetLogLevel
@@ -96,8 +98,8 @@ def start_monitor (process_name):
     if res != CustomExitCodes.STATUS_OK.value:
         raise InjectionError ('start process creation monitoring error please check logs', res)
 
-def stop_monitor ():
-    res = InjectorDLL.get_instance ().StopMonitor ()
+def release_resources ():
+    res = InjectorDLL.get_instance ().ReleaseResources ()
     if res != CustomExitCodes.STATUS_OK.value:
         raise InjectionError ('stop monitoring error', res)
 
@@ -124,7 +126,13 @@ def get_pid ():
     return pid[0]
 
 def send_message (message):
-    res = InjectorDLL.get_instance ().SendMessageToOverlay (message.encode ())
+    if not hasattr (send_message, 'message_queue'):
+        send_message.message_queue = deque (maxlen = 5)
+    send_message.message_queue.append (message)
+    acum_message = ''
+    for msg in send_message.message_queue:
+        acum_message = acum_message + msg + '\n'
+    res = InjectorDLL.get_instance ().SendMessageToOverlay (acum_message.encode ())
     if res != CustomExitCodes.STATUS_OK.value:
         raise InjectionError ('failed to send message', res)
 
@@ -135,7 +143,10 @@ def write_app_id (file_path, app_id):
 
 def run_process (exe_path, exe_args = "", steam_app_id = None):
     if steam_app_id is None:
-        logging.warning ('For Steam Games ensure that there is steam_appid.txt file in \%SteamFolder\%\\steamapps\\common\\\%GameName\% with correct appid! You can get app_id here https://steamdb.info/search/')
+        logging.warning ('For Steam Games please provide app id or ensure that there is steam_appid.txt file in game folder! You can get app_id here https://steamdb.info/search/')
+    elif not os.path.isabs (exe_path):
+        logging.warning ('to create steam_appid.txt file please provide full path to executable')
+        raise Exception ('please provide full path')
 
     game_dir = os.path.abspath (os.path.dirname (exe_path))
     steam_app_id_file = os.path.join (game_dir, 'steam_appid.txt')
@@ -145,3 +156,18 @@ def run_process (exe_path, exe_args = "", steam_app_id = None):
     res = InjectorDLL.get_instance ().RunProcess (exe_path.encode (), exe_args.encode(), location.encode ())
     if res != CustomExitCodes.STATUS_OK.value:
         raise InjectionError ('failed to run process please check logs', res)
+
+
+class OvelrayLogHandler (logging.Handler):
+
+    def __init__ (self):
+        logging.Handler.__init__(self)
+
+    def emit (self, record):
+        try:
+            send_message (self.format (record))
+        except InjectionError as inj_err:
+            # no need to notify about excpetion here cause it is implemented in cpp code
+            pass
+        except BaseException as e:
+            self.handleError (record)
