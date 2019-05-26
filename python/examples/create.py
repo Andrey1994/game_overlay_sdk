@@ -15,7 +15,7 @@ class MessageThread (threading.Thread):
         i = 0
         while not self.need_quit:
             try:
-                game_overlay_sdk.injector.send_message (' Hi from python %d' % i)
+                game_overlay_sdk.injector.send_message ('Hi from python %d' % i)
                 i = i + 1
                 time.sleep (1)
             except game_overlay_sdk.injector.InjectionError as err:

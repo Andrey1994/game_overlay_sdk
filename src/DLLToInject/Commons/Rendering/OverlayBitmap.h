@@ -144,7 +144,7 @@ private:
     Area fullArea_;
     D2D1_RECT_F messageArea_;
 
-    int lineHeight_ = 45;
+    int lineHeight_ = 35;
     int offset_ = 5;
 
     int colorSequenceIndex_ = 0;

@@ -3,6 +3,7 @@ import time
 import game_overlay_sdk
 import game_overlay_sdk.injector
 import threading
+import logging
 
 
 class MessageThread (threading.Thread):
@@ -15,15 +16,15 @@ class MessageThread (threading.Thread):
         i = 0
         while not self.need_quit:
             try:
-                game_overlay_sdk.injector.send_message (' Hi from python %d' % i)
+                game_overlay_sdk.injector.send_message ('Hi from python %d' % i)
                 i = i + 1
                 time.sleep (1)
             except game_overlay_sdk.injector.InjectionError as err:
                 if err.exit_code == game_overlay_sdk.injector.CustomExitCodes.TARGET_PROCESS_IS_NOT_CREATED_ERROR.value:
-                    print ('target process is not created')
+                    logging.warning ('target process is not created')
                     time.sleep (5)
                 elif err.exit_code == game_overlay_sdk.injector.CustomExitCodes.TARGET_PROCESS_WAS_TERMINATED_ERROR.value:
-                    print ('target process was stopped')
+                    logging.warning ('target process was stopped')
                     # in monitor mode we can run process several times so dont need to stop this thread here
                     i = 0
                     time.sleep (5)
@@ -32,6 +33,7 @@ class MessageThread (threading.Thread):
 
 
 def main ():
+    logging.basicConfig (level = logging.DEBUG)
     parser = argparse.ArgumentParser ()
     parser.add_argument ('--name', type = str, help  = 'process name', required = True)
     args = parser.parse_args ()
