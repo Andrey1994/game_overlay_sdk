@@ -1,0 +1,51 @@
+environment:
+  PY_DIR: C:\Python36-x64
+  PYPI_PASSWORD:
+    secure: ZuRCW1W45pqH03Lio54BzQ==
+
+skip_non_tags: true
+
+image:
+- Visual Studio 2017
+
+platform:
+  - x64
+
+stack: python 3
+
+clone_depth: 3
+
+build: off
+
+init:
+  - cmd: set PATH=%PY_DIR%;%PY_DIR%\Scripts;%APPVEYOR_BUILD_FOLDER%\data\lib;%PATH%
+  - cmd: set CNC_INSTALL_CNCA0_CNCB0_PORTS="YES"
+
+install:
+  - pip install twine
+
+test_script:
+  - cmake_build.cmd
+  - cmake_build32.cmd
+  - python python\setup.py install
+
+after_test:
+  - pip install wheel
+  - cd python && python setup.py sdist bdist_wheel
+
+artifacts:
+  - path: dist
+    name: python_package
+    type: zip
+
+deploy_script:
+  - twine upload --skip-existing dist/*.whl --user Andrey1994 --password %PYPI_PASSWORD%
+
+
+notifications:
+  - provider: Email
+    to:
+      - a1994ndrey@gmail.com
+    on_build_success: false
+    on_build_failure: true
+    on_build_status_changed: true
