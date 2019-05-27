@@ -188,3 +188,9 @@ python examples\monitor.py --name SOTTR.exe
 *Important note: with *start_monitor* you can run target process several times sequentially the only requirement here: dont run several processes at the same time*
 
 #### More examples [here](./python/examples)
+
+### Build Instructions
+* Install [Vulkan SDK](https://vulkan.lunarg.com/)
+* Install cmake
+* Install Visual Studio/MSBUILD
+* run cmake_build.cmd or cmake_build32.cmd (if you have VS!=2017 you will need to change cmake generator)
