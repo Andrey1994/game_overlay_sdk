@@ -18,8 +18,8 @@ To draw overlay for fullscreen game you have to hook inside game process before 
 
 Both of these options are implemented, so there are:
 ```
-def run_process (exe_path, exe_args = "", steam_app_id = None)
-def start_monitor (process_name)
+run_process (exe_path, exe_args = "", steam_app_id = None)
+start_monitor (process_name)
 ```
 *Important note: for start_monitor you need to provide executable name exactly like in TaskManager and run target process by yourself while for run_process you need to provide full path to the executable and SDK will run it for you*
 
