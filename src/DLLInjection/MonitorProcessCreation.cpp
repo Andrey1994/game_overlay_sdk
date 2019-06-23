@@ -71,8 +71,10 @@ int GetPid (int *pid)
         return PROCESS_MONITOR_IS_NOT_RUNNING_ERROR;
     }
     *pid = monitor->GetPid ();
-    if (pid == 0)
+    if (*pid == 0)
+    {
         return TARGET_PROCESS_IS_NOT_CREATED_ERROR;
+    }
     return STATUS_OK;
 }
 

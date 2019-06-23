@@ -122,7 +122,7 @@ def get_pid ():
     pid = numpy.zeros (1).astype (numpy.int64)
     res = InjectorDLL.get_instance ().GetPid (pid)
     if res != CustomExitCodes.STATUS_OK.value:
-        raise InjectionError ('Callback has not been called yet')
+        raise InjectionError ('Callback has not been called yet', res)
     return pid[0]
 
 def send_message (message):
