@@ -53,7 +53,7 @@ overlay_log_handler = game_overlay_sdk.injector.OvelrayLogHandler ()
 ### Usage with Steam Games
 Steam forks game process by default so there are two process and it's impossible to distinguish them and it breaks DLL injection, for *run_process* DLL will be loaded to the wrong process so no overlay will be drawed while for *start_monitor* it's almost random, it may hangs if wrong process was selected or may works well
 
-Fortunately there is a way to force Steam to create only one process, we just need to create file *steam_appid.txt* in game folder, and it should be done only once per game, that's why there is steam_app_id argument in *run_process* method. You can get app_id [here](https://steamdb.info/search/)
+Fortunately there is a way to force Steam to create only one process, we just need to create file *steam_appid.txt* in game folder, and it should be done only once per game, that's why there is steam_app_id argument in *run_process* method. You can get app_id [here](https://steamdb.info/search/) also make sure that Steam Client App is running
 
 
 ### Examples
