@@ -190,7 +190,7 @@ python examples\monitor.py --name SOTTR.exe
 #### More examples [here](./python/examples)
 
 ### Build Instructions
-* Install [Vulkan SDK](https://vulkan.lunarg.com/)
+* Install [Vulkan SDK](https://vulkan.lunarg.com/) (I've used v1.1.106.0)
 * Install cmake
 * Install Visual Studio/MSBUILD
 * run cmake_build.cmd or cmake_build32.cmd (if you have VS!=2017 you will need to change cmake generator)
