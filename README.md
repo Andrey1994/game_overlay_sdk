@@ -28,6 +28,7 @@ As soon as DLL was loaded inside game process you are able to call
 send_message (message)
 ```
 To send message and render it on top of game process window
+
 For Inter Process Communication I use [Memory Mapped Files](https://docs.microsoft.com/en-us/windows/desktop/memory/creating-named-shared-memory), so send_message method just sends data to this Memory Mapped File and DLL which was injected to game process reads it.
 
 *Important note: message will be showed as soon as game presents new frame and I don't ensure that all your messages will be displayed, for example if you send messages faster than game draws frames only the latest message will be displayed, also game process reads data one time per 200ms(but I use queue in python code to buffer messages, so real rate could be bigger)*
