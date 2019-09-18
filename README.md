@@ -11,6 +11,9 @@ Library to write text messages on top of game window.
 * x64
 
 ## Usage
+**Run it with admin priviligies!**
+
+
 To draw overlay for fullscreen game you have to hook inside game process before initializing of graphical API, so there are two options to achive it:
 
 * Create suspended process, install hooks and resume threads
