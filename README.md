@@ -11,8 +11,10 @@ Library to write text messages on top of game window.
 * x64
 
 ## Usage
+
 **Run it with admin priviligies!**
 
+**Install [Vulkan SDK](https://vulkan.lunarg.com/) (I've used v1.1.106.0) or Vulkan Runtime at least**
 
 To draw overlay for fullscreen game you have to hook inside game process before initializing of graphical API, so there are two options to achive it:
 
